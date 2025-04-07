@@ -65,8 +65,8 @@ export default{
             <span>轮播图管理</span>
             </template>
             <!--跟路由配置有关-->
-            <el-menu-item index="/banner/bannerlist"><el-icon><User /></el-icon>管理员列表</el-menu-item>
-            <el-menu-item index="/banner/addbanner"><el-icon><UserFilled /></el-icon>用户列表</el-menu-item>
+            <el-menu-item index="/banner/bannerlist"><el-icon><User /></el-icon>轮播图列表</el-menu-item>
+            <el-menu-item index="/banner/addbanner"><el-icon><UserFilled /></el-icon>添加轮播图</el-menu-item>
         </el-sub-menu>
 
         <!--<el-sub-menu index="1">
