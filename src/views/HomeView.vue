@@ -1,3 +1,4 @@
+
 <script>
 //在项目中万物皆模块
 import logo from "../assets/logo.jpg";
@@ -122,7 +123,7 @@ export default{
       height: 60px;
       display: flex;
       align-items: center;
-      padding: 0 10px;
+      padding: 0 5px;
       box-sizing: border-box;
     }
 
@@ -150,3 +151,4 @@ export default{
   align-items: center;
 }
 </style>
+

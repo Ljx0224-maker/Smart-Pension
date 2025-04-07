@@ -1,5 +1,11 @@
 <script>
-import { Avatar,HomeFilled,UserFilled,User } from '@element-plus/icons-vue'
+import { Avatar,House,UserFilled,User,Star,
+  Postcard,Tickets,Service,ChatLineRound,ChatDotSquare,Document,
+  CreditCard,ShoppingCart,ShoppingCartFull,ShoppingTrolley,Setting,
+  EditPen,Edit,Monitor,VideoPause,VideoCamera,Picture,PictureRounded,
+  Plus,Reading,Dish,ChatRound,Drizzling,PartlyCloudy,Pointer,Discount,
+  OfficeBuilding,Notification,View
+} from '@element-plus/icons-vue'
 import { mapState } from 'vuex';
 
 
@@ -16,9 +22,24 @@ export default{
     props:['collapse'],
     components:{
         Avatar,
-        HomeFilled,
+        House,
         UserFilled,
-        User
+        User,
+        Star,
+        Postcard,
+        Tickets,
+        Service,
+        ChatLineRound,
+        ChatDotSquare,
+        Document,
+        CreditCard,
+        ShoppingCart,
+        ShoppingCartFull,
+        ShoppingTrolley,
+        Setting,
+        Edit,
+        EditPen,Monitor,VideoPause,VideoCamera,Picture,PictureRounded,Plus,Reading,Dish,
+        ChatRound,Drizzling,PartlyCloudy,Pointer,Discount,OfficeBuilding,Notification,View
     },
     mounted(){
       console.log(this.userInfo);
@@ -33,7 +54,17 @@ export default{
     <el-menu :default-active="currentPath" :collapse="collapse" router
         class="el-menu-vertical-demo">
 
-        <el-menu-item index="/"><el-icon><HomeFilled /></el-icon>首页</el-menu-item>
+        <el-sub-menu index="/home">
+            <template #title>
+            <el-icon>
+                <House />
+            </el-icon>
+            <span>首页</span>
+            </template>
+            <!--跟路由配置有关-->
+            <el-menu-item index="/home/board"><el-icon><Notification /></el-icon>工作台</el-menu-item>
+            <el-menu-item index="/home/worktable"><el-icon><View /></el-icon>预约看板</el-menu-item>
+        </el-sub-menu>
 
         <el-sub-menu v-for="item in userInfo.checkedKeys" :key="item.path" :index="item.path">
             <template #title>
@@ -57,16 +88,97 @@ export default{
             <el-menu-item index="/manager/userlist"><el-icon><UserFilled /></el-icon>用户列表</el-menu-item>
         </el-sub-menu>
 
-        <el-sub-menu index="/banner">
+        <el-sub-menu index="/marketing">
             <template #title>
             <el-icon>
-                <Avatar />
+                <Postcard />
             </el-icon>
-            <span>轮播图管理</span>
+            <span>营销管理</span>
             </template>
             <!--跟路由配置有关-->
-            <el-menu-item index="/banner/bannerlist"><el-icon><User /></el-icon>轮播图列表</el-menu-item>
-            <el-menu-item index="/banner/addbanner"><el-icon><UserFilled /></el-icon>添加轮播图</el-menu-item>
+            <el-menu-item index="/marketing/couponlist"><el-icon><Tickets /></el-icon>优惠券</el-menu-item>
+            <el-menu-item index="/marketing/points"><el-icon><Star /></el-icon>积分</el-menu-item>
+        </el-sub-menu>
+
+        <el-sub-menu index="/message">
+            <template #title>
+            <el-icon>
+                <ChatLineRound />
+            </el-icon>
+            <span>消息管理</span>
+            </template>
+            <!--跟路由配置有关-->
+            <el-menu-item index="/message/messagesort"><el-icon><ChatDotSquare /></el-icon>消息群发</el-menu-item>
+            <el-menu-item index="/message/conversation"><el-icon><Service /></el-icon>会话</el-menu-item>
+        </el-sub-menu>
+
+        <el-sub-menu index="/order">
+            <template #title>
+            <el-icon>
+                <CreditCard />
+            </el-icon>
+            <span>交易管理</span>
+            </template>
+            <!--跟路由配置有关-->
+            <el-sub-menu index="/order/ordermanage">
+              <template #title>
+              <el-icon>
+                <ShoppingCart />
+              </el-icon>
+              <span>订单管理</span>
+              </template>
+              <el-menu-item index="/order/ordermanage/orderlist"><el-icon><ShoppingCartFull /></el-icon>订单列表</el-menu-item>
+              <el-menu-item index="/order/ordermanage/orderafter"><el-icon><ShoppingTrolley /></el-icon>售后状态</el-menu-item>
+            </el-sub-menu>
+            <el-sub-menu index="/order/settings">
+              <template #title>
+              <el-icon>
+                <Setting />
+              </el-icon>
+              <span>设置</span>
+              </template>
+              <el-menu-item index="/order/settings/oderrefund"><el-icon><Edit /></el-icon>退款原因设置</el-menu-item>
+              <el-menu-item index="/order/settings/ordersetting"><el-icon><EditPen /></el-icon>通用设置</el-menu-item>
+            </el-sub-menu>
+            <el-menu-item index="/order/ordermoney"><el-icon><Document /></el-icon>收支明细</el-menu-item>
+        </el-sub-menu>
+
+
+        <el-sub-menu index="/operation">
+            <template #title>
+            <el-icon>
+                <Monitor />
+            </el-icon>
+            <span>运营管理</span>
+            </template>
+            <!--跟路由配置有关-->
+            <el-sub-menu index="/operation/banner">
+              <template #title>
+              <el-icon>
+                <Picture />
+              </el-icon>
+              <span>轮播图管理</span>
+              </template>
+              <el-menu-item index="/operation/banner/bannerlist"><el-icon><PictureRounded /></el-icon>轮播图列表</el-menu-item>
+              <el-menu-item index="/operation/banner/addbanner"><el-icon><Plus /></el-icon>添加轮播图</el-menu-item>
+            </el-sub-menu>
+            <el-sub-menu index="/operation/events">
+              <template #title>
+              <el-icon>
+                <Reading />
+              </el-icon>
+              <span>老年活动</span>
+              </template>
+              <el-menu-item index="/operation/events/eventslist"><el-icon><Discount /></el-icon>活动管理</el-menu-item>
+              <el-menu-item index="/operation/events/rigisterinfo"><el-icon><Pointer /></el-icon>报名信息管理</el-menu-item>
+            </el-sub-menu>
+            <el-menu-item index="/operation/newslist"><el-icon><VideoPause /></el-icon>动态管理</el-menu-item>
+            <el-menu-item index="/operation/dishlist"><el-icon><Dish /></el-icon>食谱管理</el-menu-item>
+            <el-menu-item index="/operation/healthinfo"><el-icon><PartlyCloudy /></el-icon>健康资讯管理</el-menu-item>
+            <el-menu-item index="/operation/diseaselist"><el-icon><Drizzling /></el-icon>疾病宝典管理</el-menu-item>
+            <el-menu-item index="/operation/institutionlist"><el-icon><OfficeBuilding /></el-icon>养老机构列表</el-menu-item>
+            <el-menu-item index="/operation/medialist"><el-icon><VideoCamera /></el-icon>视频列表</el-menu-item>
+            <el-menu-item index="/operation/commentslist"><el-icon><ChatRound /></el-icon>评论管理</el-menu-item>
         </el-sub-menu>
 
         <!--<el-sub-menu index="1">

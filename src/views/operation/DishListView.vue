@@ -1,5 +1,5 @@
 <template>
     <div>
-        添加轮播图
+        食谱管理
     </div>
 </template>
