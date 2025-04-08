@@ -33,13 +33,14 @@ export default{
     <el-menu :default-active="currentPath" :collapse="collapse" router
         class="el-menu-vertical-demo">
 
+        
    
         <el-sub-menu index="/home">
       <template #title><el-icon><HomeFilled /></el-icon>
         <span>首页</span>
       </template>
-      <el-menu-item index="/workbench">工作台</el-menu-item> <!-- 新增工作台 -->
-      <el-menu-item index="/reservation">预约看板</el-menu-item> <!-- 新增预约看板 -->
+      <el-menu-item index="/home/worktable">工作台</el-menu-item> <!-- 新增工作台 -->
+      <el-menu-item index="/home/board">预约看板</el-menu-item> <!-- 新增预约看板 -->
     </el-sub-menu>
 
         <el-sub-menu v-for="item in userInfo.checkedKeys" :key="item.path" :index="item.path">
@@ -52,17 +53,6 @@ export default{
             <el-menu-item v-for="child in item.children" :key="child.path" :index="`/${item.path}/${child.path}`"><el-icon><UserFilled /></el-icon>{{child.label}}</el-menu-item>
         </el-sub-menu>
 
-        <el-sub-menu index="/manager">
-            <template #title>
-            <el-icon>
-                <Avatar />
-            </el-icon>
-            <span>账号管理</span>
-            </template>
-            <!--跟路由配置有关-->
-            <el-menu-item index="/manager/managerlist"><el-icon><User /></el-icon>管理员列表</el-menu-item>
-            <el-menu-item index="/manager/userlist"><el-icon><UserFilled /></el-icon>用户列表</el-menu-item>
-        </el-sub-menu>
 
         <el-sub-menu index="/banner">
             <template #title>
@@ -75,6 +65,78 @@ export default{
             <el-menu-item index="/banner/bannerlist"><el-icon><User /></el-icon>轮播图列表</el-menu-item>
             <el-menu-item index="/banner/addbanner"><el-icon><UserFilled /></el-icon>添加轮播图</el-menu-item>
         </el-sub-menu>
+
+        <el-sub-menu index="/user">
+            <template #title>
+            <el-icon>
+                <Avatar />
+            </el-icon>
+            <span>用户管理</span>
+            </template>
+            <!--跟路由配置有关-->
+            <el-menu-item index="/user/userlist"><el-icon><User /></el-icon>用户列表</el-menu-item>
+            <el-menu-item index="/user/usertag"><el-icon><UserFilled /></el-icon>用户标签</el-menu-item>
+        </el-sub-menu>
+
+
+        <el-sub-menu index="/service">
+            <template #title>
+            <el-icon>
+                <Avatar />
+            </el-icon>
+            <span>服务管理</span>
+            </template>
+            <el-menu-item index="/service/servicelist"><el-icon><User /></el-icon>全部商品列表</el-menu-item>
+            <el-sub-menu index="/service/management">
+              <template #title>
+              <el-icon>
+               
+              </el-icon>
+              <span>分类管理</span>
+              </template>
+            <!--跟路由配置有关-->
+            
+            <el-menu-item index="/service/management/jiazhenghuli"><el-icon><UserFilled /></el-icon>家政护理</el-menu-item>
+            <el-menu-item index="/service/management/shangmentiyan"><el-icon><UserFilled /></el-icon>上门体验</el-menu-item>
+            <el-menu-item index="/service/management/kangfuliliao"><el-icon><UserFilled /></el-icon>康复理疗</el-menu-item>
+        </el-sub-menu></el-sub-menu>
+
+        <el-sub-menu index="/staff">
+            <template #title>
+            <el-icon>
+                <Avatar />
+            </el-icon>
+            <span>服务人员管理</span>
+            </template>
+            <!--跟路由配置有关-->
+            <el-menu-item index="/staff/stafflist"><el-icon><User /></el-icon>全部服务人员列表</el-menu-item>
+        </el-sub-menu>
+
+        <el-sub-menu index="/data">
+            <template #title>
+            <el-icon>
+                <Avatar />
+            </el-icon>
+            <span>数据中心</span>
+            </template>
+            <el-menu-item index="/data/users"><el-icon><User /></el-icon>用户概况</el-menu-item>
+            <el-menu-item index="/data/transaction"><el-icon><User /></el-icon>交易概况</el-menu-item>
+            <el-menu-item index="/data/serviceworkorder"><el-icon><User /></el-icon>服务工单分析</el-menu-item>
+          </el-sub-menu>
+
+        <el-sub-menu index="/settings">
+            <template #title>
+            <el-icon>
+                <Avatar />
+            </el-icon>
+            <span>系统设置</span>
+            </template>
+            <!--跟路由配置有关-->
+            <el-menu-item index="/settings/pepolelist"><el-icon><User /></el-icon>员工管理</el-menu-item>
+            <el-menu-item index="/settings/protocol"><el-icon><UserFilled /></el-icon>协议管理</el-menu-item>
+        </el-sub-menu>
+
+
 
         <!--<el-sub-menu index="1">
           <template #title>
