@@ -11,6 +11,10 @@ import WorkTableView from "@/views/home/WorkTableView.vue";
 import ManagerIndexView from "@/views/manager/ManagerIndexView.vue";
 import ManagerListView from "@/views/manager/ManagerListView.vue";
 import UserListView from "@/views/manager/UserListView.vue";
+// 用户的组件
+import TagView from '@/views/user/TagView.vue';
+import UserListView from "@/views/user/UserListView.vue";
+import UserIndexView from "@/views/user/UserIndexView.vue";
 
 // 导入营销管理相关组件
 import MarketingIndexView from '@/views/marketing/MarketingIndexView.vue';
@@ -52,14 +56,48 @@ import RigisterInfoView from '@/views/operation/events/RigisterInfoView.vue';
 
 
 
+//导入服务管理
+import ServiceIndexView from '@/views/service/ServiceIndexView.vue';
+import ServiceListView from '@/views/service/ServiceListView.vue';
+import JiaZhengHuLiView from '@/views/service/JiaZhengHuLiView.vue';
+import ShangMenTiYanView from '@/views/service/ShangMenTiYanView.vue';
+import KangFuLiLiaoView from '@/views/service/KangFuLiLiaoView.vue';
+import CategoryManagementIndexView from '@/views/service/CategoryManagementIndexView.vue';
+
+
+//导入工作台&预约看板
+import HomeIndexView from '@/views/home/HomeIndexView.vue';
+import BoardView from '@/views/home/BoardView.vue';
+import WorkTableView from '@/views/home/WorkTableView.vue';
+
+//导入服务人员管理
+import StaffIndexView from '@/views/staff/StaffIndexView.vue';
+import StaffListView from '@/views/staff/StaffListView.vue';
+
+
+//导入数据中心DataIndexView
+import DataIndexView from '@/views/data/DataIndexView.vue';
+import ServiceWorkOrderView from '@/views/data/ServiceWorkOrderView.vue';
+import TransactionView from '@/views/data/TransactionView.vue';
+import UserView from '@/views/data/UserView.vue';
+
+//导入系统设置
+import ProtocolView from '@/views/settings/ProtocolView.vue';
+import SettingIndexView from '@/views/settings/SettingIndexView.vue';
+import PepoleListView from '@/views/settings/PepoleListView.vue';
+// import DataIndexView from '@/views/data/DataIndexView.vue';
+
 // 路由规则配置
 export const routes=[
   {
     path: '/',
     name: 'main',
     label:'主页面',
+    name: 'master',
+    label:'首页',
     component: HomeView,
     // 路由嵌套，配置二级路由
+    
     children:[
       {
         path:'home',
@@ -81,25 +119,29 @@ export const routes=[
           }
         ]
       },
+    ],
+    children:[
       {
-        path:'manager',//不用加‘/’，他会自动加上
-        name:'manager',
-        label:'账号管理',
-        component:ManagerIndexView,
-        // 配置三级路由
+        
+        path:'user',
+        name:'user',
+        label:'用户管理',
+        component:UserIndexView,
+        
         children:[
-          {
-            path:'managerlist',
-            name:'managerlist',
-            label:'管理员列表',
-            component:ManagerListView,
-          },
           {
             path:'userlist',
             name:'userlist',
             label:'用户列表',
             component:UserListView,
-          }
+          },
+
+          {
+            path:'usertag',
+            name:'usertag',
+            label:'用户标签',
+            component:TagView,
+          },
         ]
       },
       {
@@ -284,11 +326,133 @@ export const routes=[
             name:'commentslist',
             label:'评论管理',
             component:CommentsListView,
+            path:'addbanner',
+            name:'addbanner',
+            label:'添加轮播图',
+            component:AddBannerView,
+          },
+        ]
+      },
+
+
+
+      {
+        path: 'service',
+        name: 'service',
+        label: '服务管理',
+        component: ServiceIndexView,
+        children: [
+          {
+            path: 'servicelist',
+            name: 'servicelist',
+            label: '全部商品列表',
+            component: ServiceListView,
+          },
+          {
+            path: 'management',
+            name: 'management',
+            label: '分类管理',
+            component: CategoryManagementIndexView,
+            children: [
+              {
+                path: 'jiazhenghuli',
+                name: 'jiazhenghuli',
+                label: '家政护理',
+                component: JiaZhengHuLiView,
+              },
+              {
+                path: 'kangfuliliao',
+                name: 'kangfuliliao',
+                label: '康复理疗',
+                component: KangFuLiLiaoView,
+              },
+              {
+                path: 'shangmentiyan',
+                name: 'shangmentiyan',
+                label: '上门体验',
+                component: ShangMenTiYanView,
+              }
+            ]
           }
         ]
-      }
-    ]
+      },
+      
+
+
+      {
+         
+        path:'staff',
+        name:'staff',
+        label:'服务人员管理',
+        component:StaffIndexView,
+        children:[
+          {
+            path:'stafflist',
+            name:'stafflist',
+            label:'全部服务人员列表',
+            component:StaffListView,
+          },
+        
+        ]
+      },
+
+
+
+      {
+        path:'data',
+        name:'data',
+        label:'数据中心',
+        component:DataIndexView,
+        children:[
+          {
+            path:'serviceworkorder',
+            name:'serviceworkorder',
+            label:'服务工单分析',
+            component:ServiceWorkOrderView,
+          },
+          {
+            path:'transaction',
+            name:'transaction',
+            label:'交易概况',
+            component:TransactionView,
+            
+          },
+          {
+            path:'users',
+            name:'users',
+            label:'用户概况',
+            component:UserView,
+          },
+        ]
+      },
+
+
+      
+      {
+        path:'settings',
+        name:'settings',
+        label:'系统设置',
+        component:SettingIndexView,
+        children:[
+          {
+            path:'pepolelist',
+            name:'pepolelist',
+            label:'员工管理',
+            component:PepoleListView,
+          },
+          {
+            path:'protocol',
+            name:'protocol',
+            label:'系统设置',
+            component:ProtocolView,
+          }
+        ]
+      },
+
+    ],
+   
   },
+
   {
     path: '/login',
     name: 'login',
@@ -298,6 +462,9 @@ export const routes=[
     component: () => import('../views/LoginView.vue'),
   }
 ]
+
+
+
 
 const router = createRouter({
   history: createWebHashHistory(import.meta.env.BASE_URL),
