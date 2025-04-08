@@ -3,8 +3,8 @@ import { Avatar,House,UserFilled,User,Star,
   Postcard,Tickets,Service,ChatLineRound,ChatDotSquare,Document,
   CreditCard,ShoppingCart,ShoppingCartFull,ShoppingTrolley,Setting,
   EditPen,Edit,Monitor,VideoPause,VideoCamera,Picture,PictureRounded,
-  Plus,Reading,Dish,ChatRound,Drizzling,PartlyCloudy,Pointer,Discount,
-  OfficeBuilding,Notification,View
+  Plus,Reading,Dish,ChatRound,Drizzling,PartlyCloudy,Pointer,
+  Discount,OfficeBuilding,Notification,View
 } from '@element-plus/icons-vue'
 import { mapState } from 'vuex';
 
