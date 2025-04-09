@@ -7,10 +7,6 @@ import BoardView from "@/views/home/BoardView.vue";
 import HomeIndexView from "@/views/home/HomeIndexView.vue";
 import WorkTableView from "@/views/home/WorkTableView.vue";
 
-// 导入管理员和用户的组件
-import ManagerIndexView from "@/views/manager/ManagerIndexView.vue";
-import ManagerListView from "@/views/manager/ManagerListView.vue";
-import UserListView from "@/views/manager/UserListView.vue";
 // 用户的组件
 import TagView from '@/views/user/TagView.vue';
 import UserListView from "@/views/user/UserListView.vue";
@@ -42,7 +38,7 @@ import CommentsListView from '@/views/operation/CommentsListView.vue';
 import DiseaseListView from '@/views/operation/DiseaseListView.vue'
 import DishListView from '@/views/operation/DishListView.vue'
 import HealthInfoListView from '@/views/operation/HealthInfoListView.vue'
-import InstitutionListVIew from '@/views/operation/InstitutionListVIew.vue'
+import InstitutionListView from '@/views/operation/InstitutionListView.vue'
 import MediaListView from '@/views/operation/MediaListView.vue'
 import NewsLIstView from '@/views/operation/NewsLIstView.vue'
   // 导入轮播图管理相关组件
@@ -55,7 +51,6 @@ import EventsListView from '@/views/operation/events/EventsListView.vue';
 import RigisterInfoView from '@/views/operation/events/RigisterInfoView.vue';
 
 
-
 //导入服务管理
 import ServiceIndexView from '@/views/service/ServiceIndexView.vue';
 import ServiceListView from '@/views/service/ServiceListView.vue';
@@ -64,11 +59,6 @@ import ShangMenTiYanView from '@/views/service/ShangMenTiYanView.vue';
 import KangFuLiLiaoView from '@/views/service/KangFuLiLiaoView.vue';
 import CategoryManagementIndexView from '@/views/service/CategoryManagementIndexView.vue';
 
-
-//导入工作台&预约看板
-import HomeIndexView from '@/views/home/HomeIndexView.vue';
-import BoardView from '@/views/home/BoardView.vue';
-import WorkTableView from '@/views/home/WorkTableView.vue';
 
 //导入服务人员管理
 import StaffIndexView from '@/views/staff/StaffIndexView.vue';
@@ -93,8 +83,6 @@ export const routes=[
     path: '/',
     name: 'main',
     label:'主页面',
-    name: 'master',
-    label:'首页',
     component: HomeView,
     // 路由嵌套，配置二级路由
     
@@ -119,8 +107,6 @@ export const routes=[
           }
         ]
       },
-    ],
-    children:[
       {
         
         path:'user',
@@ -141,7 +127,7 @@ export const routes=[
             name:'usertag',
             label:'用户标签',
             component:TagView,
-          },
+          }
         ]
       },
       {
@@ -211,14 +197,14 @@ export const routes=[
             ]
           },
           {
-            path:'settings',
-            name:'settings',
+            path:'setting',
+            name:'setting',
             label:'设置',
             component:SettingsIndexView,
             children:[
               {
-                path:'oderrefund',
-                name:'oderrefund',
+                path:'orderrefund',
+                name:'orderrefund',
                 label:'退款原因设置',
                 component:OrderRefundView,
               },
@@ -312,7 +298,7 @@ export const routes=[
             path:'institutionlist',
             name:'institutionlist',
             label:'养老机构列表',
-            component:InstitutionListVIew,
+            component:InstitutionListView,
           },
           {
             path:'medialist',
@@ -326,10 +312,6 @@ export const routes=[
             name:'commentslist',
             label:'评论管理',
             component:CommentsListView,
-            path:'addbanner',
-            name:'addbanner',
-            label:'添加轮播图',
-            component:AddBannerView,
           },
         ]
       },

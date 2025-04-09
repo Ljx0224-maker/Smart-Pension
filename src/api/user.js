@@ -49,9 +49,17 @@ export function deleteAdmin(params){
 }
 
 // 获取用户数据列表
-export function getUserList(){
+// export function getUserList(){
+//     return ajax({
+//         url:'/users/list',
+//         method:'get'
+//     })
+// } 
+
+export function getUserList(params) {
     return ajax({
-        url:'/user/list',
-        method:'get'
+      url: '/users/list',
+      method: 'POST',
+      data: params
     })
-} 
+  }

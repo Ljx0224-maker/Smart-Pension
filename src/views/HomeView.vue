@@ -1,7 +1,7 @@
 
 <script>
 //在项目中万物皆模块
-import logo from "../assets/logo.jpg";
+import logo from "../assets/logo.png";
 
 import {DArrowRight,DArrowLeft} from "@element-plus/icons-vue";
 //@代表src
@@ -68,8 +68,8 @@ export default{
       <!--左侧侧边栏-->
       <el-aside>
         <div class="logo-box">
-          <el-image style="width:32px;height:32px" :src="url"></el-image>
-          <h2 class="manager-title" v-show="!collapse">智慧养老后台管理系统</h2>
+          <el-image style="width:50px;height:auto" :src="url"></el-image>
+          <h2 class="manager-title" v-show="!collapse">颐康云护</h2>
         </div>
 
         <!--使用自定义组件-->
@@ -88,7 +88,7 @@ export default{
             <component :is="headerLeft"></component>
           </el-icon>
           
-          <span>  <!--欢迎{{ $store.state.userInfo.adminname }} --><el-button @click="logout" plain>退出</el-button></span>
+          <span>  {{ $store.state.userInfo.adminname }} <el-button @click="logout" plain>退出</el-button></span>
 
         </el-header>
 
@@ -129,10 +129,11 @@ export default{
 
     .el-image{
       margin-right: 10px;
+      margin-left: 15px;
     }
 
     .manager-title{
-      font-size: 13px;
+      font-size: 20px;
     }
     
   }
@@ -140,7 +141,7 @@ export default{
 }
 
 .el-header{
-  background:#f7f8fa;
+  background:white;
   display: flex;
   justify-content: space-between;
   height:35px

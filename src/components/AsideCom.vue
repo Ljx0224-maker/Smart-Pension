@@ -67,7 +67,7 @@ export default{
         </el-sub-menu>
         
 
-        <el-sub-menu v-for="item in userInfo.checkedKeys" :key="item.path" :index="item.path">
+        <!-- <el-sub-menu v-for="item in userInfo.checkedKeys" :key="item.path" :index="item.path">
             <template #title>
             <el-icon>
                 <Avatar />
@@ -75,7 +75,7 @@ export default{
             <span>{{inputTagEmits.label}}</span>
             </template>
             <el-menu-item v-for="child in item.children" :key="child.path" :index="`/${item.path}/${child.path}`"><el-icon><UserFilled /></el-icon>{{child.label}}</el-menu-item>
-        </el-sub-menu>
+        </el-sub-menu> -->
 
 
         <el-sub-menu index="/marketing">
@@ -120,15 +120,15 @@ export default{
               <el-menu-item index="/order/ordermanage/orderlist"><el-icon><ShoppingCartFull /></el-icon>订单列表</el-menu-item>
               <el-menu-item index="/order/ordermanage/orderafter"><el-icon><ShoppingTrolley /></el-icon>售后状态</el-menu-item>
             </el-sub-menu>
-            <el-sub-menu index="/order/settings">
+            <el-sub-menu index="/order/setting">
               <template #title>
               <el-icon>
                 <Setting />
               </el-icon>
               <span>设置</span>
               </template>
-              <el-menu-item index="/order/settings/oderrefund"><el-icon><Edit /></el-icon>退款原因设置</el-menu-item>
-              <el-menu-item index="/order/settings/ordersetting"><el-icon><EditPen /></el-icon>通用设置</el-menu-item>
+              <el-menu-item index="/order/setting/orderrefund"><el-icon><Edit /></el-icon>退款原因设置</el-menu-item>
+              <el-menu-item index="/order/setting/ordersetting"><el-icon><EditPen /></el-icon>通用设置</el-menu-item>
             </el-sub-menu>
             <el-menu-item index="/order/ordermoney"><el-icon><Document /></el-icon>收支明细</el-menu-item>
         </el-sub-menu>

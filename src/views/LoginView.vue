@@ -87,7 +87,7 @@ export default{
   <div class="login-container">
 
     <div class="form-wrap">
-      <h2 class=header>智慧养老后台管理系统</h2>
+      <h2 class=header>颐康云护</h2>
       <el-input v-model="adminname" placeholder="请输入管理员账号" />
       <el-input class=psw v-model="password" @keyup.enter="submitForm" placeholder="请输入密码" show-password />
       <el-button type="primary" round @click="submitForm">登录</el-button>
