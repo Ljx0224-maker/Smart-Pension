@@ -42,11 +42,10 @@ import DishListView from '@/views/operation/DishListView.vue'
 import HealthInfoListView from '@/views/operation/HealthInfoListView.vue'
 import InstitutionListView from '@/views/operation/InstitutionListView.vue'
 import MediaListView from '@/views/operation/MediaListView.vue'
-import NewsLIstView from '@/views/operation/NewsLIstView.vue'
-  // 导入轮播图管理相关组件
-import BannerIndexView from '@/views/operation/banner/BannerIndexView.vue';
-import BannerListView from '@/views/operation/banner/BannerListView.vue';
-import AddBannerView from '@/views/operation/banner/AddBannerView.vue';
+  // 导入生活圈管理相关组件
+import BannerIndexView from '@/views/operation/social/BannerIndexView.vue';
+import BannerListView from '@/views/operation/social/BannerListView.vue';
+import NewsLIstView from '@/views/operation/social/NewsLIstView.vue'
   // 导入老年活动相关组件
 import EventsIndexView from '@/views/operation/events/EventsIndexView.vue';
 import EventsListView from '@/views/operation/events/EventsListView.vue';
@@ -247,23 +246,23 @@ export const routes=[
         component:OperationIndexView,
         children:[
           {
-            path:'banner',
-            name:'banner',
-            label:'轮播图管理',
+            path:'social',
+            name:'social',
+            label:'生活圈管理',
             component:BannerIndexView,
             children:[
               {
                 path:'bannerlist',
                 name:'bannerlist',
-                label:'轮播图列表',
+                label:'轮播图管理',
                 component:BannerListView,
-              },
+              },      
               {
-                path:'addbanner',
-                name:'addbanner',
-                label:'添加轮播图',
-                component:AddBannerView,
-              }
+                path:'newslist',
+                name:'newslist',
+                label:'动态管理',
+                component:NewsLIstView,
+              },
             ]
           },
           {
@@ -287,12 +286,6 @@ export const routes=[
             ]
           },
           {
-            path:'newslist',
-            name:'newslist',
-            label:'动态管理',
-            component:NewsLIstView,
-          },
-          {
             path:'dishlist',
             name:'dishlist',
             label:'食谱管理',
@@ -313,13 +306,13 @@ export const routes=[
           {
             path:'institutionlist',
             name:'institutionlist',
-            label:'养老机构列表',
+            label:'养老机构管理',
             component:InstitutionListView,
           },
           {
             path:'medialist',
             name:'medialist',
-            label:'视频列表',
+            label:'视频管理',
             component:MediaListView,
           }
           ,
