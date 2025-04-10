@@ -120,15 +120,15 @@ export default{
               <el-menu-item index="/order/ordermanage/orderlist"><el-icon><ShoppingCartFull /></el-icon>订单列表</el-menu-item>
               <el-menu-item index="/order/ordermanage/orderafter"><el-icon><ShoppingTrolley /></el-icon>售后状态</el-menu-item>
             </el-sub-menu>
-            <el-sub-menu index="/order/settings">
+            <el-sub-menu index="/order/setting">
               <template #title>
               <el-icon>
                 <Setting />
               </el-icon>
               <span>设置</span>
               </template>
-              <el-menu-item index="/order/settings/oderrefund"><el-icon><Edit /></el-icon>退款原因设置</el-menu-item>
-              <el-menu-item index="/order/settings/ordersetting"><el-icon><EditPen /></el-icon>通用设置</el-menu-item>
+              <el-menu-item index="/order/setting/orderrefund"><el-icon><Edit /></el-icon>退款原因设置</el-menu-item>
+              <el-menu-item index="/order/setting/ordersetting"><el-icon><EditPen /></el-icon>通用设置</el-menu-item>
             </el-sub-menu>
             <el-menu-item index="/order/ordermoney"><el-icon><Document /></el-icon>收支明细</el-menu-item>
         </el-sub-menu>
@@ -181,6 +181,8 @@ export default{
             <!--跟路由配置有关-->
             <el-menu-item index="/user/userlist"><el-icon><User /></el-icon>用户列表</el-menu-item>
             <el-menu-item index="/user/usertag"><el-icon><UserFilled /></el-icon>用户标签</el-menu-item>
+            <el-menu-item index="/user/adduser"><el-icon><User /></el-icon>添加用户</el-menu-item>
+            <el-menu-item index="/user/addtag"><el-icon><UserFilled /></el-icon>添加标签</el-menu-item>
         </el-sub-menu>
 
 
@@ -189,18 +191,20 @@ export default{
             <el-icon>
                 <Avatar />
             </el-icon>
-            <span>服务管理</span>
+            <span>商品服务管理</span>
             </template>
             <el-menu-item index="/service/servicelist"><el-icon><User /></el-icon>全部商品列表</el-menu-item>
+            <el-menu-item index="/service/addservice"><el-icon><User /></el-icon>新增商品信息</el-menu-item>
+    
+
             <el-sub-menu index="/service/management">
+
               <template #title>
-              <el-icon>
-               
-              </el-icon>
-              <span>分类管理</span>
+      
+              <span>服务分类管理</span>
               </template>
             <!--跟路由配置有关-->
-            
+        
             <el-menu-item index="/service/management/jiazhenghuli"><el-icon><UserFilled /></el-icon>家政护理</el-menu-item>
             <el-menu-item index="/service/management/shangmentiyan"><el-icon><UserFilled /></el-icon>上门体验</el-menu-item>
             <el-menu-item index="/service/management/kangfuliliao"><el-icon><UserFilled /></el-icon>康复理疗</el-menu-item>
@@ -215,6 +219,7 @@ export default{
             </template>
             <!--跟路由配置有关-->
             <el-menu-item index="/staff/stafflist"><el-icon><User /></el-icon>全部服务人员列表</el-menu-item>
+            <el-menu-item index="/staff/addstaff"><el-icon><User /></el-icon>新增服务人员</el-menu-item>
         </el-sub-menu>
 
         <el-sub-menu index="/data">

@@ -7,14 +7,12 @@ import BoardView from "@/views/home/BoardView.vue";
 import HomeIndexView from "@/views/home/HomeIndexView.vue";
 import WorkTableView from "@/views/home/WorkTableView.vue";
 
-// 导入管理员和用户的组件
-import ManagerIndexView from "@/views/manager/ManagerIndexView.vue";
-import ManagerListView from "@/views/manager/ManagerListView.vue";
-import UserListView from "@/views/manager/UserListView.vue";
 // 用户的组件
 import TagView from '@/views/user/TagView.vue';
 import UserListView from "@/views/user/UserListView.vue";
 import UserIndexView from "@/views/user/UserIndexView.vue";
+import AddUserView from "@/views/user/AddUserView.vue";
+import AddTagView from "@/views/user/AddTagView.vue";
 
 // 导入营销管理相关组件
 import MarketingIndexView from '@/views/marketing/MarketingIndexView.vue';
@@ -63,17 +61,13 @@ import JiaZhengHuLiView from '@/views/service/JiaZhengHuLiView.vue';
 import ShangMenTiYanView from '@/views/service/ShangMenTiYanView.vue';
 import KangFuLiLiaoView from '@/views/service/KangFuLiLiaoView.vue';
 import CategoryManagementIndexView from '@/views/service/CategoryManagementIndexView.vue';
+import AddServiceView from '@/views/service/AddServiceView.vue';
 
-
-//导入工作台&预约看板
-import HomeIndexView from '@/views/home/HomeIndexView.vue';
-import BoardView from '@/views/home/BoardView.vue';
-import WorkTableView from '@/views/home/WorkTableView.vue';
 
 //导入服务人员管理
 import StaffIndexView from '@/views/staff/StaffIndexView.vue';
 import StaffListView from '@/views/staff/StaffListView.vue';
-
+import AddStaffView from '@/views/staff/AddStaffView.vue';
 
 //导入数据中心DataIndexView
 import DataIndexView from '@/views/data/DataIndexView.vue';
@@ -85,6 +79,7 @@ import UserView from '@/views/data/UserView.vue';
 import ProtocolView from '@/views/settings/ProtocolView.vue';
 import SettingIndexView from '@/views/settings/SettingIndexView.vue';
 import PepoleListView from '@/views/settings/PepoleListView.vue';
+
 // import DataIndexView from '@/views/data/DataIndexView.vue';
 
 // 路由规则配置
@@ -93,8 +88,6 @@ export const routes=[
     path: '/',
     name: 'main',
     label:'主页面',
-    name: 'master',
-    label:'首页',
     component: HomeView,
     // 路由嵌套，配置二级路由
     
@@ -119,8 +112,7 @@ export const routes=[
           }
         ]
       },
-    ],
-    children:[
+
       {
         
         path:'user',
@@ -142,6 +134,18 @@ export const routes=[
             label:'用户标签',
             component:TagView,
           },
+          {
+            path:'adduser',
+            name:'adduser',
+            label:'添加用户',
+            component:AddUserView,
+          },
+          {
+            path:'addtag',
+            name:'addtag',
+            label:'添加标签',
+            component:AddTagView,
+          }
         ]
       },
       {
@@ -211,14 +215,14 @@ export const routes=[
             ]
           },
           {
-            path:'settings',
-            name:'settings',
+            path:'setting',
+            name:'setting',
             label:'设置',
             component:SettingsIndexView,
             children:[
               {
-                path:'oderrefund',
-                name:'oderrefund',
+                path:'orderrefund',
+                name:'orderrefund',
                 label:'退款原因设置',
                 component:OrderRefundView,
               },
@@ -326,10 +330,7 @@ export const routes=[
             name:'commentslist',
             label:'评论管理',
             component:CommentsListView,
-            path:'addbanner',
-            name:'addbanner',
-            label:'添加轮播图',
-            component:AddBannerView,
+         
           },
         ]
       },
@@ -339,7 +340,7 @@ export const routes=[
       {
         path: 'service',
         name: 'service',
-        label: '服务管理',
+        label: '商品服务管理',
         component: ServiceIndexView,
         children: [
           {
@@ -348,12 +349,20 @@ export const routes=[
             label: '全部商品列表',
             component: ServiceListView,
           },
+          { 
+            path: 'addservice',
+            name: 'addservice',
+            label: '新增商品信息',
+            component: AddServiceView,
+
+          },
           {
             path: 'management',
             name: 'management',
-            label: '分类管理',
+            label: '服务分类管理',
             component: CategoryManagementIndexView,
             children: [
+              
               {
                 path: 'jiazhenghuli',
                 name: 'jiazhenghuli',
@@ -391,6 +400,12 @@ export const routes=[
             name:'stafflist',
             label:'全部服务人员列表',
             component:StaffListView,
+          },
+          {
+            path:'addstaff',
+            name:'addstaff',
+            label:'新增人员',
+            component:AddStaffView,
           },
         
         ]

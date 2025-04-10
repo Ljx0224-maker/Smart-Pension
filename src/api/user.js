@@ -48,10 +48,39 @@ export function deleteAdmin(params){
     })
 }
 
-// 获取用户数据列表
-export function getUserList(){
+
+// 用户列表（带分页和搜索）
+export function getUserList(params) {
     return ajax({
-        url:'/user/list',
-        method:'get'
+      url: '/users/list',
+      method: 'POST',
+      data: params
     })
-} 
+  }
+  
+  // 添加/修改用户
+  export function addUser(userData) {
+    return ajax({
+      url: '/users/addOrUpdate',
+      method: 'POST',
+      data: userData
+    })
+  }
+  
+  // 删除用户
+  export function deleteUser(userId) {
+    return ajax({
+      url: '/users/delete',
+      method: 'DELETE',
+      params: { userId }
+    })
+  }
+  
+  // 获取用户详情
+  export function getUserDetail(userId) {
+    return ajax({
+      url: '/users/detail',
+      method: 'GET',
+      params: { userId }
+    })
+  }

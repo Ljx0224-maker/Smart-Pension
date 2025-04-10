@@ -21,9 +21,21 @@ export default {
             },
             defaultCheckedKeys: [],
             interfaceType: '10086',//10086添加管理员 10010编辑管理员
+            searchKeyword: '', // 搜索的关键字
+            selectedRole: '', // 选中的角色
         }
     },
     methods: {
+
+      filterData() {
+    // 过滤逻辑
+    adminList({
+      keyword: this.searchKeyword,
+      role: this.selectedRole,
+    }).then(res => {
+      this.tableData = res.data;
+    });
+  },
       addClick(){
         this.interfaceType = '10086'
         this.drawer = true
@@ -181,12 +193,39 @@ export default {
 }
 </script>
 <template>
-    <div>
-      <div class="header">
-        管理员列表
-        <el-button type="success" @click="addClick">添加管理员</el-button>
-      </div>
+  <div>
+    <div class="header">
+      管理员列表
+      <el-button type="success" @click="addClick">添加管理员</el-button>
+      <div class="filter-container" style="margin-top: 10px;">
+        <el-input 
+          v-model="searchKeyword" 
+          placeholder="请输入管理员姓名"
+          style="width: 200px; margin-right: 10px;"/>
+        
+        <el-select 
+          v-model="selectedRole" 
+          placeholder="选择管理员角色"
+          style="width: 180px; margin-right: 10px;">
+          <el-option label="所有角色" value=""/>
+          <el-option label="管理员" value="1"/>
+          <el-option label="超级管理员" value="2"/>
+        </el-select>
 
+        <el-button 
+          type="primary" 
+          @click="filterData"
+          style="margin-right: 10px;">
+          <i class="el-icon-search"></i> 搜索
+        </el-button>
+
+        <el-button 
+          type="info"
+          @click="resetFilter">
+          <i class="el-icon-refresh"></i> 重置
+        </el-button>
+      </div>
+    </div>
 
         <el-table
       :data="computedTableData"
@@ -276,9 +315,21 @@ export default {
 
     </div>
 </template>
+
 <style lang="scss" scoped>
 .header {
-    margin-bottom: 16px;
+  margin-bottom: 16px;
+  align-items: center;
+  justify-content: space-between;
+  
+  .filter-container {
+    display: flex;
+    align-items: center;
+    margin-top: 15px;
+    
+    .el-input, .el-select {
+      margin-right: 10px;
+    }
+  }
 }
-
 </style>
