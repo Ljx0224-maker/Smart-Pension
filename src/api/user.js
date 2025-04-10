@@ -56,6 +56,7 @@ export function getUserList(params) {
       method: 'POST',
       data: params
     })
+
   }
   
   // 添加/修改用户
@@ -83,4 +84,5 @@ export function getUserList(params) {
       method: 'GET',
       params: { userId }
     })
+
   }

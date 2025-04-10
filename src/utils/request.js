@@ -1,11 +1,25 @@
 import axios from 'axios';
 
 // 封装 baseurl
-const isDev = process.env.NODE_ENV === 'development';
-const request = axios.create({
-  baseURL: isDev ? 'http://localhost:8080/smartcare' : 'http://localhost:5173',
-  timeout: 60000
-});
+// 开发环境（写代码的阶段）       生产环境（代码已经部署服务器）    测试环境（代码写好阶段）
+// development                  production                     production
+// npm run dev                  npm run build                  npm run build
+
+// 获取当前环境，判断当前环境是否为开发环境
+const isDev=process.env.NODE_ENV=='development'
+/*
+    开发阶段：192.168.1.111
+    生产阶段：http://121.89.205.189
+*/
+
+const request=axios.create({
+    // isDev为真
+    // baseURL: isDev ? '开发环境' : '生产环境'
+    // baseURL用来配置基础路径的，以后数据请求的时候不需要每次都写对应的地址了
+    // baseURL:isDev? 'http://121.89.205.189:3000/admin':'http://121.89.205.189:3000/admin',
+    baseURL:'http://localhost:8080/smartcare',
+    timeout:60000
+})
 
 // 添加请求拦截器
 request.interceptors.request.use(function (config) {

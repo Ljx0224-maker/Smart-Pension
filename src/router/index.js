@@ -40,7 +40,7 @@ import CommentsListView from '@/views/operation/CommentsListView.vue';
 import DiseaseListView from '@/views/operation/DiseaseListView.vue'
 import DishListView from '@/views/operation/DishListView.vue'
 import HealthInfoListView from '@/views/operation/HealthInfoListView.vue'
-import InstitutionListVIew from '@/views/operation/InstitutionListVIew.vue'
+import InstitutionListView from '@/views/operation/InstitutionListView.vue'
 import MediaListView from '@/views/operation/MediaListView.vue'
 import NewsLIstView from '@/views/operation/NewsLIstView.vue'
   // 导入轮播图管理相关组件
@@ -51,7 +51,6 @@ import AddBannerView from '@/views/operation/banner/AddBannerView.vue';
 import EventsIndexView from '@/views/operation/events/EventsIndexView.vue';
 import EventsListView from '@/views/operation/events/EventsListView.vue';
 import RigisterInfoView from '@/views/operation/events/RigisterInfoView.vue';
-
 
 
 //导入服务管理
@@ -112,7 +111,6 @@ export const routes=[
           }
         ]
       },
-
       {
         
         path:'user',
@@ -316,7 +314,7 @@ export const routes=[
             path:'institutionlist',
             name:'institutionlist',
             label:'养老机构列表',
-            component:InstitutionListVIew,
+            component:InstitutionListView,
           },
           {
             path:'medialist',
@@ -330,7 +328,6 @@ export const routes=[
             name:'commentslist',
             label:'评论管理',
             component:CommentsListView,
-         
           },
         ]
       },

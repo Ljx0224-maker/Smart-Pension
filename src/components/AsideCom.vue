@@ -67,7 +67,7 @@ export default{
         </el-sub-menu>
         
 
-        <el-sub-menu v-for="item in userInfo.checkedKeys" :key="item.path" :index="item.path">
+        <!-- <el-sub-menu v-for="item in userInfo.checkedKeys" :key="item.path" :index="item.path">
             <template #title>
             <el-icon>
                 <Avatar />
@@ -75,7 +75,7 @@ export default{
             <span>{{inputTagEmits.label}}</span>
             </template>
             <el-menu-item v-for="child in item.children" :key="child.path" :index="`/${item.path}/${child.path}`"><el-icon><UserFilled /></el-icon>{{child.label}}</el-menu-item>
-        </el-sub-menu>
+        </el-sub-menu> -->
 
 
         <el-sub-menu index="/marketing">

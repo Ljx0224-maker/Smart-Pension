@@ -3,6 +3,8 @@
 import { createApp } from 'vue'
 import App from './App.vue'
 import router from './router'
+import ElementPlus from 'element-plus';
+// import axios from 'axios' 
 
 import 'normalize.css/normalize.css'
 
@@ -11,7 +13,12 @@ import 'element-plus/dist/index.css'
 // 如果store中只有一个index.js那么路径可以不写
 import store from './store/index'
 
+
+// axios.defaults.baseURL = 'http://localhost:8080/smartcare'
+
 const app = createApp(App)
+// app.config.globalProperties.$axios = axios
+// app.config.globalProperties.$httpUrl = axios.defaults.baseURL
 
 app.use(router)
 
@@ -19,3 +26,4 @@ app.use(router)
 app.use(store)
 
 app.mount('#app')
+

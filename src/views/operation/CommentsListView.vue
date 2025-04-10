@@ -1,5 +1,317 @@
 <template>
-    <div>
-        评论管理
+    <div class="comments-container">
+      <div class="filter-section">
+        <div class="filter-item">
+          <span>发布日期</span>
+          <el-date-picker
+            v-model="dateRange"
+            type="daterange"
+            range-separator="至"
+            start-placeholder="开始日期"
+            end-placeholder="结束日期"
+            style="width: 300px;"
+          ></el-date-picker>
+        </div>
+  
+        <div class="filter-item">
+          <el-input v-model="searchKeyword" placeholder="请输入关键字" style="width: 300px;"></el-input>
+          <el-button type="primary" @click="searchComments">
+            <el-icon><Search/></el-icon>
+          </el-button>
+          <el-button @click="resetSearch">
+            <el-icon><RefreshLeft/></el-icon>
+          </el-button>
+        </div>
+      </div>
+  
+      <div class="action-table-box">
+        <div class="action-section">
+          <div class="action-buttons">
+            <el-button @click="batchDelete">批量操作</el-button>
+          </div>
+        </div>
+  
+        <el-table
+          :data="filteredComments"
+          style="width: 100%"
+          @selection-change="handleSelectionChange"
+        >
+          <el-table-column type="selection" width="55"></el-table-column>
+          <el-table-column prop="publishTime" label="发布时间"></el-table-column>
+          <el-table-column prop="content" label="评论内容"></el-table-column>
+          <el-table-column prop="module" label="所属模块"></el-table-column>
+          <el-table-column prop="title" label="标题"></el-table-column>
+          <el-table-column prop="likes" label="点赞"></el-table-column>
+          <el-table-column label="发布人">
+            <template #default="scope">
+              <div class="publisher">
+                <img :src="scope.row.publisherAvatar" alt="发布人头像" class="publisher-avatar">
+                <div class="publisher-name">{{ scope.row.publisherName }}</div>
+              </div>
+            </template>
+          </el-table-column>
+          <el-table-column label="状态">
+            <template #default="scope">
+              <el-switch
+                v-model="scope.row.visible"
+                active-text="显示"
+                inactive-text="隐藏"
+                @change="toggleVisibility(scope.row)"
+              ></el-switch>
+            </template>
+          </el-table-column>
+          <el-table-column label="操作" width="150">
+            <template #default="scope">
+              <el-button type="text" @click="deleteComment(scope.row)">删除</el-button>
+            </template>
+          </el-table-column>
+        </el-table>
+  
+        <el-pagination
+          background
+          v-model:current-page="currentPage"
+          :page-size="pageSize"
+          layout="total, prev, pager, next, jumper"
+          :total="total"
+          @current-change="handlePageChange"
+        ></el-pagination>
+      </div>
     </div>
-</template>
+  </template>
+  
+  <script>
+  import { ElMessage } from 'element-plus';
+  import {Search,RefreshLeft  } from '@element-plus/icons-vue'
+  import { getComments, updateCommentVisibility, deleteComment, batchDeleteComments } from '@/api/banner';
+  
+  export default {
+    data() {
+      return {
+        tableData: [
+          {
+            id: 1,
+            publishTime: '2024-10-09 10:09:09',
+            content: '我们也需要关注老年人的心理需求和生活质量，为他们提供更加全面和人性化的关怀和支持。',
+            module: '健康资讯',
+            title: '老年人如何控制血糖？',
+            likes: 1001,
+            publisherName: '笑看人生',
+            publisherAvatar: 'https://via.placeholder.com/40',
+            visible: true,
+          },
+          {
+            id: 2,
+            publishTime: '2024-10-09 10:09:09',
+            content: '我们也需要关注老年人的心理需求和生活质量，为他们提供更加全面和人性化的关怀和支持。',
+            module: '健康资讯',
+            title: '老年人如何控制血糖？',
+            likes: 1001,
+            publisherName: '笑看人生',
+            publisherAvatar: 'https://via.placeholder.com/40',
+            visible: true,
+          },
+          {
+            id: 3,
+            publishTime: '2024-10-09 10:09:09',
+            content: '我们也需要关注老年人的心理需求和生活质量，为他们提供更加全面和人性化的关怀和支持。',
+            module: '健康资讯',
+            title: '老年人如何控制血糖？',
+            likes: 1001,
+            publisherName: '笑看人生',
+            publisherAvatar: 'https://via.placeholder.com/40',
+            visible: true,
+          },
+          {
+            id: 4,
+            publishTime: '2024-10-09 10:09:09',
+            content: '我们也需要关注老年人的心理需求和生活质量，为他们提供更加全面和人性化的关怀和支持。',
+            module: '健康资讯',
+            title: '老年人如何控制血糖？',
+            likes: 1001,
+            publisherName: '笑看人生',
+            publisherAvatar: 'https://via.placeholder.com/40',
+            visible: true,
+          },
+          {
+            id: 5,
+            publishTime: '2024-10-09 10:09:09',
+            content: '我们也需要关注老年人的心理需求和生活质量，为他们提供更加全面和人性化的关怀和支持。',
+            module: '健康资讯',
+            title: '老年人如何控制血糖？',
+            likes: 1001,
+            publisherName: '笑看人生',
+            publisherAvatar: 'https://via.placeholder.com/40',
+            visible: true,
+          },
+        ],
+        currentPage: 1,
+        pageSize: 10,
+        total: 0,
+        dateRange: '',
+        searchKeyword: '',
+        selectedRows: [],
+      };
+    },
+    components:{
+        Search,
+        RefreshLeft
+
+    },
+    computed: {
+      filteredComments() {
+        return this.tableData.filter(comment => {
+          // 筛选日期范围
+          if (this.dateRange && comment.publishTime) {
+            const commentDate = new Date(comment.publishTime);
+            const startDate = this.dateRange[0];
+            const endDate = this.dateRange[1];
+            if (commentDate < startDate || commentDate > endDate) {
+              return false;
+            }
+          }
+  
+          // 筛选关键字
+          if (this.searchKeyword && !comment.content.includes(this.searchKeyword)) {
+            return false;
+          }
+  
+          return true;
+        });
+      },
+    },
+    methods: {
+      searchComments() {
+        // 搜索框功能
+      },
+      resetSearch() {
+        this.dateRange = '';
+        this.searchKeyword = '';
+      },
+      toggleVisibility(row) {
+        updateCommentVisibility(row.id, { visible: row.visible }).then(res => {
+          if (res.code === 200) {
+            ElMessage.success(row.visible ? '显示成功' : '隐藏成功');
+          } else {
+            ElMessage.error(row.visible ? '显示失败' : '隐藏失败');
+            row.visible = !row.visible; // 恢复原状态
+          }
+        });
+      },
+      deleteComment(row) {
+        this.$confirm('确定要删除此评论吗?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning',
+        }).then(() => {
+          deleteComment(row.id).then(res => {
+            if (res.code === 200) {
+              ElMessage.success('删除成功');
+              this.tableData = this.tableData.filter(item => item.id !== row.id);
+            } else {
+              ElMessage.error('删除失败');
+            }
+          });
+        }).catch(() => {
+          ElMessage.info('已取消删除');
+        });
+      },
+      batchDelete() {
+        if (this.selectedRows.length === 0) {
+          ElMessage.warning('请至少选择一条记录');
+          return;
+        }
+  
+        this.$confirm('确定要批量删除选中的评论吗?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning',
+        }).then(() => {
+          const ids = this.selectedRows.map(row => row.id);
+          batchDeleteComments(ids).then(res => {
+            if (res.code === 200) {
+              ElMessage.success('批量删除成功');
+              this.tableData = this.tableData.filter(item => !ids.includes(item.id));
+              this.selectedRows = [];
+            } else {
+              ElMessage.error('批量删除失败');
+            }
+          });
+        }).catch(() => {
+          ElMessage.info('已取消批量删除');
+        });
+      },
+      handleSelectionChange(selection) {
+        this.selectedRows = selection;
+      },
+      handlePageChange(page) {
+        this.currentPage = page;
+        // 加载对应页的数据
+      },
+    },
+    mounted() {
+      // 初始化数据
+      this.total = this.tableData.length;
+    },
+  };
+  </script>
+  
+  <style scoped>
+  .comments-container {
+    padding: 20px;
+    background-color: #f5f7fa;
+  }
+  
+  .filter-section {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+  }
+  
+  .filter-item {
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+  }
+  
+  .filter-item span {
+    width: 80px;
+    display: inline-block;
+  }
+  
+  .action-table-box {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+  }
+  
+  .action-section {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    margin-bottom: 15px;
+  }
+  
+  .el-table {
+    border-radius: 8px;
+    overflow: hidden;
+    margin-bottom: 15px;
+  }
+  
+  .el-pagination {
+    text-align: center;
+  }
+  
+  .publisher {
+    display: flex;
+    align-items: center;
+  }
+  
+  .publisher-avatar {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    margin-right: 10px;
+  }
+  </style>
