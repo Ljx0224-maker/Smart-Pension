@@ -4,7 +4,7 @@
     <div style="margin-bottom: 20px;">
       <el-button type="primary" @click="addTag">新增标签</el-button>
     </div>
-    <el-table :data="tableData" style="width: 100%" v-ref="table">
+    <el-table :data="tableData" style="width: 100%" ref="table">
       <el-table-column type="selection" width="55" v-model="selectedTags" />
       <el-table-column label="标签名称" prop="tagName" width="150" />
       <el-table-column label="标签类型" prop="tagType" width="150" />
@@ -76,6 +76,7 @@ const tableData: Tag[] = [
 ]
 
 const selectedTags = ref<Tag[]>([])
+const table = ref(null) // 用于获取表格的引用
 
 const editTag = (row: Tag) => {
   console.log('编辑标签:', row)

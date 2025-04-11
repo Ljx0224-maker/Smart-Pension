@@ -37,23 +37,16 @@
         </el-form-item>
       </el-form>
       <el-table :data="tableData" style="width: 100%">
-        <el-table-column prop="image" label="商品信息" width="180">
+        <el-table-column prop="category" label="分类" width="150"></el-table-column>
+        <el-table-column prop="serviceType" label="服务类型" width="150"></el-table-column>
+        <el-table-column prop="status" label="状态" width="100">
           <template #default="scope">
-            <img :src="scope.row.image" alt="商品图片" class="product-image">
-            <div>{{ scope.row.name }}</div>
-          </template>
-        </el-table-column>
-        <el-table-column prop="productCode" label="商品编码" width="150"></el-table-column>
-        <el-table-column prop="category" label="分类" width="100"></el-table-column>
-        <el-table-column prop="price" label="价格（元）" width="100"></el-table-column>
-        <el-table-column prop="status" label="状态" width="80">
-          <template #default="scope">
-            <el-tag :type="scope.row.status === 'listed' ? 'success' : 'danger'">
-              {{ scope.row.status === 'listed' ? '已上架' : '已下架' }}
+            <el-tag :type="scope.row.status === '已上架' ? 'success' : 'danger'">
+              {{ scope.row.status }}
             </el-tag>
           </template>
         </el-table-column>
-        <el-table-column prop="lastUpdatedBy" label="最后更新人" width="180"></el-table-column>
+        <el-table-column prop="lastUpdatedBy" label="最后更新人" width="150"></el-table-column>
         <el-table-column prop="lastUpdatedAt" label="最后更新时间" width="200"></el-table-column>
         <el-table-column label="操作" width="180">
           <template #default="scope">
@@ -62,6 +55,14 @@
           </template>
         </el-table-column>
       </el-table>
+      <el-pagination
+        background
+        layout="total, prev, pager, next, jumper"
+        :total="total"
+        v-model:current-page="currentPage"
+        :page-size="pageSize"
+        @current-change="fetchProductList"
+      />
     </el-card>
   </div>
 </template>
@@ -70,7 +71,7 @@
 import { ref, onMounted } from 'vue';
 import { getProductList, addProduct, deleteProduct, updateProduct } from '@/api/service';
 import { useRouter } from 'vue-router';
-import { ElMessage } from 'element-plus';
+import { ElMessage, ElMessageBox } from 'element-plus';
 
 export default {
   setup() {
@@ -84,15 +85,35 @@ export default {
       date: [],
       keyword: ''
     });
+    const total = ref(0);
+    const currentPage = ref(1);
+    const pageSize = ref(10);
 
     // 获取商品列表
     const fetchProductList = async () => {
       try {
-        const res = await getProductList(filter.value);
+        const params = {
+          category: filter.value.category,
+          status: filter.value.status,
+          minPrice: filter.value.minPrice,
+          maxPrice: filter.value.maxPrice,
+          keyword: filter.value.keyword,
+          pageNum: currentPage.value, // 当前页码
+          pageSize: pageSize.value,   // 每页条数
+        };
+
+        // 转换日期范围
+        if (filter.value.date.length === 2) {
+          params.startDate = filter.value.date[0];
+          params.endDate = filter.value.date[1];
+        }
+
+        const res = await getProductList(params);
         if (res.code === 200) {
-           tableData.value = res.data;
+          tableData.value = res.data; // 将后端返回的商品列表赋值给表格数据
+          total.value = res.total;   // 设置总记录数
         } else {
-          console.error('获取商品列表失败:', res);
+          console.error('获取商品列表失败:', res.message);
           tableData.value = [];
         }
       } catch (error) {
@@ -119,6 +140,7 @@ export default {
         date: [],
         keyword: ''
       };
+      fetchProductList(); // 重置后重新加载数据
     };
 
     const addProduct = () => {
@@ -138,12 +160,24 @@ export default {
 
     const removeProduct = async (row) => {
       try {
-        const res = await deleteProduct(row.productCode);
-        if (res.success) {
-          ElMessage.success('商品删除成功');
-          fetchProductList();
-        } else {
-          ElMessage.error('商品删除失败');
+        const confirm = await ElMessageBox.confirm(
+          '确定要删除该商品吗？',
+          '提示',
+          {
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+            type: 'warning',
+          }
+        );
+
+        if (confirm) {
+          const res = await deleteProduct(row.productCode);
+          if (res.code === 200) {
+            ElMessage.success('商品删除成功');
+            fetchProductList(); // 重新加载商品列表
+          } else {
+            ElMessage.error('商品删除失败');
+          }
         }
       } catch (error) {
         console.error('删除商品失败:', error);
@@ -154,12 +188,15 @@ export default {
     return {
       tableData,
       filter,
+      total,
+      currentPage,
+      pageSize,
       search,
       resetFilters,
       addProduct,
       batchAction,
       editProduct,
-      removeProduct
+      removeProduct,
     };
   }
 };
@@ -168,10 +205,10 @@ export default {
 <style scoped>
 .service-list-view {
   padding: 20px;
+  background-color: #fff;
 }
 
 .box-card {
-  background-color: #fff;
   border-radius: 8px;
   box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
 }

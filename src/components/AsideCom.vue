@@ -193,7 +193,7 @@ export default{
             </el-icon>
             <span>商品服务管理</span>
             </template>
-            <el-menu-item index="/service/servicelist"><el-icon><User /></el-icon>全部商品列表</el-menu-item>
+            <el-menu-item index="/service/servicelist"><el-icon><User /></el-icon>分类管理</el-menu-item>
             <el-menu-item index="/service/addservice"><el-icon><User /></el-icon>新增商品信息</el-menu-item>
     
 
@@ -201,7 +201,7 @@ export default{
 
               <template #title>
       
-              <span>服务分类管理</span>
+              <span>商品列表</span>
               </template>
             <!--跟路由配置有关-->
         

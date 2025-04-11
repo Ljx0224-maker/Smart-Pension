@@ -1,19 +1,72 @@
 <template>
-  <div class="product-list-view">
-    <el-card class="box-card" shadow="hover">
-      <div class="clearfix">
-        <span>上门体验商品管理</span>
-        <el-button style="float: right;" type="primary" @click="addProduct">新增</el-button>
-        <el-button style="float: right; margin-right: 10px;" @click="batchAction">批量操作</el-button>
+  <div class="product-container">
+    <div class="filter-section">
+      <div class="page-header">
+        <h2>上门体验商品管理</h2>
       </div>
-      <el-form :inline="true" class="demo-form-inline">
-        <el-form-item>
-          <el-input v-model="filter.keyword" placeholder="请输入关键字"></el-input>
-          <el-button type="primary" @click="search">搜索</el-button>
-          <el-button @click="resetFilters">重置</el-button>
-        </el-form-item>
-      </el-form>
-      <el-table :data="tableData" style="width: 100%">
+
+      <div class="filter-box">
+        <div class="filter-row">
+          <div class="filter-item">
+            <span>状态</span>
+            <el-select v-model="statusFilter" placeholder="请选择" style="width: 200px;">
+              <el-option label="全部" value=""></el-option>
+              <el-option label="已上架" value="listed"></el-option>
+              <el-option label="已下架" value="unlisted"></el-option>
+            </el-select>
+          </div>
+
+          <div class="filter-item">
+            <span style="margin-left: 70px;">分类</span>
+            <el-select v-model="categoryFilter" placeholder="请选择" style="width: 200px;">
+              <el-option label="全部" value=""></el-option>
+              <el-option label="体检服务" value="体检服务"></el-option>
+              <el-option label="咨询预约" value="咨询预约"></el-option>
+              <el-option label="上门服务" value="上门服务"></el-option>
+            </el-select>
+          </div>
+        </div>
+
+        <div class="filter-row">
+          <div class="filter-item">
+            <span>更新日期</span>
+            <el-date-picker
+              v-model="dateRange"
+              type="daterange"
+              range-separator="~"
+              start-placeholder="开始日期"
+              end-placeholder="结束日期"
+              style="width: 300px;"
+            ></el-date-picker>
+          </div>
+
+          <div class="filter-item">
+            <el-input v-model="searchKeyword" placeholder="请输入关键字" style="width: 300px;"></el-input>
+            <el-button type="primary" @click="searchProducts" style="margin-left: 10px;">
+              <el-icon><Search/></el-icon>
+            </el-button>
+            <el-button @click="resetSearch" style="margin-left: 10px;">
+              <el-icon><RefreshLeft/></el-icon>
+            </el-button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="action-table-box">
+      <div class="action-section">
+        <div class="action-buttons">
+          <el-button type="primary" @click="addNewProduct">新增</el-button>
+          <el-button @click="batchDelete" :disabled="selectedRows.length === 0">批量删除</el-button>
+        </div>
+      </div>
+
+      <el-table
+        :data="filteredProducts"
+        style="width: 100%"
+        @selection-change="handleSelectionChange"
+      >
+        <el-table-column type="selection" width="55"></el-table-column>
         <el-table-column prop="image" label="商品信息" width="180">
           <template #default="scope">
             <img :src="scope.row.image" alt="商品图片" class="product-image">
@@ -23,7 +76,7 @@
         <el-table-column prop="productCode" label="商品编码" width="150"></el-table-column>
         <el-table-column prop="category" label="分类" width="100"></el-table-column>
         <el-table-column prop="price" label="价格（元）" width="100"></el-table-column>
-        <el-table-column prop="status" label="状态" width="80">
+        <el-table-column label="状态" width="80">
           <template #default="scope">
             <el-tag :type="scope.row.status === '已上架' ? 'success' : 'danger'">
               {{ scope.row.status === '已上架' ? '已上架' : '已下架' }}
@@ -39,118 +92,367 @@
           </template>
         </el-table-column>
       </el-table>
-    </el-card>
+
+      <el-pagination
+        background
+        v-model:current-page="currentPage"
+        :page-size="pageSize"
+        layout="total, prev, pager, next, jumper"
+        :total="total"
+        @current-change="handlePageChange"
+      ></el-pagination>
+
+      <!-- 编辑/新增弹窗 -->
+      <el-dialog
+        :title="dialogTitle"
+        v-model="dialogVisible"
+        width="500px"
+      >
+        <el-form :model="form" label-width="100px">
+          <el-form-item label="商品名称">
+            <el-input v-model="form.name"></el-input>
+          </el-form-item>
+          <el-form-item label="商品编码">
+            <el-input v-model="form.productCode"></el-input>
+          </el-form-item>
+          <el-form-item label="分类">
+            <el-select v-model="form.category" placeholder="请选择">
+              <el-option label="体检服务" value="体检服务"></el-option>
+              <el-option label="咨询预约" value="咨询预约"></el-option>
+              <el-option label="上门服务" value="上门服务"></el-option>
+            </el-select>
+          </el-form-item>
+          <el-form-item label="价格">
+            <el-input-number v-model="form.price" :min="0" :precision="2"></el-input-number>
+          </el-form-item>
+          <el-form-item label="状态">
+            <el-select v-model="form.status" placeholder="请选择">
+              <el-option label="已上架" value="listed"></el-option>
+              <el-option label="已下架" value="unlisted"></el-option>
+            </el-select>
+          </el-form-item>
+          <el-form-item label="商品图片">
+            <el-upload
+              class="avatar-uploader"
+              action="https://jsonplaceholder.typicode.com/posts/"
+              :show-file-list="false"
+              :on-success="handleImageSuccess"
+              :before-upload="beforeImageUpload"
+            >
+              <img v-if="form.image" :src="form.image" class="avatar">
+              <el-icon v-else><Plus /></el-icon>
+            </el-upload>
+          </el-form-item>
+        </el-form>
+        <template #footer>
+          <el-button @click="dialogVisible = false">取消</el-button>
+          <el-button type="primary" @click="saveProduct">保存</el-button>
+        </template>
+      </el-dialog>
+    </div>
   </div>
 </template>
 
 <script>
-import { ref, onMounted } from 'vue';
-import { getSMProductList, addProduct, deleteProduct, updateProduct } from '@/api/service';
-import { useRouter } from 'vue-router';
-import { ElMessage } from 'element-plus';
+import { ElMessage, ElMessageBox } from 'element-plus';
+import { Search, RefreshLeft, Plus } from '@element-plus/icons-vue';
+import { getSMProductList, addProduct, updateProduct, deleteProduct } from '@/api/service';
 
 export default {
-  setup() {
-    const router = useRouter();
-    const tableData = ref([]);
-    const filter = ref({
-      category: '',
-      status: '',
-      minPrice: '',
-      maxPrice: '',
-      date: [],
-      keyword: ''
-    });
-
-    // 获取上门体验商品列表
-    const fetchProductList = async () => {
-      try {
-        const res = await getSMProductList(filter.value);
-        if (res.code === 200) {
-          tableData.value = res.data;
-        } else {
-          console.error('获取商品列表失败:', res);
-          tableData.value = [];
-        }
-      } catch (error) {
-        console.error('获取商品列表失败:', error);
-        ElMessage.error('获取商品列表失败');
-        tableData.value = [];
-      }
-    };
-
-    onMounted(() => {
-      fetchProductList();
-    });
-
-    const search = () => {
-      fetchProductList();
-    };
-
-    const resetFilters = () => {
-      filter.value = {
-        category: '',
-        status: '',
-        minPrice: '',
-        maxPrice: '',
-        date: [],
-        keyword: ''
-      };
-    };
-
-    const addProduct = () => {
-      // 跳转到添加商品页面
-      router.push('/product/addProduct');
-    };
-
-    const batchAction = () => {
-      // 批量操作的逻辑
-      console.log('批量操作');
-    };
-
-    const editProduct = (row) => {
-      // 跳转到编辑商品页面
-      router.push({ path: '/product/editProduct', query: { productId: row.productCode } });
-    };
-
-    const removeProduct = async (row) => {
-      try {
-        const res = await deleteProduct(row.productCode);
-        if (res.success) {
-          ElMessage.success('商品删除成功');
-          fetchProductList();
-        } else {
-          ElMessage.error('商品删除失败');
-        }
-      } catch (error) {
-        console.error('删除商品失败:', error);
-        ElMessage.error('删除商品失败');
-      }
-    };
-
+  data() {
     return {
-      tableData,
-      filter,
-      search,
-      resetFilters,
-      addProduct,
-      batchAction,
-      editProduct,
-      removeProduct
+      tableData: [],
+      currentPage: 1,
+      pageSize: 10,
+      total: 0,
+      statusFilter: '',
+      categoryFilter: '',
+      dateRange: '',
+      searchKeyword: '',
+      dialogVisible: false,
+      dialogTitle: '',
+      form: {
+        id: null,
+        name: '',
+        productCode: '',
+        category: '',
+        price: 0,
+        status: '',
+        image: '',
+      },
+      selectedRows: [],
     };
-  }
+  },
+  components: {
+    Search,
+    RefreshLeft,
+    Plus,
+  },
+  computed: {
+    filteredProducts() {
+      return this.tableData.filter(product => {
+        // 筛选状态
+        if (this.statusFilter && product.status !== this.statusFilter) {
+          return false;
+        }
+
+        // 筛选分类
+        if (this.categoryFilter && product.category !== this.categoryFilter) {
+          return false;
+        }
+
+        // 筛选日期范围
+        if (this.dateRange && product.lastUpdatedAt) {
+          const productDate = new Date(product.lastUpdatedAt);
+          const startDate = this.dateRange[0];
+          const endDate = this.dateRange[1];
+          if (productDate < startDate || productDate > endDate) {
+            return false;
+          }
+        }
+
+        // 筛选关键字
+        if (this.searchKeyword && !product.name.includes(this.searchKeyword)) {
+          return false;
+        }
+
+        return true;
+      });
+    },
+  },
+  methods: {
+    handleImageSuccess(res, file) {
+      this.form.image = URL.createObjectURL(file.raw);
+    },
+    beforeImageUpload(file) {
+      const isJPG = file.type === 'image/jpeg';
+      const isLt2M = file.size / 1024 / 1024 < 2;
+
+      if (!isJPG) {
+        ElMessage.error('上传头像图片只能是 JPG 格式!');
+      }
+      if (!isLt2M) {
+        ElMessage.error('上传头像图片大小不能超过 2MB!');
+      }
+      return isJPG && isLt2M;
+    },
+    searchProducts() {
+      this.loadProducts();
+    },
+    resetSearch() {
+      this.statusFilter = '';
+      this.categoryFilter = '';
+      this.dateRange = '';
+      this.searchKeyword = '';
+      this.loadProducts();
+    },
+    addNewProduct() {
+      this.dialogTitle = '新增商品';
+      this.form = {
+        id: null,
+        name: '',
+        productCode: '',
+        category: '',
+        price: 0,
+        status: '',
+        image: '',
+      };
+      this.dialogVisible = true;
+    },
+    editProduct(row) {
+      this.dialogTitle = '编辑商品';
+      this.form = { ...row };
+      this.dialogVisible = true;
+    },
+    removeProduct(row) {
+      ElMessageBox.confirm(
+        '确定要删除此商品吗?',
+        '提示',
+        {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning',
+        }
+      ).then(() => {
+        deleteProduct(row.productCode).then(res => {
+          if (res.success) {
+            ElMessage.success('删除成功');
+            this.loadProducts();
+          } else {
+            ElMessage.error('删除失败');
+          }
+        }).catch(err => {
+          console.error('Delete error:', err);
+        });
+      }).catch(() => {
+        ElMessage.info('已取消删除');
+      });
+    },
+    saveProduct() {
+      if (this.form.id) {
+        // 编辑
+        updateProduct(this.form.id, this.form).then(res => {
+          if (res.success) {
+            ElMessage.success('编辑成功');
+            this.dialogVisible = false;
+            this.loadProducts();
+          } else {
+            ElMessage.error('编辑失败');
+          }
+        });
+      } else {
+        // 新增
+        addProduct(this.form).then(res => {
+          if (res.success) {
+            ElMessage.success('新增成功');
+            this.dialogVisible = false;
+            this.loadProducts();
+          } else {
+            ElMessage.error('新增失败');
+          }
+        });
+      }
+    },
+    batchDelete() {
+      if (this.selectedRows.length === 0) {
+        ElMessage.warning('请至少选择一条记录');
+        return;
+      }
+
+      ElMessageBox.confirm('确定要批量删除选中的商品吗?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning',
+      }).then(() => {
+        const productCodes = this.selectedRows.map(row => row.productCode);
+        deleteProduct(productCodes).then(res => {
+          if (res.success) {
+            ElMessage.success('批量删除成功');
+            this.loadProducts();
+            this.selectedRows = [];
+          } else {
+            ElMessage.error('批量删除失败');
+          }
+        });
+      }).catch(() => {
+        ElMessage.info('已取消批量删除');
+      });
+    },
+    handleSelectionChange(selection) {
+      this.selectedRows = selection;
+    },
+    handlePageChange(page) {
+      this.currentPage = page;
+      this.loadProducts();
+    },
+    loadProducts() {
+      const params = {
+        pageSize: this.pageSize,
+        pageNum: this.currentPage,
+        params: {
+          status: this.statusFilter,
+          category: this.categoryFilter,
+          keyword: this.searchKeyword,
+        },
+      };
+
+      if (this.dateRange) {
+        params.params.startDate = this.dateRange[0];
+        params.params.endDate = this.dateRange[1];
+      }
+
+      getSMProductList(params).then(res => {
+        if (res.code === 200) {
+          this.tableData = res.data;
+          this.total = res.total;
+        } else {
+          ElMessage.error('获取数据失败');
+        }
+      });
+    },
+  },
+  mounted() {
+    this.loadProducts();
+  },
 };
 </script>
 
 <style scoped>
-.product-list-view {
+.product-container {
   padding: 20px;
+  background-color: #f5f7fa;
 }
 
-.box-card {
+.page-header {
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+}
+
+.page-header::before {
+  content: '';
+  display: inline-block;
+  width: 8px;
+  height: 20px;
+  background-color: #4fc3f7;
+  margin-right: 10px;
+  border-radius: 2px;
+}
+
+.filter-section {
   background-color: #fff;
+  padding: 20px;
   border-radius: 8px;
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
+  margin-bottom: 20px;
+}
+
+.filter-box {
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.filter-row {
+  display: flex;
+  margin-bottom: 15px;
+  align-items: center;
+}
+
+.filter-item {
+  margin-right: 20px;
+  display: flex;
+  align-items: center;
+}
+
+.filter-item span {
+  width: 80px;
+  display: inline-block;
+}
+
+.action-table-box {
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+}
+
+.action-section {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.el-table {
+  border-radius: 8px;
+  overflow: hidden;
+  margin-bottom: 15px;
+}
+
+.el-pagination {
+  text-align: center;
 }
 
 .product-image {
@@ -159,8 +461,23 @@ export default {
   object-fit: cover;
 }
 
-.delete-btn {
-  color: #f56c6c;
-  border: none;
+.avatar-uploader .el-upload {
+  border: 1px dashed #d9d9d9;
+  border-radius: 6px;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  width: 100px;
+  height: 100px;
+}
+
+.avatar-uploader .el-upload:hover {
+  border-color: #409EFF;
+}
+
+.avatar {
+  width: 100px;
+  height: 100px;
+  display: block;
 }
 </style>

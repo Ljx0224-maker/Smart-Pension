@@ -51,38 +51,71 @@ export function deleteAdmin(params){
 
 // 用户列表（带分页和搜索）
 export function getUserList(params) {
-    return ajax({
-      url: '/users/list',
-      method: 'POST',
-      data: params
-    })
+  return ajax({
+    url: '/users/list',
+    method: 'POST',
+    data: params
+  });
+}
 
-  }
-  
-  // 添加/修改用户
-  export function addUser(userData) {
-    return ajax({
-      url: '/users/addOrUpdate',
-      method: 'POST',
-      data: userData
-    })
-  }
-  
-  // 删除用户
-  export function deleteUser(userId) {
-    return ajax({
-      url: '/users/delete',
-      method: 'DELETE',
-      params: { userId }
-    })
-  }
-  
-  // 获取用户详情
-  export function getUserDetail(userId) {
-    return ajax({
-      url: '/users/detail',
-      method: 'GET',
-      params: { userId }
-    })
+// 添加/修改用户
+export function addUser(userData) {
+  return ajax({
+    url: '/users/addOrUpdate',
+    method: 'POST',
+    data: userData
+  });
+}
 
-  }
+// 删除用户
+export function deleteUser(userId) {
+  return ajax({
+    url: '/users/delete?userId=' + userId,
+    method: 'DELETE',
+    params: { userId }
+  });
+}
+
+// 获取用户详情
+export function getUserDetail(userId) {
+  return ajax({
+    url: '/users/detail?userId=' + userId,
+    method: 'GET',
+    params: { userId }
+  });
+}
+
+// 查询用户（关键字搜索）
+export function searchUser(query) {
+  return ajax({
+    url: '/users/query',
+    method: 'POST',
+    data: query
+  });
+}
+
+// 标签列表（分页）
+export function getTagsList() {
+  return ajax({
+    url: '/users/tags/list',
+    method: 'GET',
+  });
+}
+
+// 添加或修改标签
+export function addOrUpdateTag(tagData) {
+  return ajax({
+    url: '/users/tags/addOrUpdate',
+    method: 'POST',
+    data: tagData,
+  });
+}
+
+// 删除标签
+export function deleteTag(tagId) {
+  return ajax({
+    url: '/users/tags/delete',
+    method: 'DELETE',
+    params: { tagId },
+  });
+}

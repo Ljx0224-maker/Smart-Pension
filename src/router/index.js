@@ -343,7 +343,7 @@ export const routes=[
           {
             path: 'servicelist',
             name: 'servicelist',
-            label: '全部商品列表',
+            label: '分类管理',
             component: ServiceListView,
           },
           { 
@@ -356,7 +356,7 @@ export const routes=[
           {
             path: 'management',
             name: 'management',
-            label: '服务分类管理',
+            label: '商品列表',
             component: CategoryManagementIndexView,
             children: [
               
