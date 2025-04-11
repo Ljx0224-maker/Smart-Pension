@@ -147,10 +147,10 @@ export default{
               <el-icon>
                 <Picture />
               </el-icon>
-              <span>轮播图管理</span>
+              <span>生活圈管理</span>
               </template>
-              <el-menu-item index="/operation/banner/bannerlist"><el-icon><PictureRounded /></el-icon>轮播图列表</el-menu-item>
-              <el-menu-item index="/operation/banner/addbanner"><el-icon><Plus /></el-icon>添加轮播图</el-menu-item>
+              <el-menu-item index="/operation/social/bannerlist"><el-icon><PictureRounded /></el-icon>轮播图管理</el-menu-item>
+              <el-menu-item index="/operation/social/newslist"><el-icon><VideoPause /></el-icon>动态管理</el-menu-item>
             </el-sub-menu>
             <el-sub-menu index="/operation/events">
               <template #title>
@@ -162,12 +162,11 @@ export default{
               <el-menu-item index="/operation/events/eventslist"><el-icon><Discount /></el-icon>活动管理</el-menu-item>
               <el-menu-item index="/operation/events/rigisterinfo"><el-icon><Pointer /></el-icon>报名信息管理</el-menu-item>
             </el-sub-menu>
-            <el-menu-item index="/operation/newslist"><el-icon><VideoPause /></el-icon>动态管理</el-menu-item>
             <el-menu-item index="/operation/dishlist"><el-icon><Dish /></el-icon>食谱管理</el-menu-item>
             <el-menu-item index="/operation/healthinfo"><el-icon><PartlyCloudy /></el-icon>健康资讯管理</el-menu-item>
             <el-menu-item index="/operation/diseaselist"><el-icon><Drizzling /></el-icon>疾病宝典管理</el-menu-item>
-            <el-menu-item index="/operation/institutionlist"><el-icon><OfficeBuilding /></el-icon>养老机构列表</el-menu-item>
-            <el-menu-item index="/operation/medialist"><el-icon><VideoCamera /></el-icon>视频列表</el-menu-item>
+            <el-menu-item index="/operation/institutionlist"><el-icon><OfficeBuilding /></el-icon>养老机构管理</el-menu-item>
+            <el-menu-item index="/operation/medialist"><el-icon><VideoCamera /></el-icon>视频管理</el-menu-item>
             <el-menu-item index="/operation/commentslist"><el-icon><ChatRound /></el-icon>评论管理</el-menu-item>
         </el-sub-menu>
 

@@ -71,7 +71,15 @@
         <el-table-column prop="category" label="分类"></el-table-column>
         <el-table-column label="标签">
           <template #default="scope">
-            <el-tag v-for="tag in scope.row.tag.split(',')" :key="tag" :type="getTagType(tag)">{{ tag }}</el-tag>
+            <div>
+              <el-tag
+                v-for="tag in scope.row.tag"
+                :key="tag"
+                :type="getTagType(tag)" 
+                class="tag-item">
+                {{ tag }}
+            </el-tag>
+          </div>
           </template>
         </el-table-column>
         <el-table-column prop="share" label="分享"></el-table-column>
@@ -123,6 +131,13 @@
             <el-select v-model="form.tag" multiple placeholder="请选择">
               <el-option label="清淡" value="清淡"></el-option>
               <el-option label="营养" value="营养"></el-option>
+              <el-option label="简单" value="简单"></el-option>
+              <el-option label="下饭" value="下饭"></el-option>
+              <el-option label="健康" value="健康"></el-option>
+              <el-option label="低脂" value="低脂"></el-option>
+              <el-option label="养胃" value="养胃"></el-option>
+              <el-option label="滋补" value="滋补"></el-option>
+              <el-option label="低糖" value="低糖"></el-option>
             </el-select>
           </el-form-item>
           <el-form-item label="状态">
@@ -212,6 +227,12 @@ export default {
         return 'info';
       } else if (tag === '营养') {
         return 'warning';
+      } else if (tag === '健康') {
+        return 'success';
+      } else if (tag === '低脂') {
+        return 'primary';
+      } else if (tag === '下饭') {
+        return 'danger';
       }
       return '';
     },
@@ -233,6 +254,9 @@ export default {
         category: '',
         tag: [],
         status: '',
+        share: 0, // 默认分享数为 0
+        collect: 0, // 默认收藏数为 0
+        lastUpdatedAt: new Date().toISOString(), // 设置当前时间
       };
       this.dialogVisible = true;
     },
@@ -267,9 +291,17 @@ export default {
       });
     },
     saveDish() {
+      const formData = {
+        ...this.form,
+        tag: this.form.tag.join('、'), // 将数组转换为逗号分隔的字符串
+        share: 0, // 默认分享数为 0
+        collect: 0, // 默认收藏数为 0
+        lastUpdatedAt: this.form.lastUpdatedAt || new Date().toISOString(), // 如果没有时间，设置当前时间
+      };
+    
       if (this.form.id) {
         // 编辑
-        updateDish(this.form.id, this.form).then(res => {
+        updateDish(this.form.id, formData).then(res => {
           if (res.code === 200) {
             ElMessage.success('编辑成功');
             this.dialogVisible = false;
@@ -280,7 +312,7 @@ export default {
         });
       } else {
         // 新增
-        addDish(this.form).then(res => {
+        addDish(formData).then(res => {
           if (res.code === 200) {
             ElMessage.success('新增成功');
             this.dialogVisible = false;
@@ -343,7 +375,7 @@ export default {
         if (res.code === 200) {
           this.tableData = res.data.map(item => ({
             ...item,
-            tag: item.tag || '', // 确保 tag 字段存在
+            tag: item.tag ? item.tag.split('、') : [], // 将字符串分解为数组
           }));
           this.total = res.total;
         } else {
@@ -434,5 +466,16 @@ export default {
 
 .el-pagination {
   text-align: center;
+}
+
+.tag-container {
+  display: flex; /* 使用 flex 布局 */
+  flex-wrap: wrap; /* 允许换行 */
+  gap: 2px; /* 设置标签之间的间距 */
+}
+
+.tag-item {
+  margin-right: 3px; /* 设置右侧间距 */
+  margin-bottom: 3px; /* 如果标签换行，设置下方间距 */
 }
 </style>
