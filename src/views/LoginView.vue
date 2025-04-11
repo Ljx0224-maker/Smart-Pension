@@ -72,7 +72,7 @@ export default{
 
           //this.$router 是我们的路由对象
           //.push 需要进入到哪个路由中
-          this.$router.push('/')
+          this.$router.push('/home/worktable')
           //console.log(this.$router);
         }
         })

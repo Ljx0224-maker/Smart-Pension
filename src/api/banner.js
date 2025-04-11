@@ -357,34 +357,45 @@ export function batchDeleteVideos(ids) {
 // 获取评论列表
 export function getComments(params) {
   return ajax({
-    url: '/comments/list',
+    url: '/operation/review/list',
     method: 'get',
     params,
   });
 }
 
-// 更新评论显示状态
-export function updateCommentVisibility(id, data) {
-  return ajax({
-    url: `/comments/${id}/visibility`,
-    method: 'put',
-    data,
-  });
-}
-
 // 删除评论
-export function deleteComment(id) {
+export function deleteComment(reviewId) {
   return ajax({
-    url: `/comments/${id}`,
+    url: '/operation/review/delete?reviewId=' + reviewId,
     method: 'delete',
+    params: { reviewId },
   });
 }
 
-// 批量删除评论
+
+export function deleteClassProduct(deleteData) {
+    return ajax({
+      url: `/products/class/delete?serviceType=${deleteData.serviceType}&category=${deleteData.category}`,
+      method: 'delete',
+      params: { serviceType: deleteData.serviceType, category: deleteData.category }
+    });
+  }
+  
+// 更新评论显示状态
+export function updateCommentVisibility(postData) {
+  return ajax({
+    url: '/operation/review/updateStatus',
+    method: 'post',
+    params: { reviewId: postData.reviewId, status: postData.status }, // 使用 params 传递参数
+  });
+}
+
+// 批量删除评论（如果需要实现批量删除功能，可以扩展后端接口）
 export function batchDeleteComments(ids) {
   return ajax({
-    url: `/comments/batch-delete`,
+    url: '/operation/review/batch-delete', // 假设后端支持批量删除
     method: 'post',
     data: { ids },
   });
 }
+

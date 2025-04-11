@@ -1,36 +1,27 @@
 import ajax from '@/utils/request.js';
 
 // 获取订单列表
-export function orderList(params) {
+export function getOrders(params) {
   return ajax({
-    url: '/order/list',
-    method: 'get',
-    params,
-  });
-}
-
-// 更新订单
-export function updateOrder(data) {
-  return ajax({
-    url: '/order/update',
+    url: '/orders/list',
     method: 'post',
-    data,
+    data: params,
   });
 }
 
 // 删除订单
-export function deleteOrder(data) {
+export function deleteOrder(orderId) {
   return ajax({
-    url: '/order/delete',
-    method: 'post',
-    data,
+    url: `/orders/delete?orderId=${orderId}`,
+    method: 'delete',
+    params: { orderId },
   });
 }
 
-// 添加订单
-export function addOrder(data) {
+// 添加或更新订单
+export function addOrUpdateOrder(data) {
   return ajax({
-    url: '/order/create',
+    url: '/orders/addOrUpdate',
     method: 'post',
     data,
   });
