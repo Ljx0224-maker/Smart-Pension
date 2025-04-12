@@ -373,20 +373,13 @@ export function deleteComment(reviewId) {
 }
 
 
-export function deleteClassProduct(deleteData) {
-    return ajax({
-      url: `/products/class/delete?serviceType=${deleteData.serviceType}&category=${deleteData.category}`,
-      method: 'delete',
-      params: { serviceType: deleteData.serviceType, category: deleteData.category }
-    });
-  }
   
 // 更新评论显示状态
-export function updateCommentVisibility(postData) {
+export function updateCommentVisibility(reviewId,status) {
   return ajax({
-    url: '/operation/review/updateStatus',
+    url: `/operation/review/updateStatus?reviewId=${reviewId}&status=${status}`,
     method: 'post',
-    params: { reviewId: postData.reviewId, status: postData.status }, // 使用 params 传递参数
+    params: { reviewId, status}, // 使用 params 传递参数
   });
 }
 

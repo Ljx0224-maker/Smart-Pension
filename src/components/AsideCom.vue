@@ -178,17 +178,10 @@ export default{
             <span>用户管理</span>
             </template>
             <!--跟路由配置有关-->
-<<<<<<< HEAD
             <el-menu-item index="/user/userlist"><el-icon><User /></el-icon>用户列表</el-menu-item>
             <el-menu-item index="/user/usertag"><el-icon><UserFilled /></el-icon>用户标签</el-menu-item>
             <el-menu-item index="/user/adduser"><el-icon><User /></el-icon>新增/修改用户信息</el-menu-item>
             <el-menu-item index="/user/addtag"><el-icon><UserFilled /></el-icon>添加标签</el-menu-item>
-=======
-            <el-menu-item index="/user/userlist"><el-icon><Document /></el-icon>用户列表</el-menu-item>
-            <el-menu-item index="/user/usertag"><el-icon><CollectionTag /></el-icon>用户标签</el-menu-item>
-            <el-menu-item index="/user/adduser"><el-icon><DocumentAdd /></el-icon>添加用户</el-menu-item>
-            <el-menu-item index="/user/addtag"><el-icon><PriceTag /></el-icon>添加标签</el-menu-item>
->>>>>>> 73420b57ce2b775d81c26f417b3bcd1388526adc
         </el-sub-menu>
 
 

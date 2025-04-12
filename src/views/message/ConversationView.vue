@@ -1,117 +1,127 @@
 <template>
-    <div class="conversation-container">
-      <div class="conversation-sidebar">
-        <div class="search-box">
-          <el-input
-            placeholder="搜索会话"
-            v-model="searchConversation"
-            prefix-icon="el-icon-search"
-            style="width: 100%;"
-          ></el-input>
-        </div>
-        <div class="conversation-list">
-          <div
-            class="conversation-item"
-            v-for="conversation in conversations"
-            :key="conversation.id"
-            :class="{ active: activeConversationId === conversation.id }"
-            @click="selectConversation(conversation)"
-          >
-            <div class="avatar">
-              <img :src="conversation.avatar" alt="用户头像">
-            </div>
-            <div class="info">
-              <div class="name">{{ conversation.name }}</div>
-              <div class="message">{{ conversation.lastMessage }}</div>
-            </div>
-            <div class="time">{{ conversation.time }}</div>
-            <div class="unread" v-if="conversation.unread > 0">{{ conversation.unread }}</div>
-          </div>
-        </div>
+  <div class="conversation-container">
+    <div class="conversation-sidebar">
+      <div class="page-header">
+        <h2>会话</h2>
+        <div class="header-line"></div>
       </div>
-  
-      <div class="conversation-main">
-        <div class="conversation-header">
-          <div class="user-info">
-            <div class="name">笑看人生</div>
-          </div>
-          <div class="actions">
-            <el-button type="text" @click="endConversation">
-              <i class="el-icon-more"></i> 结束会话
-            </el-button>
-            <el-button type="text">
-              <i class="el-icon-more"></i> 客户资料
-            </el-button>
-            <el-button type="text">
-              <i class="el-icon-more"></i> 商品列表
-            </el-button>
-          </div>
-        </div>
-  
-        <div class="chat-window">
-          <div class="message-item" v-for="message in currentMessages" :key="message.id">
-            <div class="message-time">{{ message.time }}</div>
-            <div class="message-content" :class="{ 'is-user': message.isUser }">
-              <div class="avatar">
-                <img :src="message.avatar" alt="用户头像">
-              </div>
-              <div class="bubble">{{ message.content }}</div>
-            </div>
-          </div>
-        </div>
-  
-        <div class="input-box">
-          <el-input
-            type="textarea"
-            placeholder="请输入"
-            v-model="newMessage"
-            @keyup.enter.native="sendMessage"
-            style="width: 100%; margin-right: 10px;"
-          ></el-input>
-          <el-button type="primary" @click="sendMessage">发送</el-button>
-        </div>
+      <div class="search-box">
+        <el-input
+          placeholder="搜索会话"
+          v-model="searchConversation"
+          prefix-icon="el-icon-search"
+          style="width: 100%;"
+        ></el-input>
       </div>
-  
-      <div class="customer-sidebar">
-        <div class="customer-info">
+      <div class="conversation-list">
+        <div
+          class="conversation-item"
+          v-for="conversation in conversations"
+          :key="conversation.id"
+          :class="{ active: activeConversationId === conversation.id }"
+          @click="selectConversation(conversation)"
+        >
           <div class="avatar">
-            <img :src="currentCustomer.avatar" alt="客户头像">
+            <img :src="conversation.avatar" alt="用户头像">
           </div>
-          <div class="name">
-            {{ currentCustomer.name }}
-            <el-button type="text" @click="viewCustomerDetails">查看资料</el-button>
+          <div class="info">
+            <div class="name">{{ conversation.name }}</div>
+            <div class="message">{{ conversation.lastMessage }}</div>
           </div>
-          <div class="tags">
-            <el-tag v-for="tag in currentCustomer.tags" :key="tag" size="small">{{ tag }}</el-tag>
-          </div>
-          <div class="stats">
-            <div>累计订单数 {{ currentCustomer.orderCount }}</div>
-            <div>累计消费金额（元）{{ currentCustomer.totalAmount }}</div>
+          <div class="time">{{ conversation.time }}</div>
+          <div class="unread" v-if="conversation.unread > 0">{{ conversation.unread }}</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="conversation-main">
+      <div class="page-header1">
+        <h2>  </h2>
+      </div>
+      <div class="conversation-header">
+        <div class="user-info">
+          <div class="name">笑看人生</div>
+        </div>
+        <div class="actions">
+          <el-button type="text" @click="endConversation">
+            <i class="el-icon-more"></i> 结束会话
+          </el-button>
+          <el-button type="text">
+            <i class="el-icon-more"></i> 客户资料
+          </el-button>
+          <el-button type="text">
+            <i class="el-icon-more"></i> 商品列表
+          </el-button>
+        </div>
+      </div>
+
+      <div class="chat-window">
+        <div class="message-item" v-for="message in currentMessages" :key="message.id">
+          <div class="message-time">{{ message.time }}</div>
+          <div class="message-content" :class="{ 'is-user': message.isUser }">
+            <div class="avatar">
+              <img :src="message.avatar" alt="用户头像">
+            </div>
+            <div class="bubble">{{ message.content }}</div>
           </div>
         </div>
-  
-        <div class="order-list">
-          <div class="title">订单列表 ({{ currentCustomer.orderCount }})</div>
-          <div class="order-item" v-for="order in currentCustomer.orders" :key="order.id">
-            <div class="order-status">{{ order.status }}</div>
-            <div class="order-details">
-              <div class="product">
-                <img :src="order.productImage" alt="商品图片">
-                <div class="product-info">
-                  <div class="product-name">{{ order.productName }}</div>
-                  <div class="order-detail">
-                    <el-button type="text" @click="viewOrderDetails(order)">订单详情</el-button>
-                  </div>
+      </div>
+
+      <div class="input-box">
+        <el-input
+          type="textarea"
+          placeholder="请输入"
+          v-model="newMessage"
+          @keyup.enter.native="sendMessage"
+          style="width: 100%; margin-right: 10px;"
+        ></el-input>
+        <el-button type="primary" @click="sendMessage">发送</el-button>
+      </div>
+    </div>
+
+    <div class="customer-sidebar">
+      <div class="page-header1">
+        <h2>  </h2>
+      </div>
+      <div class="customer-info">
+        <div class="avatar">
+          <img :src="currentCustomer.avatar" alt="客户头像">
+        </div>
+        <div class="name">
+          {{ currentCustomer.name }}
+          <el-button type="text" @click="viewCustomerDetails">查看资料</el-button>
+        </div>
+        <div class="tags">
+          <el-tag v-for="tag in currentCustomer.tags" :key="tag" size="small">{{ tag }}</el-tag>
+        </div>
+        <div class="stats">
+          <div>累计订单数 {{ currentCustomer.orderCount }}</div>
+          <div>累计消费金额（元）{{ currentCustomer.totalAmount }}</div>
+        </div>
+      </div>
+
+      <div class="order-list">
+        <div class="title">订单列表 ({{ currentCustomer.orderCount }})</div>
+        <div class="order-item" v-for="order in currentCustomer.orders" :key="order.id">
+          <div class="order-status">{{ order.status }}</div>
+          <div class="order-details">
+            <div class="product">
+              <img :src="order.productImage" alt="商品图片">
+              <div class="product-info">
+                <div class="product-name">{{ order.productName }}</div>
+                <div class="order-detail">
+                  <el-button type="text" @click="viewOrderDetails(order)">订单详情</el-button>
                 </div>
               </div>
-              <div class="order-time">下单时间: {{ order.orderTime }}</div>
-              <div class="order-amount">订单金额: {{ order.amount }}元</div>
             </div>
+            <div class="order-time">下单时间: {{ order.orderTime }}</div>
+            <div class="order-amount">订单金额: {{ order.amount }}元</div>
           </div>
         </div>
       </div>
     </div>
-  </template>
+  </div>
+</template>
   
   <script>
   import { ElMessage } from 'element-plus';
@@ -427,7 +437,7 @@
   }
   
   .message-content.is-user .bubble {
-    background-color: #18a095;
+    background-color: #4fc3f7;
     color: white;
     border-bottom-right-radius: 4px;
   }
@@ -508,4 +518,26 @@
     font-size: 12px;
     color: #999;
   }
+
+  .page-header {
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+}
+
+.page-header::before {
+  content: '';
+  display: inline-block;
+  width: 8px;
+  height: 20px;
+  background-color: #4fc3f7;
+  margin-right: 10px;
+  border-radius: 2px;
+}
+
+.page-header1 {
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+}
   </style>

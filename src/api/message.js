@@ -1,46 +1,39 @@
 import ajax from '@/utils/request.js';
 
+
+
 // 获取消息列表
-export function getMessages(params) {
+export function getMessageList() {
   return ajax({
-    url: '/messages/list',
-    method: 'get',
-    params,
+    url: '/mass-message/list',
+    method: 'post',
   });
 }
 
-// 添加新消息
-export function addMessage(data) {
+// 添加或更新消息
+export function addOrUpdateMessage(data) {
   return ajax({
-    url: '/messages',
+    url: '/mass-message/addOrUpdate',
     method: 'post',
     data,
   });
 }
 
-// 更新消息
-export function updateMessage(id, data) {
-  return ajax({
-    url: `/messages/${id}`,
-    method: 'put',
-    data,
-  });
-}
-
-// 删除消息
+// 删除单条消息
 export function deleteMessage(id) {
   return ajax({
-    url: `/messages/${id}`,
+    url: '/mass-message/delete?massMessageId=' + id,
     method: 'delete',
+    params: { massMessageId: id },
   });
 }
 
-// 批量删除消息
-export function batchDeleteMessages(ids) {
+// 分页查询消息
+export function queryMessages(params) {
   return ajax({
-    url: `/messages/batch-delete`,
+    url: '/mass-message/query',
     method: 'post',
-    data: { ids },
+    data: params,
   });
 }
 

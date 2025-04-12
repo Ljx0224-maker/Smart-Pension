@@ -51,14 +51,20 @@
       </div>
 
       <el-table
-        :data="filteredComments"
+        :data="computedTableData"
         style="width: 100%"
         @selection-change="handleSelectionChange"
       >
         <el-table-column type="selection" width="55"></el-table-column>
         <el-table-column prop="releaseTime" label="发布时间"></el-table-column>
         <el-table-column prop="content" label="评论内容"></el-table-column>
-        <el-table-column prop="model" label="所属模块"></el-table-column>
+        <el-table-column prop="model" label="所属模块">
+          <template #default="scope">
+            <el-tag :type="getTagType(scope.row.model)">
+              {{ scope.row.model }}
+            </el-tag>
+          </template>
+        </el-table-column>
         <el-table-column prop="title" label="标题"></el-table-column>
         <el-table-column prop="love" label="点赞"></el-table-column>
         <el-table-column prop="publisher" label="发布人"></el-table-column>
@@ -97,12 +103,12 @@ import { Search, RefreshLeft } from '@element-plus/icons-vue';
 import { getComments, deleteComment, batchDeleteComments, updateCommentVisibility } from '@/api/banner';
 
 export default {
-  data() {
+    data() {
     return {
       tableData: [],
-      currentPage: 1,
-      pageSize: 10,
-      total: 0,
+      currentPage: 1, // 当前页
+      pageSize: 10, // 每页显示的条目数
+      total: 0, // 总条目数
       statusFilter: '',
       moduleFilter: '',
       dateRange: '',
@@ -115,6 +121,12 @@ export default {
     RefreshLeft,
   },
   computed: {
+    computedTableData() {
+      return this.tableData.slice(
+        (this.currentPage - 1) * this.pageSize,
+        this.currentPage * this.pageSize
+      );
+    },
     filteredComments() {
       return this.tableData.filter(comment => {
         // 筛选状态
@@ -147,6 +159,14 @@ export default {
     },
   },
   methods: {
+    getTagType(tag) {
+    if (tag === '健康讲座') {
+      return 'success';
+    } else if (tag === '养老院') {
+      return 'primary';
+    } 
+    return '';
+  },
     searchComments() {
       this.loadComments();
     },
@@ -158,15 +178,11 @@ export default {
       this.loadComments();
     },
     toggleStatus(row) {
-      const newStatus = row.status === '显示' ? '隐藏' : '显示'; // 切换状态
-      updateCommentVisibility(row.reviewId, newStatus).then(res => {
-        console.log(res);
-        
+      updateCommentVisibility(row.reviewId, row.status).then(res => { 
         if (res.code === 200) {
-          row.status = newStatus; // 更新状态
-          ElMessage.success(newStatus === '显示' ? '显示成功' : '隐藏成功');
+          ElMessage.success(row.status === '显示' ? '显示成功' : '隐藏成功');
         } else {
-          ElMessage.error(newStatus === '显示' ? '显示失败' : '隐藏失败');
+          ElMessage.error(row.status === '显示' ? '显示失败' : '隐藏失败');
         }
       }).catch(() => {
         ElMessage.error('状态更新失败');
