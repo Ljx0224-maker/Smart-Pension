@@ -12,7 +12,7 @@ export function getStaffList(params) {
 // 删除服务人员
 export function deleteStaff(staffId) {
   return ajax({
-    url: '/service-staff/delete',
+    url: '/service-staff/delete?staffId=' + staffId,
     method: 'DELETE',
     params: { staffId }
   });
@@ -30,8 +30,8 @@ export function addOrUpdateStaff(staffData) {
 // 获取服务人员详情
 export function getStaffDetail(staffId) {
   return ajax({
-    url: '/service-staff/query',
+    url: '/service-staff/query?staffId=' + staffId,
     method: 'POST',
-    data: { params: { staffId } }
+     params: { staffId } ,
   });
 }

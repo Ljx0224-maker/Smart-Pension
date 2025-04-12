@@ -20,9 +20,9 @@
             <span style="margin-left: 70px;">分类</span>
             <el-select v-model="categoryFilter" placeholder="请选择" style="width: 200px;">
               <el-option label="全部" value=""></el-option>
-              <el-option label="按摩服务" value="按摩服务"></el-option>
-              <el-option label="理疗服务" value="理疗服务"></el-option>
-              <el-option label="康复训练" value="康复训练"></el-option>
+              <el-option label="运动康复" value="运动康复"></el-option>
+              <el-option label="心理康复" value="心理康复"></el-option>
+              <el-option label="神经康复" value="神经康复"></el-option>
             </el-select>
           </div>
         </div>
@@ -67,6 +67,14 @@
         @selection-change="handleSelectionChange"
       >
         <el-table-column type="selection" width="55"></el-table-column>
+        
+        <!-- 商品名称列 -->
+        <el-table-column prop="productName" label="商品名称" width="200">
+          <template #default="scope">
+            <div>{{ scope.row.productName }}</div>
+          </template>
+        </el-table-column>
+        
         <el-table-column label="商品编码" width="200">
           <template #default="scope">
             <div>
@@ -120,13 +128,13 @@
             <el-input v-model="form.name"></el-input>
           </el-form-item>
           <el-form-item label="商品编码">
-            <el-input v-model="form.productCode"></el-input>
+            <el-input v-model="form.productCode" disabled></el-input>
           </el-form-item>
           <el-form-item label="分类">
             <el-select v-model="form.category" placeholder="请选择">
-              <el-option label="按摩服务" value="按摩服务"></el-option>
-              <el-option label="理疗服务" value="理疗服务"></el-option>
-              <el-option label="康复训练" value="康复训练"></el-option>
+              <el-option label="运动康复" value="运动康复"></el-option>
+              <el-option label="心理康复" value="心理康复"></el-option>
+              <el-option label="神经康复" value="神经康复"></el-option>
             </el-select>
           </el-form-item>
           <el-form-item label="价格">
@@ -137,6 +145,21 @@
               <el-option label="已上架" value="listed"></el-option>
               <el-option label="已下架" value="unlisted"></el-option>
             </el-select>
+          </el-form-item>
+          <el-form-item label="商品备注">
+            <el-input v-model="form.productRemark"></el-input>
+          </el-form-item>
+          <el-form-item label="服务详情">
+            <el-input type="textarea" v-model="form.serviceDetails"></el-input>
+          </el-form-item>
+          <el-form-item label="销量">
+            <el-input-number v-model="form.sales" :min="0"></el-input-number>
+          </el-form-item>
+          <el-form-item label="服务人数">
+            <el-input-number v-model="form.servicePeople" :min="0"></el-input-number>
+          </el-form-item>
+          <el-form-item label="服务时长（分钟）">
+            <el-input-number v-model="form.serviceDuration" :min="0"></el-input-number>
           </el-form-item>
           <el-form-item label="商品图片">
             <el-upload
@@ -228,6 +251,11 @@ export default {
     },
   },
   methods: {
+    generateRandomCode() {
+      const timestamp = Date.now().toString(36); // 基于时间戳的部分
+      const randomPart = Math.random().toString(36).substring(2, 8).toUpperCase(); // 随机部分
+      return `KF-${timestamp}-${randomPart}`; // 组合成商品编码
+    },
     handleImageSuccess(res, file) {
       this.form.image = URL.createObjectURL(file.raw);
     },
@@ -257,12 +285,18 @@ export default {
       this.dialogTitle = '新增商品';
       this.form = {
         id: null,
-        name: '',
-        productCode: '',
-        category: '',
-        price: 0,
-        status: '',
-        image: '',
+        name: '', // 商品名称
+        productCode: this.generateRandomCode(), // 随机生成商品编码
+        category: '', // 分类
+        price: 0, // 价格
+        status: 'unlisted', // 默认状态为下架
+        image: '', // 商品图片
+        productRemark: '', // 商品备注
+        serviceDetails: '', // 服务详情
+        sales: 0, // 销量
+        servicePeople: 0, // 服务人数
+        serviceDuration: 0, // 服务时长（分钟）
+        serviceType: '康复理疗', // 设置服务类型为康复理疗
       };
       this.dialogVisible = true;
     },
@@ -302,27 +336,39 @@ export default {
       });
     },
     saveProduct() {
+      const payload = {
+        ...this.form,
+        productName: this.form.name, // 映射为后端字段
+        status: this.form.status === 'listed' ? '已上架' : '下架', // 映射状态值
+        lastUpdatedBy: '管理员', // 设置默认值为管理员
+        serviceType: '康复理疗', // 确保服务类型为康复理疗
+      };
+
       if (this.form.id) {
-        // 编辑
-        updateProduct(this.form.id, this.form).then(res => {
-          if (res.success) {
+        updateProduct(payload).then(res => {
+          if (res.code === 200) {
             ElMessage.success('编辑成功');
             this.dialogVisible = false;
-            this.loadProducts();
+            this.loadProducts(); // 刷新商品列表
           } else {
-            ElMessage.error('编辑失败');
+            ElMessage.error('编辑失败: ' + res.message);
           }
+        }).catch(err => {
+          console.error('编辑失败:', err);
+          ElMessage.error('编辑失败: ' + (err.message || '未知错误'));
         });
       } else {
-        // 新增
-        addProduct(this.form).then(res => {
-          if (res.success) {
+        addProduct(payload).then(res => {
+          if (res.code === 200) {
             ElMessage.success('新增成功');
             this.dialogVisible = false;
-            this.loadProducts();
+            this.loadProducts(); // 刷新商品列表
           } else {
-            ElMessage.error('新增失败');
+            ElMessage.error('新增失败: ' + res.message);
           }
+        }).catch(err => {
+          console.error('新增失败:', err);
+          ElMessage.error('新增失败: ' + (err.message || '未知错误'));
         });
       }
     },
@@ -337,18 +383,15 @@ export default {
         cancelButtonText: '取消',
         type: 'warning',
       }).then(() => {
-        const productCodes = this.selectedRows.map(row => row.productCode);
-        deleteProduct(productCodes).then(res => {
-          if (res.success) {
+        const productIds = this.selectedRows.map(row => row.productId);
+        deleteProduct(productIds).then(res => {
+          if (res.code === 200) {
             ElMessage.success('批量删除成功');
-            this.loadProducts(); // 重新加载商品列表
+            this.loadProducts();
             this.selectedRows = [];
           } else {
             ElMessage.error('批量删除失败');
           }
-        }).catch(err => {
-          console.error('Batch delete error:', err);
-          ElMessage.error('批量删除失败');
         });
       }).catch(() => {
         ElMessage.info('已取消批量删除');
@@ -369,6 +412,7 @@ export default {
           status: this.statusFilter,
           category: this.categoryFilter,
           keyword: this.searchKeyword,
+          serviceType: '康复理疗', // 只加载服务类型为康复理疗的商品
         },
       };
 
@@ -379,11 +423,14 @@ export default {
 
       getKFProductList(params).then(res => {
         if (res.code === 200) {
-          this.tableData = res.data;
-          this.total = res.total;
+          this.tableData = res.data; // 更新表格数据
+          this.total = res.total; // 更新总条目数
         } else {
           ElMessage.error('获取数据失败');
         }
+      }).catch(err => {
+        console.error('获取数据失败:', err);
+        ElMessage.error('获取数据失败: ' + (err.message || '未知错误'));
       });
     },
   },
