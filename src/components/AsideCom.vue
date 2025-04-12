@@ -178,17 +178,10 @@ export default{
             <span>用户管理</span>
             </template>
             <!--跟路由配置有关-->
-<<<<<<< HEAD
-            <el-menu-item index="/user/userlist"><el-icon><User /></el-icon>用户列表</el-menu-item>
-            <el-menu-item index="/user/usertag"><el-icon><UserFilled /></el-icon>用户标签</el-menu-item>
-            <el-menu-item index="/user/adduser"><el-icon><User /></el-icon>新增/修改用户信息</el-menu-item>
-            <el-menu-item index="/user/addtag"><el-icon><UserFilled /></el-icon>添加标签</el-menu-item>
-=======
             <el-menu-item index="/user/userlist"><el-icon><Document /></el-icon>用户列表</el-menu-item>
             <el-menu-item index="/user/usertag"><el-icon><CollectionTag /></el-icon>用户标签</el-menu-item>
             <el-menu-item index="/user/adduser"><el-icon><DocumentAdd /></el-icon>添加用户</el-menu-item>
             <el-menu-item index="/user/addtag"><el-icon><PriceTag /></el-icon>添加标签</el-menu-item>
->>>>>>> 73420b57ce2b775d81c26f417b3bcd1388526adc
         </el-sub-menu>
 
 
@@ -200,7 +193,7 @@ export default{
             <span>商品服务管理</span>
             </template>
             <el-menu-item index="/service/servicelist"><el-icon><Guide /></el-icon>分类管理</el-menu-item>
-            <el-menu-item index="/service/addservice"><el-icon><Plus /></el-icon>新增商品信息</el-menu-item>
+            <!-- <el-menu-item index="/service/addservice"><el-icon><Plus /></el-icon>新增商品信息</el-menu-item> -->
     
 
             <el-sub-menu index="/service/management">
@@ -237,7 +230,7 @@ export default{
             </template>
             <el-menu-item index="/data/users"><el-icon><User /></el-icon>用户概况</el-menu-item>
             <el-menu-item index="/data/transaction"><el-icon><DataBoard /></el-icon>交易概况</el-menu-item>
-            <el-menu-item index="/data/serviceworkorder"><el-icon><DataLine /></el-icon>服务工单分析</el-menu-item>
+            <!-- <el-menu-item index="/data/serviceworkorder"><el-icon><DataLine /></el-icon>服务工单分析</el-menu-item> -->
           </el-sub-menu>
 
         <el-sub-menu index="/settings">

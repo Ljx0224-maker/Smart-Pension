@@ -20,9 +20,9 @@
             <span style="margin-left: 70px;">分类</span>
             <el-select v-model="categoryFilter" placeholder="请选择" style="width: 200px;">
               <el-option label="全部" value=""></el-option>
-              <el-option label="清洁服务" value="清洁服务"></el-option>
-              <el-option label="护理服务" value="护理服务"></el-option>
-              <el-option label="维修服务" value="维修服务"></el-option>
+              <el-option label="生活照料" value="生活照料"></el-option>
+              <el-option label="陪同就医" value="陪同就医"></el-option>
+              <el-option label="日常清洁" value="日常清洁"></el-option>
             </el-select>
           </div>
         </div>
@@ -67,11 +67,19 @@
         @selection-change="handleSelectionChange"
       >
         <el-table-column type="selection" width="55"></el-table-column>
+        
+        <!-- 商品名称列 -->
+        <el-table-column prop="productName" label="商品名称" width="200">
+          <template #default="scope">
+            <div>{{ scope.row.productName }}</div>
+          </template>
+        </el-table-column>
+        
         <el-table-column label="商品编码" width="200">
           <template #default="scope">
             <div>
               <div>{{ scope.row.productId }}</div>
-              <div>{{ scope.row.productCode }}</div> <!-- 确保这里显示了 productCode -->
+              <div>{{ scope.row.productCode }}</div>
             </div>
           </template>
         </el-table-column>
@@ -117,16 +125,13 @@
       >
         <el-form :model="form" label-width="100px">
           <el-form-item label="商品名称">
-            <el-input v-model="form.name"></el-input>
-          </el-form-item>
-          <el-form-item label="商品编码">
-            <el-input v-model="form.productCode"></el-input>
+            <el-input v-model="form.productName"></el-input>
           </el-form-item>
           <el-form-item label="分类">
             <el-select v-model="form.category" placeholder="请选择">
-              <el-option label="清洁服务" value="清洁服务"></el-option>
-              <el-option label="护理服务" value="护理服务"></el-option>
-              <el-option label="维修服务" value="维修服务"></el-option>
+              <el-option label="生活照料" value="生活照料"></el-option>
+              <el-option label="陪同就医" value="陪同就医"></el-option>
+              <el-option label="日常清洁" value="日常清洁"></el-option>
             </el-select>
           </el-form-item>
           <el-form-item label="价格">
@@ -134,9 +139,24 @@
           </el-form-item>
           <el-form-item label="状态">
             <el-select v-model="form.status" placeholder="请选择">
-              <el-option label="已上架" value="listed"></el-option>
-              <el-option label="已下架" value="unlisted"></el-option>
+              <el-option label="已上架" value="已上架"></el-option>
+              <el-option label="下架" value="下架"></el-option>
             </el-select>
+          </el-form-item>
+          <el-form-item label="商品备注">
+            <el-input v-model="form.productRemark"></el-input>
+          </el-form-item>
+          <el-form-item label="服务详情">
+            <el-input type="textarea" v-model="form.serviceDetails"></el-input>
+          </el-form-item>
+          <el-form-item label="销量">
+            <el-input-number v-model="form.sales" :min="0"></el-input-number>
+          </el-form-item>
+          <el-form-item label="服务人数">
+            <el-input-number v-model="form.servicePeople" :min="0"></el-input-number>
+          </el-form-item>
+          <el-form-item label="服务时长（分钟）">
+            <el-input-number v-model="form.serviceDuration" :min="0"></el-input-number>
           </el-form-item>
           <el-form-item label="商品图片">
             <el-upload
@@ -186,6 +206,11 @@ export default {
         price: 0,
         status: '',
         image: '',
+        productRemark: '', // 商品备注
+        serviceDetails: '', // 服务详情
+        sales: 0, // 销量
+        servicePeople: 0, // 服务人数
+        serviceDuration: 0, // 服务时长（分钟）
       },
       selectedRows: [],
     };
@@ -199,8 +224,13 @@ export default {
     filteredProducts() {
       const filtered = this.tableData.filter(product => {
         // 筛选状态
-        if (this.statusFilter && product.status !== this.statusFilter) {
-          return false;
+        if (this.statusFilter) {
+          if (this.statusFilter === 'listed' && product.status !== '已上架') {
+            return false;
+          }
+          if (this.statusFilter === 'unlisted' && product.status !== '下架') {
+            return false;
+          }
         }
 
         // 筛选分类
@@ -211,8 +241,8 @@ export default {
         // 筛选日期范围
         if (this.dateRange && product.lastUpdatedAt) {
           const productDate = new Date(product.lastUpdatedAt);
-          const startDate = this.dateRange[0];
-          const endDate = this.dateRange[1];
+          const startDate = new Date(this.dateRange[0]);
+          const endDate = new Date(this.dateRange[1]);
           if (productDate < startDate || productDate > endDate) {
             return false;
           }
@@ -225,7 +255,8 @@ export default {
 
         return true;
       });
-      console.log('表格数据:', filtered);
+
+      console.log('筛选后的表格数据:', filtered); // 调试信息
       return filtered;
     },
   },
@@ -259,18 +290,22 @@ export default {
       this.dialogTitle = '新增商品';
       this.form = {
         id: null,
-        name: '',
-        productCode: '',
-        category: '',
-        price: 0,
-        status: '',
-        image: '',
+        name: '', // 商品名称
+        category: '', // 分类
+        price: 0, // 价格
+        status: '', // 状态
+        image: '', // 商品图片
+        productRemark: '', // 商品备注
+        serviceDetails: '', // 服务详情
+        sales: 0, // 销量
+        servicePeople: 0, // 服务人数
+        serviceDuration: 0, // 服务时长（分钟）
       };
       this.dialogVisible = true;
     },
     editProduct(row) {
       this.dialogTitle = '编辑商品';
-      this.form = { ...row };
+      this.form = { ...row }; // 将 row 的所有字段赋值到 form
       this.dialogVisible = true;
     },
     removeProduct(row) {
@@ -304,31 +339,43 @@ export default {
       });
     },
     saveProduct() {
+      const payload = {
+        ...this.form,
+        productName: this.form.name, // 映射为后端字段
+        status: this.form.status === '已上架' ? '已上架' : '下架', // 映射状态值
+        lastUpdatedBy: '管理员', // 设置默认值为管理员
+      };
+
       if (this.form.id) {
-        // 编辑
-        updateProduct(this.form.id, this.form).then(res => {
-          if (res.success) {
+        // 编辑商品
+        updateProduct(payload).then(res => {
+          if (res.code === 200) {
             ElMessage.success('编辑成功');
             this.dialogVisible = false;
-            this.loadProducts();
+            this.loadProducts(); // 刷新商品列表
           } else {
-            ElMessage.error('编辑失败');
+            ElMessage.error('编辑失败: ' + res.message);
           }
+        }).catch(err => {
+          console.error('编辑失败:', err);
+          ElMessage.error('编辑失败: ' + (err.message || '未知错误'));
         });
       } else {
-        // 新增
-        addProduct(this.form).then(res => {
-          if (res.success) {
+        // 新增商品
+        addProduct(payload).then(res => {
+          if (res.code === 200) {
             ElMessage.success('新增成功');
             this.dialogVisible = false;
-            this.loadProducts();
+            this.loadProducts(); // 刷新商品列表
           } else {
-            ElMessage.error('新增失败');
+            ElMessage.error('新增失败: ' + res.message);
           }
+        }).catch(err => {
+          console.error('新增失败:', err);
+          ElMessage.error('新增失败: ' + (err.message || '未知错误'));
         });
       }
     },
-   
     handleSelectionChange(selection) {
       this.selectedRows = selection;
     },

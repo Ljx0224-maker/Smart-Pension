@@ -180,14 +180,14 @@ export default {
 
       getStaffList(params).then((res) => {
         if (res.code === 200) {
-          this.tableData = res.data || []; // 后端返回的员工列表
-          this.total = res.total || 0; // 总记录数
+          this.tableData = res.data || []; // 更新员工列表数据
+          this.total = res.total || 0; // 更新总记录数
         } else {
-          ElMessage.error('获取数据失败');
+          this.$message.error('获取数据失败');
         }
       }).catch((err) => {
         console.error('Error loading staff list:', err);
-        ElMessage.error('加载员工列表时发生错误');
+        this.$message.error('加载员工列表时发生错误');
       });
     },
     // 删除单个员工

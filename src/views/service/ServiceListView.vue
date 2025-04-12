@@ -44,7 +44,7 @@
     </div>
 
     <!-- 编辑弹窗 -->
-    <el-dialog title="编辑商品" :visible.sync="editDialogVisible" width="500px">
+    <el-dialog title="编辑商品" v-model="editDialogVisible" width="500px">
       <el-form :model="editForm" label-width="100px">
         <el-form-item label="服务类型">
           <el-input v-model="editForm.serviceType" disabled></el-input>
@@ -57,8 +57,8 @@
         </el-form-item>
         <el-form-item label="状态">
           <el-select v-model="editForm.status" placeholder="请选择状态">
-            <el-option label="已上架" value="已上架"></el-option>
-            <el-option label="已下架" value="已下架"></el-option>
+            <el-option label="已上架" value="listed"></el-option>
+            <el-option label="已下架" value="unlisted"></el-option>
           </el-select>
         </el-form-item>
       </el-form>
@@ -121,18 +121,24 @@ export default {
         serviceType: row.serviceType,
         oldCategory: row.category,
         newCategory: row.category,
-        status: row.status,
+        status: row.status === '已上架' ? '已上架' : '下架', // 映射为中文
       };
       editDialogVisible.value = true;
     };
 
     const submitEdit = async () => {
       try {
-        const res = await editProduct(editForm.value);
+        const res = await editProduct({
+          serviceType: editForm.value.serviceType,
+          oldCategory: editForm.value.oldCategory,
+          category: editForm.value.newCategory,
+          status: editForm.value.status === '已上架' ? '已上架' : '下架', // 映射为英文
+        });
+
         if (res.code === 200) {
           ElMessage.success('编辑成功');
           editDialogVisible.value = false;
-          fetchProductClassList(); // 刷新列表
+          fetchProductClassList();
         } else {
           ElMessage.error('编辑失败: ' + res.message);
         }

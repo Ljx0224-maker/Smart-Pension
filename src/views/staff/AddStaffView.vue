@@ -5,7 +5,7 @@
           <el-input v-model="staffForm.name" placeholder="请输入"></el-input>
         </el-form-item>
         <el-form-item label="ID" required>
-          <el-input v-model="staffForm.id" placeholder="自动生成"></el-input>
+          <el-input v-model="staffForm.id" placeholder="自动生成" readonly></el-input>
         </el-form-item>
         <el-form-item label="服务类型" required>
           <el-select v-model="staffForm.serviceType" placeholder="请选择">
@@ -21,11 +21,7 @@
             <!-- Add options as needed -->
           </el-select>
         </el-form-item>
-        <el-form-item label="标签">
-          <el-select v-model="staffForm.tag" placeholder="请选择">
-            <!-- Add options as needed -->
-          </el-select>
-        </el-form-item>
+      
         <el-form-item label="头像">
           <el-upload
             action="#"
@@ -60,6 +56,14 @@
             <!-- Add more work hours as needed -->
           </el-checkbox-group>
         </el-form-item>
+        <el-form-item label="密码" required>
+          <el-input
+            v-model="staffForm.password"
+            type="password"
+            placeholder="请输入密码"
+            show-password
+          ></el-input>
+        </el-form-item>
         <el-form-item>
           <el-button type="primary" @click="submitForm">提交审核</el-button>
           <el-button @click="resetForm">返回</el-button>
@@ -69,7 +73,7 @@
   </template>
   
   <script>
-  import { getStaffDetail } from '@/api/staff'; // 假设有获取员工详情的接口
+  import { getStaffDetail, addOrUpdateStaff } from '@/api/staff'; // 假设有获取员工详情的接口
 
   export default {
     data() {
@@ -80,15 +84,15 @@
           serviceType: '',
           phone: '',
           region: '',
-          tag: '',
           description: '',
           idNumber: '',
           bankCardNumber: '',
           bankBranch: '',
           status: true,
           userReward: false,
-          workHours: []
-        }
+          workHours: [],
+          password: '', // 添加密码字段
+        },
       };
     },
     methods: {
@@ -97,26 +101,65 @@
       },
       submitForm() {
         console.log('Submitting form:', this.staffForm);
-        // Add your submission logic here
+
+        // 转换 status 为数据库支持的值
+        const formData = {
+          ...this.staffForm,
+          status: this.staffForm.status ? '启用' : '禁用', // 转换布尔值为字符串
+        };
+
+        // 调用接口提交表单数据
+        addOrUpdateStaff(formData).then((res) => {
+          if (res.code === 200) {
+            this.$message.success('提交成功');
+            this.$router.push('/staff/stafflist'); // 跳转到服务人员列表页面
+          } else {
+            this.$message.error('提交失败: ' + res.message);
+          }
+        }).catch((err) => {
+          console.error('提交失败:', err);
+          this.$message.error('提交失败，请稍后重试');
+        });
       },
       resetForm() {
         this.$router.push('/staff/stafflist'); // 返回员工列表页面
       },
-      // 加载员工详情
       async loadStaffDetail() {
-        const staffId = this.$route.query.staffId;
+        const staffId = this.$route.query.staffId; // 从路由参数中获取 staffId
         if (!staffId) {
           this.$message.error('员工ID不存在');
           return;
         }
         try {
-          const res = await getStaffDetail(staffId); // 调用接口获取员工详情
+          const res = await getStaffDetail(staffId);
+          console.log('接口返回数据:', res); // 打印接口返回的数据
           if (res.code === 200) {
-            this.staffForm = res.data; // 将返回的数据填充到表单中
+            // 从返回的数组中找到匹配的员工
+            const staff = res.data.find((item) => item.staffId === staffId);
+            if (staff) {
+  this.staffForm = {
+    name: staff.name,
+    id: staff.staffId,
+    serviceType: staff.serviceType,
+    phone: staff.phone,
+    region: staff.serviceArea,
+    description: staff.bio,
+    idNumber: staff.sfz,
+    bankCardNumber: staff.bankId,
+    bankBranch: staff.bankName,
+    status: staff.status === '启用', // 转换为布尔值
+    userReward: false, // 默认值
+    workHours: [], // 默认值
+    password: staff.password || '', // 加载密码字段
+  };
+}else {
+              this.$message.error('未找到对应的员工信息');
+            }
           } else {
             this.$message.error('获取员工详情失败: ' + res.message);
           }
         } catch (error) {
+          console.error('接口调用错误:', error);
           this.$message.error('获取员工详情失败: ' + error.message);
         }
       }

@@ -2,7 +2,7 @@
   <div class="product-container">
     <div class="filter-section">
       <div class="page-header">
-        <h2>上门体验商品管理</h2>
+        <h2>上门体检</h2>
       </div>
 
       <div class="filter-box">
@@ -20,9 +20,12 @@
             <span style="margin-left: 70px;">分类</span>
             <el-select v-model="categoryFilter" placeholder="请选择" style="width: 200px;">
               <el-option label="全部" value=""></el-option>
-              <el-option label="体检服务" value="体检服务"></el-option>
-              <el-option label="咨询预约" value="咨询预约"></el-option>
-              <el-option label="上门服务" value="上门服务"></el-option>
+              <el-option label="常规检查" value="常规检查"></el-option>
+              <el-option label="高血压" value="高血压"></el-option>
+              <el-option label="腰肌劳损" value="腰肌劳损"></el-option>
+              <el-option label="心血管疾病" value="心血管疾病"></el-option>
+              <el-option label="骨密度检查" value="骨密度检查"></el-option>
+              <el-option label="肿瘤标志物" value="肿瘤标志物"></el-option>
             </el-select>
           </div>
         </div>
@@ -67,6 +70,14 @@
         @selection-change="handleSelectionChange"
       >
         <el-table-column type="selection" width="55"></el-table-column>
+        
+        <!-- 商品名称列 -->
+        <el-table-column prop="productName" label="商品名称" width="200">
+          <template #default="scope">
+            <div>{{ scope.row.productName }}</div>
+          </template>
+        </el-table-column>
+        
         <el-table-column label="商品编码" width="200">
           <template #default="scope">
             <div>
@@ -120,13 +131,16 @@
             <el-input v-model="form.name"></el-input>
           </el-form-item>
           <el-form-item label="商品编码">
-            <el-input v-model="form.productCode"></el-input>
+            <el-input v-model="form.productCode" disabled></el-input>
           </el-form-item>
           <el-form-item label="分类">
             <el-select v-model="form.category" placeholder="请选择">
-              <el-option label="体检服务" value="体检服务"></el-option>
-              <el-option label="咨询预约" value="咨询预约"></el-option>
-              <el-option label="上门服务" value="上门服务"></el-option>
+              <el-option label="常规检查" value="常规检查"></el-option>
+              <el-option label="高血压" value="高血压"></el-option>
+              <el-option label="腰肌劳损" value="腰肌劳损"></el-option>
+              <el-option label="心血管疾病" value="心血管疾病"></el-option>
+              <el-option label="骨密度检查" value="骨密度检查"></el-option>
+              <el-option label="肿瘤标志物" value="肿瘤标志物"></el-option>
             </el-select>
           </el-form-item>
           <el-form-item label="价格">
@@ -137,6 +151,21 @@
               <el-option label="已上架" value="listed"></el-option>
               <el-option label="已下架" value="unlisted"></el-option>
             </el-select>
+          </el-form-item>
+          <el-form-item label="商品备注">
+            <el-input v-model="form.productRemark"></el-input>
+          </el-form-item>
+          <el-form-item label="服务详情">
+            <el-input type="textarea" v-model="form.serviceDetails"></el-input>
+          </el-form-item>
+          <el-form-item label="销量">
+            <el-input-number v-model="form.sales" :min="0"></el-input-number>
+          </el-form-item>
+          <el-form-item label="服务人数">
+            <el-input-number v-model="form.servicePeople" :min="0"></el-input-number>
+          </el-form-item>
+          <el-form-item label="服务时长（分钟）">
+            <el-input-number v-model="form.serviceDuration" :min="0"></el-input-number>
           </el-form-item>
           <el-form-item label="商品图片">
             <el-upload
@@ -186,6 +215,11 @@ export default {
         price: 0,
         status: '',
         image: '',
+        productRemark: '', // 商品备注
+        serviceDetails: '', // 服务详情
+        sales: 0, // 销量
+        servicePeople: 0, // 服务人数
+        serviceDuration: 0, // 服务时长（分钟）
       },
       selectedRows: [],
     };
@@ -199,8 +233,13 @@ export default {
     filteredProducts() {
       return this.tableData.filter(product => {
         // 筛选状态
-        if (this.statusFilter && product.status !== this.statusFilter) {
-          return false;
+        if (this.statusFilter) {
+          if (this.statusFilter === 'listed' && product.status !== '已上架') {
+            return false;
+          }
+          if (this.statusFilter === 'unlisted' && product.status !== '下架') {
+            return false;
+          }
         }
 
         // 筛选分类
@@ -211,8 +250,8 @@ export default {
         // 筛选日期范围
         if (this.dateRange && product.lastUpdatedAt) {
           const productDate = new Date(product.lastUpdatedAt);
-          const startDate = this.dateRange[0];
-          const endDate = this.dateRange[1];
+          const startDate = new Date(this.dateRange[0]);
+          const endDate = new Date(this.dateRange[1]);
           if (productDate < startDate || productDate > endDate) {
             return false;
           }
@@ -228,6 +267,11 @@ export default {
     },
   },
   methods: {
+    generateRandomCode() {
+      const timestamp = Date.now().toString(36); // 基于时间戳的部分
+      const randomPart = Math.random().toString(36).substring(2, 8).toUpperCase(); // 随机部分
+      return `SM-${timestamp}-${randomPart}`; // 组合成商品编码
+    },
     handleImageSuccess(res, file) {
       this.form.image = URL.createObjectURL(file.raw);
     },
@@ -257,12 +301,18 @@ export default {
       this.dialogTitle = '新增商品';
       this.form = {
         id: null,
-        name: '',
-        productCode: '',
-        category: '',
-        price: 0,
-        status: '',
-        image: '',
+        name: '', // 商品名称
+        productCode: this.generateRandomCode(), // 随机生成商品编码
+        category: '', // 分类
+        price: 0, // 价格
+        status: 'unlisted', // 默认状态为下架
+        image: '', // 商品图片
+        productRemark: '', // 商品备注
+        serviceDetails: '', // 服务详情
+        sales: 0, // 销量
+        servicePeople: 0, // 服务人数
+        serviceDuration: 0, // 服务时长（分钟）
+        serviceType: '上门体检', // 设置服务类型为上门体检
       };
       this.dialogVisible = true;
     },
@@ -302,26 +352,37 @@ export default {
       });
     },
     saveProduct() {
+      const payload = {
+        ...this.form,
+        productName: this.form.name, // 映射为后端字段
+        status: this.form.status === 'listed' ? '已上架' : '下架', // 映射状态值
+        lastUpdatedBy: '管理员', // 设置默认值为管理员
+        serviceType: '上门体检', // 确保服务类型为上门体检
+      };
+
       if (this.form.id) {
-        // 编辑
-        updateProduct(this.form.id, this.form).then(res => {
-          if (res.success) {
+        // 编辑商品
+        updateProduct(payload).then(res => {
+          if (res.code === 200) {
             ElMessage.success('编辑成功');
             this.dialogVisible = false;
-            this.loadProducts();
+            this.loadProducts(); // 刷新商品列表
           } else {
-            ElMessage.error('编辑失败');
+            ElMessage.error('编辑失败: ' + res.message);
           }
+        }).catch(err => {
+          console.error('编辑失败:', err);
+          ElMessage.error('编辑失败: ' + (err.message || '未知错误'));
         });
       } else {
-        // 新增
-        addProduct(this.form).then(res => {
-          if (res.success) {
-            ElMessage.success('新增成功');
+        // 新增商品
+        addProduct(payload).then(res => {
+          if (res.code === 200) {
+            console.log('新增商品成功，服务类型:', payload.serviceType);
             this.dialogVisible = false;
             this.loadProducts();
           } else {
-            ElMessage.error('新增失败');
+            console.error('新增失败:', res.message);
           }
         });
       }
@@ -337,9 +398,9 @@ export default {
         cancelButtonText: '取消',
         type: 'warning',
       }).then(() => {
-        const productCodes = this.selectedRows.map(row => row.productCode);
-        deleteProduct(productCodes).then(res => {
-          if (res.success) {
+        const productIds = this.selectedRows.map(row => row.productId);
+        deleteProduct(productIds).then(res => {
+          if (res.code === 200) {
             ElMessage.success('批量删除成功');
             this.loadProducts();
             this.selectedRows = [];
@@ -366,6 +427,7 @@ export default {
           status: this.statusFilter,
           category: this.categoryFilter,
           keyword: this.searchKeyword,
+          serviceType: '上门体检', // 只加载服务类型为上门体检的商品
         },
       };
 
@@ -374,13 +436,18 @@ export default {
         params.params.endDate = this.dateRange[1];
       }
 
+      console.log('加载商品列表，服务类型: 上门体检');
       getSMProductList(params).then(res => {
         if (res.code === 200) {
-          this.tableData = res.data;
-          this.total = res.total;
+          console.log('商品列表加载成功:', res.data);
+          this.tableData = res.data; // 更新表格数据
+          this.total = res.total; // 更新总条目数
         } else {
-          ElMessage.error('获取数据失败');
+          console.error('商品列表加载失败:', res.message);
         }
+      }).catch(err => {
+        console.error('获取数据失败:', err);
+        ElMessage.error('获取数据失败: ' + (err.message || '未知错误'));
       });
     },
   },

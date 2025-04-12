@@ -40,7 +40,7 @@ import CommentsListView from '@/views/operation/CommentsListView.vue';
 import DiseaseListView from '@/views/operation/DiseaseListView.vue'
 import DishListView from '@/views/operation/DishListView.vue'
 import HealthInfoListView from '@/views/operation/HealthInfoListView.vue'
-import InstitutionListView from '@/views/operation/InstitutionListView.vue'
+import InstitutionListView from '@/views/operation/InstitutionListVIew.vue'
 import MediaListView from '@/views/operation/MediaListView.vue'
   // 导入生活圈管理相关组件
 import BannerIndexView from '@/views/operation/social/BannerIndexView.vue';
@@ -59,7 +59,7 @@ import JiaZhengHuLiView from '@/views/service/JiaZhengHuLiView.vue';
 import ShangMenTiYanView from '@/views/service/ShangMenTiYanView.vue';
 import KangFuLiLiaoView from '@/views/service/KangFuLiLiaoView.vue';
 import CategoryManagementIndexView from '@/views/service/CategoryManagementIndexView.vue';
-import AddServiceView from '@/views/service/AddServiceView.vue';
+// import AddServiceView from '@/views/service/AddServiceView.vue';
 
 
 //导入服务人员管理
@@ -69,7 +69,7 @@ import AddStaffView from '@/views/staff/AddStaffView.vue';
 
 //导入数据中心DataIndexView
 import DataIndexView from '@/views/data/DataIndexView.vue';
-import ServiceWorkOrderView from '@/views/data/ServiceWorkOrderView.vue';
+// import ServiceWorkOrderView from '@/views/data/ServiceWorkOrderView.vue';
 import TransactionView from '@/views/data/TransactionView.vue';
 import UserView from '@/views/data/UserView.vue';
 
@@ -339,13 +339,13 @@ export const routes=[
             label: '分类管理',
             component: ServiceListView,
           },
-          { 
-            path: 'addservice',
-            name: 'addservice',
-            label: '新增商品信息',
-            component: AddServiceView,
+          // { 
+          //   path: 'addservice',
+          //   name: 'addservice',
+          //   label: '新增商品信息',
+          //   component: AddServiceView,
 
-          },
+          // },
           {
             path: 'management',
             name: 'management',
@@ -409,12 +409,12 @@ export const routes=[
         label:'数据中心',
         component:DataIndexView,
         children:[
-          {
-            path:'serviceworkorder',
-            name:'serviceworkorder',
-            label:'服务工单分析',
-            component:ServiceWorkOrderView,
-          },
+          // {
+          //   path:'serviceworkorder',
+          //   name:'serviceworkorder',
+          //   label:'服务工单分析',
+          //   component:ServiceWorkOrderView,
+          // },
           {
             path:'transaction',
             name:'transaction',

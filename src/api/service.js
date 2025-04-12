@@ -100,9 +100,14 @@ export function getProductClassList() {
 
 export function editProduct(editData) {
   return ajax({
-    url: '/products/class/edit', // 后端提供的编辑接口路径
+    url: `/products/class/edit`,
     method: 'POST',
-    data: editData,
+    data: {
+      serviceType: editData.serviceType,
+      oldCategory: editData.oldCategory, // 添加旧分类参数
+      category: editData.category,
+      status: editData.status,
+    },
   });
 }
 
