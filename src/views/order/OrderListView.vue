@@ -1,333 +1,361 @@
 <template>
-    <div class="order-container">
-      <div class="filter-section">
-        <div class="filter-item">
-          <span>服务类型</span>
-          <el-radio-group v-model="serviceType">
-            <el-radio label="家政护工">家政护工</el-radio>
-            <el-radio label="康复理疗">康复理疗</el-radio>
-            <el-radio label="上门体检">上门体检</el-radio>
-          </el-radio-group>
+  <div class="order-container">
+    <div class="filter-section">
+      <div class="page-header">
+        <h2>全部订单</h2>
+      </div>
+
+      <div class="filter-box">
+        <!-- 筛选条件 -->
+        <div class="filter-row">
+          <div class="filter-item">
+            <span>服务类型</span>
+            <el-radio-group v-model="category">
+              <el-radio label="生活照料">生活照料</el-radio>
+              <el-radio label="临床护理">临床护理</el-radio>
+              <el-radio label="康复护理">康复护理</el-radio>
+              <el-radio label="心理关怀">心理关怀</el-radio>
+            </el-radio-group>
+          </div>
         </div>
-  
-        <div class="filter-item">
-          <span>支付方式</span>
-          <el-select v-model="paymentType" placeholder="请选择">
-            <el-option label="全部" value=""></el-option>
-            <el-option label="支付宝" value="支付宝"></el-option>
-            <el-option label="微信" value="微信"></el-option>
-          </el-select>
+
+        <div class="filter-row">
+          <div class="filter-item">
+            <span >支付方式</span>
+            <el-select v-model="paymentMethod" placeholder="请选择" style="width: 200px;">
+              <el-option label="全部" value=""></el-option>
+              <el-option label="支付宝" value="支付宝"></el-option>
+              <el-option label="微信支付" value="微信支付"></el-option>
+              <el-option label="银行卡" value="银行卡"></el-option>
+              <el-option label="现金" value="现金"></el-option>
+            </el-select>
+          </div>
+          <div class="filter-item">
+            <span style="margin-left:50px;">订单状态</span>
+            <el-select v-model="orderStatusFilter" placeholder="请选择订单状态" style="width: 200px;">
+              <el-option label="全部" value=""></el-option>
+              <el-option label="订单完成" value="订单完成"></el-option>
+              <el-option label="退款完成，订单关闭" value="退款完成，订单关闭"></el-option>
+              <el-option label="待付款" value="待付款"></el-option>
+              <el-option label="待服务" value="待服务"></el-option>
+            </el-select>
+          </div>
+
         </div>
-  
-        <div class="filter-item">
-          <span>下单日期</span>
-          <el-date-picker
-            v-model="dateRange"
-            type="daterange"
-            range-separator="至"
-            start-placeholder="开始日期"
-            end-placeholder="结束日期"
-          ></el-date-picker>
-        </div>
-  
-        <div class="filter-item">
-          <span>实付金额</span>
-          <el-input v-model="minPrice" placeholder="最低价格" style="width: 120px;"></el-input>
-          <span style="margin: 0 8px;">-</span>
-          <el-input v-model="maxPrice" placeholder="最高价格" style="width: 120px;"></el-input>
-        </div>
-  
-        <div class="filter-item">
-          <el-input v-model="searchKeyword" placeholder="请输入关键字"></el-input>
-          <el-button type="primary" @click="searchOrders">搜索</el-button>
-          <el-button @click="resetFilters">重置</el-button>
+
+        <div class="filter-row">
+          <div class="filter-item">
+            <span >下单日期</span>
+            <el-date-picker
+              v-model="orderDateRange"
+              type="daterange"
+              range-separator="~"
+              start-placeholder="开始日期"
+              end-placeholder="结束日期"
+              style="width: 300px;"
+            ></el-date-picker>
+          </div>
+
         </div>
       </div>
-  
-      <div class="status-tabs">
-        <el-tabs v-model="activeStatus" @tab-click="handleStatusChange">
-          <el-tab-pane label="全部" name="all"></el-tab-pane>
-          <el-tab-pane label="待付款" name="pending"></el-tab-pane>
-          <el-tab-pane label="待接单" name="waiting"></el-tab-pane>
-          <el-tab-pane label="待服务" name="processing"></el-tab-pane>
-          <el-tab-pane label="已完成" name="completed"></el-tab-pane>
-          <el-tab-pane label="退款售后" name="refunded"></el-tab-pane>
-          <el-tab-pane label="已关闭" name="closed"></el-tab-pane>
-        </el-tabs>
-        <el-button type="primary" style="float: right;">批量操作</el-button>
+    </div>
+
+    <div class="action-table-box">
+      <div class="action-section">
+        <div class="action-buttons">
+          <el-button @click="batchOperation">批量操作</el-button>
+        </div>
       </div>
-  
-      <el-table :data="filteredOrders" style="width: 100%">
-        <el-table-column prop="productInfo" label="商品信息" width="300">
+
+      <el-table
+        :data="filteredOrders"
+        style="width: 100%"
+        @selection-change="handleSelectionChange"
+      >
+        <el-table-column type="selection" width="55"></el-table-column>
+        <el-table-column prop="productName" label="商品"></el-table-column>
+        <el-table-column prop="orderedTime" label="下单时间" width="180">
           <template #default="scope">
-            <div style="display: flex; align-items: center;">
-              <img :src="scope.row.productImage" alt="商品图片" style="width: 50px; height: 50px; margin-right: 10px;">
-              <div>
-                <div>{{ scope.row.productName }}</div>
-                <div style="font-size: 12px; color: #999;">{{ scope.row.productDetails }}</div>
-              </div>
-            </div>
+            {{ formatDate(scope.row.orderedTime) }}
           </template>
         </el-table-column>
-  
-        <el-table-column prop="price" label="价格（元）" width="120"></el-table-column>
-  
-        <el-table-column prop="buyer" label="买家" width="180">
+        <el-table-column prop="category" label="服务类型">
           <template #default="scope">
-            <div style="display: flex; align-items: center;">
-              <img :src="scope.row.buyerAvatar" alt="买家头像" style="width: 30px; height: 30px; border-radius: 50%; margin-right: 10px;">
-              <div>
-                <div>{{ scope.row.buyerName }}</div>
-                <div style="font-size: 12px; color: #999;">{{ scope.row.buyerPhone }}</div>
-              </div>
-            </div>
-          </template>
-        </el-table-column>
-  
-        <el-table-column prop="status" label="订单状态" width="120">
-          <template #default="scope">
-            <el-tag :type="getStatusType(scope.row.status)">
-              {{ getStatusText(scope.row.status) }}
+            <el-tag :type="getCategoryType(scope.row.category)">
+              {{ scope.row.category }}
             </el-tag>
           </template>
         </el-table-column>
-  
-        <el-table-column prop="paymentMethod" label="支付方式" width="120"></el-table-column>
-  
+        <el-table-column prop="totalAmount" label="总金额（元）"></el-table-column>
+        <el-table-column prop="realName" label="买家"></el-table-column>
+        <el-table-column prop="orderStatus" label="订单状态"></el-table-column>
+        <el-table-column prop="paymentMethod" label="支付方式"></el-table-column>
         <el-table-column label="操作" width="200">
           <template #default="scope">
             <el-button type="text" @click="viewOrderDetails(scope.row)">订单详情</el-button>
-            <el-button type="text" @click="closeOrder(scope.row)">关闭订单</el-button>
-            <el-button type="text" @click="assignOrder(scope.row)">手动派单</el-button>
-            <el-button type="text" @click="refundOrder(scope.row)">退款</el-button>
-            <el-button type="text" @click="contactUser(scope.row)">联系用户</el-button>
-            <el-button type="text" @click="addNote(scope.row)">备注</el-button>
+            <el-button type="text" @click="deleteOrder(scope.row.orderId)" style="color: #FF4D4F;">删除订单</el-button>
           </template>
         </el-table-column>
       </el-table>
-  
+
+      <!-- 翻页栏 -->
       <el-pagination
         background
         v-model:current-page="currentPage"
-        layout="prev, pager, next"
-        :total="filteredOrders.length"
+        :page-size="pageSize"
+        layout="total, prev, pager, next, jumper"
+        :total="total"
         @current-change="handlePageChange"
       ></el-pagination>
     </div>
-  </template>
-  
-  <script>
-  import { ElMessage } from 'element-plus';
-  
-  export default {
-    data() {
-      return {
-        tableData: [
-          {
-            orderId: '2400126670',
-            productImage: 'https://via.placeholder.com/50',
-            productName: '日常清洁',
-            productDetails: '2小时1人急速清洁全程质保',
-            price: '300.00',
-            buyerAvatar: 'https://via.placeholder.com/30',
-            buyerName: '笑看人生',
-            buyerPhone: '19288664488',
-            status: 'pending',
-            paymentMethod: '-',
-            orderTime: '2022-12-09 14:12:07',
-          },
-          {
-            orderId: '2400126670',
-            productImage: 'https://via.placeholder.com/50',
-            productName: '日常清洁',
-            productDetails: '2小时1人急速清洁全程质保',
-            price: '300.00',
-            buyerAvatar: 'https://via.placeholder.com/30',
-            buyerName: '笑看人生',
-            buyerPhone: '19288664488',
-            status: 'waiting',
-            paymentMethod: '支付宝',
-            orderTime: '2022-12-09 14:12:07',
-          },
-        ],
-        currentPage: 1,
-        serviceType: '家政护工',
-        paymentType: '',
-        dateRange: '',
-        minPrice: '',
-        maxPrice: '',
-        searchKeyword: '',
-        activeStatus: 'all',
+  </div>
+</template>
+
+<script>
+import { ElMessage, ElMessageBox } from 'element-plus';
+import { Search, RefreshLeft } from '@element-plus/icons-vue';
+import { getOrders, deleteOrder } from '@/api/order';
+
+export default {
+  data() {
+    return {
+      orders: [],
+      currentPage: 1,
+      pageSize: 10,
+      total: 0,
+      category: '',
+      paymentMethod: '',
+      orderDateRange: '',
+      minPrice: null,
+      maxPrice: null,
+      searchKeyword: '',
+      selectedRows: [],
+      orderStatusFilter: '', // 新增订单状态筛选变量
+    };
+  },
+  components: {
+    Search,
+    RefreshLeft,
+  },
+  computed: {
+    filteredOrders() {
+      return this.orders.filter(order => {
+        // 筛选服务类型
+        if (this.category && order.category !== this.category) {
+          return false;
+        }
+
+        // 筛选支付方式
+        if (this.paymentMethod && order.paymentMethod !== this.paymentMethod) {
+          return false;
+        }
+
+        // 筛选订单状态
+        if (this.orderStatusFilter && order.orderStatus !== this.orderStatusFilter) {
+          return false;
+        }
+
+        // 筛选日期范围
+        if (this.orderDateRange && order.orderedTime) {
+          const orderDate = new Date(order.orderedTime);
+          const startDate = new Date(this.orderDateRange[0]);
+          const endDate = new Date(this.orderDateRange[1]);
+          if (orderDate < startDate || orderDate > endDate) {
+            return false;
+          }
+        }
+
+        // 筛选关键字
+        if (this.searchKeyword && (!order.realName || !order.realName.includes(this.searchKeyword))) {
+          return false;
+        }
+
+        return true;
+      });
+    },
+  },
+  methods: {
+    searchOrders() {
+      this.loadOrders();
+    },
+    resetSearch() {
+      this.category = '';
+      this.paymentMethod = '';
+      this.orderDateRange = '';
+      this.minPrice = null;
+      this.maxPrice = null;
+      this.searchKeyword = '';
+      this.orderStatusFilter = ''; // 重置订单状态筛选
+      this.loadOrders();
+    },
+    batchOperation() {
+      if (this.selectedRows.length === 0) {
+        ElMessage.warning('请至少选择一条记录');
+        return;
+      }
+      // 批量操作逻辑
+    },
+    handleSelectionChange(selection) {
+      this.selectedRows = selection;
+    },
+    handlePageChange(page) {
+      this.currentPage = page;
+      this.loadOrders();
+    },
+    loadOrders() {
+      const params = {
+        pageSize: this.pageSize,
+        pageNum: this.currentPage,
+        category: this.category,
+        paymentMethod: this.paymentMethod,
+        minPrice: this.minPrice,
+        maxPrice: this.maxPrice,
+        keyword: this.searchKeyword,
+        orderStatus: this.orderStatusFilter,
       };
+    
+      if (this.orderDateRange) {
+        params.startDate = this.orderDateRange[0];
+        params.endDate = this.orderDateRange[1];
+      }
+    
+      getOrders(params).then(res => {
+        console.log('获取订单列表响应:', res); // 打印响应数据
+        
+        if (res.code === 200) {
+          this.orders = res.data; 
+          this.total = res.total; // 更新总条数
+        } else {
+          ElMessage.error('获取订单失败');
+        }
+      });
     },
-    computed: {
-      filteredOrders() {
-        return this.tableData.filter(order => {
-          // 状态过滤
-          if (this.activeStatus !== 'all' && order.status !== this.activeStatus) {
-            return false;
-          }
-  
-          // 服务类型过滤
-          if (this.serviceType && order.serviceType !== this.serviceType) {
-            return false;
-          }
-  
-          // 支付方式过滤
-          if (this.paymentType && order.paymentMethod !== this.paymentType) {
-            return false;
-          }
-  
-          // 日期范围过滤
-          if (this.dateRange && order.orderTime) {
-            const orderDate = new Date(order.orderTime);
-            const startDate = this.dateRange[0];
-            const endDate = this.dateRange[1];
-            if (orderDate < startDate || orderDate > endDate) {
-              return false;
+    deleteOrder(orderId) {
+      ElMessageBox.confirm('确定要删除此订单吗？', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning',
+      })
+        .then(() => {
+          deleteOrder(orderId).then(res => {
+            if (res.code === 200) {
+              ElMessage.success('删除成功');
+              this.loadOrders();
+            } else {
+              ElMessage.error('删除失败');
             }
-          }
-  
-          // 价格范围过滤
-          if (this.minPrice && parseFloat(order.price) < parseFloat(this.minPrice)) {
-            return false;
-          }
-          if (this.maxPrice && parseFloat(order.price) > parseFloat(this.maxPrice)) {
-            return false;
-          }
-  
-          // 关键字过滤
-          if (this.searchKeyword && !order.productName.includes(this.searchKeyword)) {
-            return false;
-          }
-  
-          return true;
+          });
+        })
+        .catch(() => {
+          ElMessage.info('已取消删除');
         });
-      },
     },
-    methods: {
-      getStatusType(status) {
-        switch (status) {
-          case 'completed':
-            return 'success';
-          case 'waiting':
-            return 'warning';
-          case 'pending':
-          case 'refunded':
-          case 'closed':
-            return 'danger';
-          default:
-            return '';
-        }
-      },
-      getStatusText(status) {
-        switch (status) {
-          case 'completed':
-            return '已完成';
-          case 'waiting':
-            return '待接单';
-          case 'pending':
-            return '待付款';
-          case 'refunded':
-            return '退款售后';
-          case 'closed':
-            return '已关闭';
-          default:
-            return status;
-        }
-      },
-      handleStatusChange(tab) {
-        this.activeStatus = tab.name;
-      },
-      handlePageChange(page) {
-        this.currentPage = page;
-      },
-      searchOrders() {
-        // 搜索结果会自动过滤
-      },
-      resetFilters() {
-        this.serviceType = '家政护工';
-        this.paymentType = '';
-        this.dateRange = '';
-        this.minPrice = '';
-        this.maxPrice = '';
-        this.searchKeyword = '';
-        this.activeStatus = 'all';
-      },
-      viewOrderDetails(row) {
-        ElMessage.info(`查看订单 ${row.orderId} 的详情`);
-        // 这里可以跳转到订单详情页
-      },
-      closeOrder(row) {
-        ElMessage.success(`关闭订单 ${row.orderId}`);
-        // 这里可以调用关闭订单的 API
-      },
-      assignOrder(row) {
-        ElMessage.success(`手动派单 ${row.orderId}`);
-        // 这里可以调用派单的 API
-      },
-      refundOrder(row) {
-        ElMessage.success(`退款订单 ${row.orderId}`);
-        // 这里可以调用退款的 API
-      },
-      contactUser(row) {
-        ElMessage.success(`联系用户 ${row.buyerName}`);
-        // 这里可以调用联系用户的 API
-      },
-      addNote(row) {
-        ElMessage.success(`添加备注 ${row.orderId}`);
-        // 这里可以调用添加备注的 API
-      },
+    viewOrderDetails(order) {
+      // 查看订单详情逻辑
     },
-  };
-  </script>
-  
-  <style scoped>
-  .order-container {
-    padding: 20px;
-    background-color: #f5f7fa;
-  }
-  
-  .filter-section {
-    background-color: #fff;
-    padding: 20px;
-    border-radius: 8px;
-    margin-bottom: 20px;
-  }
-  
-  .filter-item {
-    margin-bottom: 15px;
-    display: flex;
-    align-items: center;
-  }
-  
-  .filter-item span {
-    width: 80px;
-    display: inline-block;
-  }
-  
-  .status-tabs {
-    background-color: #fff;
-    padding: 20px;
-    border-radius: 8px;
-    margin-bottom: 20px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
-  
-  .el-tabs {
-    width: 100%;
-  }
-  
-  .el-table {
-    background-color: #fff;
-    border-radius: 8px;
-    overflow: hidden;
-  }
-  
-  .el-pagination {
-    margin-top: 20px;
-    text-align: center;
-  }
-  </style>
+    formatDate(date) {
+      if (!date) return '';
+      const d = new Date(date);
+      return `${d.getFullYear()}-${d.getMonth() + 1}-${d.getDate()} ${d.getHours()}:${d.getMinutes()}:${d.getSeconds()}`;
+    },
+    handlePageChange(page) {
+      this.currentPage = page;
+      this.loadOrders(); // 切换页码时重新加载数据
+    },
+        getCategoryType(category) {
+      if (category === '生活照料') {
+        return 'success';
+      } else if (category === '临床护理') {
+        return 'primary';
+      } else if (category === '康复护理') {
+        return 'warning';
+      } else if (category === '心理关怀') {
+        return 'info';
+      }
+      return '';
+    },
+  },
+  mounted() {
+    this.loadOrders();
+  },
+};
+</script>
+
+<style scoped>
+.order-container {
+  padding: 20px;
+  background-color: #f5f7fa;
+}
+
+.page-header {
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+}
+
+.page-header::before {
+  content: '';
+  display: inline-block;
+  width: 8px;
+  height: 20px;
+  background-color: #4fc3f7;
+  margin-right: 10px;
+  border-radius: 2px;
+}
+
+.filter-section {
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+}
+
+.filter-box {
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.filter-row {
+  display: flex;
+  margin-bottom: 15px;
+  align-items: center;
+}
+
+.filter-item {
+  margin-right: 20px;
+  display: flex;
+  align-items: center;
+}
+
+.filter-item span {
+  width: 80px;
+  display: inline-block;
+}
+
+.action-table-box {
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+}
+
+.action-section {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.el-table {
+  border-radius: 8px;
+  overflow: hidden;
+  margin-bottom: 15px;
+}
+
+.el-pagination {
+  text-align: center;
+}
+</style>

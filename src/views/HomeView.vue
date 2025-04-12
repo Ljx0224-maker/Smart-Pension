@@ -3,7 +3,7 @@
 //在项目中万物皆模块
 import logo from "../assets/logo.png";
 
-import {DArrowRight,DArrowLeft} from "@element-plus/icons-vue";
+import {Expand,Fold} from "@element-plus/icons-vue";
 //@代表src
 import AsideCom from "@/components/AsideCom.vue";
 
@@ -25,17 +25,17 @@ export default{
   },
   computed:{
     headerLeft(){
-      return this.collapse ? 'DArrowRight':'DArrowLeft'
+      return this.collapse ? 'Expand':'Fold'
     },
     asideWidth(){
       return this.collapse ? '54px':'200px'
     }
   },
   components:{
-    DArrowRight,
-    DArrowLeft,
+    Expand,
+    Fold,
     AsideCom,
-    BreadCrumbCom
+    BreadCrumbCom,
   },
   methods:{
     setCount(){
@@ -69,7 +69,7 @@ export default{
       <el-aside>
         <div class="logo-box">
           <el-image style="width:50px;height:auto" :src="url"></el-image>
-          <h2 class="manager-title" v-show="!collapse">颐康云护</h2>
+          <h3 class="manager-title" v-show="!collapse">颐康云护</h3>
         </div>
 
         <!--使用自定义组件-->
@@ -84,7 +84,7 @@ export default{
 
         <!--头部-->
         <el-header>
-          <el-icon size="30" @click="collapse =!collapse">
+          <el-icon color="#409efc" size="26" @click="collapse =!collapse" >
             <component :is="headerLeft"></component>
           </el-icon>
           
@@ -133,6 +133,7 @@ export default{
     }
 
     .manager-title{
+      margin-top:25px;
       font-size: 20px;
     }
     

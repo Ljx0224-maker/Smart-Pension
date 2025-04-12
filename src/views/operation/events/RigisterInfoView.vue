@@ -2,7 +2,7 @@
   <div class="registration-container">
     <div class="filter-section">
       <div class="page-header">
-        <h2>报名信息管理</h2>
+        <h2>报名信息列表</h2>
       </div>
 
       <div class="filter-box">
@@ -17,18 +17,6 @@
           </div>
 
           <div class="filter-item">
-            <span>提交日期</span>
-            <el-date-picker
-              v-model="submissionDateRange"
-              type="daterange"
-              range-separator="~"
-              start-placeholder="开始日期"
-              end-placeholder="结束日期"
-              style="width: 300px;"
-            ></el-date-picker>
-          </div>
-
-          <div class="filter-item">
             <el-input v-model="searchKeyword" placeholder="请输入关键字" style="width: 300px;"></el-input>
             <el-button type="primary" @click="searchRegistrations" style="margin-left: 10px;">
               <el-icon><Search/></el-icon>
@@ -37,7 +25,23 @@
               <el-icon><RefreshLeft/></el-icon>
             </el-button>
           </div>
+
+          
         </div>
+        <div class="filter-row">
+        <div class="filter-item">
+          <span >提交日期</span>
+          <el-date-picker
+          v-model="submissionDateRange"
+          type="daterange"
+          range-separator="~"
+          start-placeholder="开始日期"
+          end-placeholder="结束日期"
+          style="width: 300px;"
+          ></el-date-picker>
+        </div>
+      </div>           
+
       </div>
     </div>
 

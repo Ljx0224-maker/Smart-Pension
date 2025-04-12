@@ -1,10 +1,10 @@
 <script>
-import { Avatar,House,UserFilled,User,Star,
-  Postcard,Tickets,Service,ChatLineRound,ChatDotSquare,Document,
-  CreditCard,ShoppingCart,ShoppingCartFull,ShoppingTrolley,Setting,
-  EditPen,Edit,Monitor,VideoPause,VideoCamera,Picture,PictureRounded,
-  Plus,Reading,Dish,ChatRound,Drizzling,PartlyCloudy,Pointer,
-  Discount,OfficeBuilding,Notification,View
+import { Avatar,House,UserFilled,User,Star,Guide,Collection,DataAnalysis,DocumentCopy,
+  Postcard,Tickets,Service,ChatLineRound,ChatDotSquare,Document,Bicycle,CopyDocument,
+  CreditCard,ShoppingCart,ShoppingCartFull,ShoppingTrolley,Setting,DataBoard,
+  EditPen,Edit,Monitor,VideoPause,VideoCamera,Picture,PictureRounded,DocumentAdd,
+  Plus,Reading,Dish,ChatRound,Drizzling,PartlyCloudy,Pointer,Coordinate,CollectionTag,
+  Discount,OfficeBuilding,Notification,View,Goods,SoldOut,School,DataLine,PriceTag
 } from '@element-plus/icons-vue'
 import { mapState } from 'vuex';
 
@@ -21,23 +21,23 @@ export default{
     //接收为一个数字
     props:['collapse'],
     components:{
-        Avatar,
-        House,
+        Avatar,SoldOut,
+        House,School,Coordinate,
         UserFilled,
-        User,
-        Star,
-        Postcard,
-        Tickets,
-        Service,
-        ChatLineRound,
+        User,DataBoard,
+        Star,Bicycle,
+        Postcard,Collection,
+        Tickets,DataAnalysis,
+        Service,DataLine,
+        ChatLineRound,CopyDocument,
         ChatDotSquare,
-        Document,
-        CreditCard,
+        Document,PriceTag,
+        CreditCard,CollectionTag,
         ShoppingCart,
-        ShoppingCartFull,
+        ShoppingCartFull,Guide,
         ShoppingTrolley,
-        Setting,
-        Edit,
+        Setting,DocumentAdd,
+        Edit,Goods,DocumentCopy,
         EditPen,Monitor,VideoPause,VideoCamera,Picture,PictureRounded,Plus,Reading,Dish,
         ChatRound,Drizzling,PartlyCloudy,Pointer,Discount,OfficeBuilding,Notification,View
     },
@@ -62,8 +62,8 @@ export default{
             <span>首页</span>
             </template>
             <!--跟路由配置有关-->
-            <el-menu-item index="/home/board"><el-icon><Notification /></el-icon>工作台</el-menu-item>
-            <el-menu-item index="/home/worktable"><el-icon><View /></el-icon>预约看板</el-menu-item>
+            <el-menu-item index="/home/worktable"><el-icon><Notification /></el-icon>工作台</el-menu-item>
+            <el-menu-item index="/home/board"><el-icon><View /></el-icon>预约看板</el-menu-item>
         </el-sub-menu>
         
 
@@ -173,76 +173,83 @@ export default{
         <el-sub-menu index="/user">
             <template #title>
             <el-icon>
-                <Avatar />
+                <User />
             </el-icon>
             <span>用户管理</span>
             </template>
             <!--跟路由配置有关-->
+<<<<<<< HEAD
             <el-menu-item index="/user/userlist"><el-icon><User /></el-icon>用户列表</el-menu-item>
             <el-menu-item index="/user/usertag"><el-icon><UserFilled /></el-icon>用户标签</el-menu-item>
             <el-menu-item index="/user/adduser"><el-icon><User /></el-icon>新增/修改用户信息</el-menu-item>
             <el-menu-item index="/user/addtag"><el-icon><UserFilled /></el-icon>添加标签</el-menu-item>
+=======
+            <el-menu-item index="/user/userlist"><el-icon><Document /></el-icon>用户列表</el-menu-item>
+            <el-menu-item index="/user/usertag"><el-icon><CollectionTag /></el-icon>用户标签</el-menu-item>
+            <el-menu-item index="/user/adduser"><el-icon><DocumentAdd /></el-icon>添加用户</el-menu-item>
+            <el-menu-item index="/user/addtag"><el-icon><PriceTag /></el-icon>添加标签</el-menu-item>
+>>>>>>> 73420b57ce2b775d81c26f417b3bcd1388526adc
         </el-sub-menu>
 
 
         <el-sub-menu index="/service">
             <template #title>
             <el-icon>
-                <Avatar />
+                <Goods />
             </el-icon>
             <span>商品服务管理</span>
             </template>
-            <el-menu-item index="/service/servicelist"><el-icon><User /></el-icon>分类管理</el-menu-item>
-            <el-menu-item index="/service/addservice"><el-icon><User /></el-icon>新增商品信息</el-menu-item>
+            <el-menu-item index="/service/servicelist"><el-icon><Guide /></el-icon>分类管理</el-menu-item>
+            <el-menu-item index="/service/addservice"><el-icon><Plus /></el-icon>新增商品信息</el-menu-item>
     
 
             <el-sub-menu index="/service/management">
 
               <template #title>
       
-              <span>商品列表</span>
+              <span><el-icon><SoldOut /></el-icon>商品列表</span>
               </template>
             <!--跟路由配置有关-->
         
-            <el-menu-item index="/service/management/jiazhenghuli"><el-icon><UserFilled /></el-icon>家政护理</el-menu-item>
-            <el-menu-item index="/service/management/shangmentiyan"><el-icon><UserFilled /></el-icon>上门体验</el-menu-item>
-            <el-menu-item index="/service/management/kangfuliliao"><el-icon><UserFilled /></el-icon>康复理疗</el-menu-item>
+            <el-menu-item index="/service/management/jiazhenghuli"><el-icon><School /></el-icon>家政护理</el-menu-item>
+            <el-menu-item index="/service/management/shangmentiyan"><el-icon><Coordinate /></el-icon>上门体验</el-menu-item>
+            <el-menu-item index="/service/management/kangfuliliao"><el-icon><Bicycle /></el-icon>康复理疗</el-menu-item>
         </el-sub-menu></el-sub-menu>
 
         <el-sub-menu index="/staff">
             <template #title>
             <el-icon>
-                <Avatar />
+                <User />
             </el-icon>
             <span>服务人员管理</span>
             </template>
             <!--跟路由配置有关-->
-            <el-menu-item index="/staff/stafflist"><el-icon><User /></el-icon>全部服务人员列表</el-menu-item>
-            <el-menu-item index="/staff/addstaff"><el-icon><User /></el-icon>新增服务人员</el-menu-item>
+            <el-menu-item index="/staff/stafflist"><el-icon><DocumentCopy /></el-icon>全部服务人员列表</el-menu-item>
+            <el-menu-item index="/staff/addstaff"><el-icon><CopyDocument /></el-icon>新增服务人员</el-menu-item>
         </el-sub-menu>
 
         <el-sub-menu index="/data">
             <template #title>
             <el-icon>
-                <Avatar />
+                <DataAnalysis />
             </el-icon>
             <span>数据中心</span>
             </template>
             <el-menu-item index="/data/users"><el-icon><User /></el-icon>用户概况</el-menu-item>
-            <el-menu-item index="/data/transaction"><el-icon><User /></el-icon>交易概况</el-menu-item>
-            <el-menu-item index="/data/serviceworkorder"><el-icon><User /></el-icon>服务工单分析</el-menu-item>
+            <el-menu-item index="/data/transaction"><el-icon><DataBoard /></el-icon>交易概况</el-menu-item>
+            <el-menu-item index="/data/serviceworkorder"><el-icon><DataLine /></el-icon>服务工单分析</el-menu-item>
           </el-sub-menu>
 
         <el-sub-menu index="/settings">
             <template #title>
             <el-icon>
-                <Avatar />
+                <Setting />
             </el-icon>
             <span>系统设置</span>
             </template>
             <!--跟路由配置有关-->
             <el-menu-item index="/settings/pepolelist"><el-icon><User /></el-icon>员工管理</el-menu-item>
-            <el-menu-item index="/settings/protocol"><el-icon><UserFilled /></el-icon>协议管理</el-menu-item>
+            <el-menu-item index="/settings/protocol"><el-icon><Collection /></el-icon>协议管理</el-menu-item>
         </el-sub-menu>
 
 
