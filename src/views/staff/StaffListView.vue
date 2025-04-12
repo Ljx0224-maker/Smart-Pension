@@ -68,32 +68,27 @@
         @selection-change="handleSelectionChange"
       >
         <el-table-column type="selection" width="55"></el-table-column>
-        <el-table-column prop="name" label="服务人员信息"></el-table-column>
+        <el-table-column prop="name" label="服务人员姓名"></el-table-column>
         <el-table-column prop="staffId" label="服务人员ID"></el-table-column>
         <el-table-column prop="serviceType" label="服务类型"></el-table-column>
-        <el-table-column prop="tag" label="标签">
+        <el-table-column prop="serviceArea" label="负责区域"></el-table-column>
+        <el-table-column prop="phone" label="联系电话"></el-table-column>
+        <el-table-column prop="status" label="状态">
           <template #default="scope">
-            <el-tag v-for="tag in scope.row.tag.split(',')" :key="tag" :type="getTagType(tag)">{{ tag }}</el-tag>
-          </template>
-        </el-table-column>
-        <el-table-column prop="region" label="负责区域"></el-table-column>
-        <el-table-column prop="joinMethod" label="加入方式"></el-table-column>
-        <el-table-column prop="joinTime" label="加入时间"></el-table-column>
-        <el-table-column label="状态">
-          <template #default="scope">
-            <el-switch
-              v-model="scope.row.status"
-              :active-text="'启用'"
-              :inactive-text="'禁用'"
-              @change="handleStatusChange(scope.row)"
-            ></el-switch>
+            <div style="display: flex; align-items: center;">
+              <el-switch
+                v-model="scope.row.status"
+                active-value="启用"
+                inactive-value="禁用"
+                @change="toggleStatus(scope.row)"
+              ></el-switch>
+              <span style="margin-left: 10px;">{{ scope.row.status }}</span>
+            </div>
           </template>
         </el-table-column>
         <el-table-column label="操作" width="200">
           <template #default="scope">
             <el-button type="text" @click="editStaff(scope.row)">编辑</el-button>
-            <el-button type="text" @click="viewOrders(scope.row)">工单记录</el-button>
-            <el-button type="text" @click="viewCommissions(scope.row)">佣金记录</el-button>
             <el-button type="text" @click="removeStaff(scope.row)" style="color: #FFB800;">删除</el-button>
           </template>
         </el-table-column>
@@ -119,17 +114,17 @@ import { getStaffList, deleteStaff } from '@/api/staff';
 export default {
   data() {
     return {
-      tableData: [],
-      currentPage: 1,
-      pageSize: 10,
-      total: 0,
+      tableData: [], // 员工列表数据
+      currentPage: 1, // 当前页码
+      pageSize: 10, // 每页显示条数
+      total: 0, // 总记录数
       filter: {
         serviceType: '',
         tag: '',
         joinDate: [],
         keyword: '',
       },
-      selectedRows: [],
+      selectedRows: [], // 选中的行
     };
   },
   components: {
@@ -137,6 +132,11 @@ export default {
     RefreshLeft,
   },
   methods: {
+    // 跳转到新增服务人员页面
+    addStaff() {
+      this.$router.push('/staff/addstaff');
+    },
+    // 获取标签类型
     getTagType(tag) {
       if (tag === '金牌家政') {
         return 'success';
@@ -147,10 +147,12 @@ export default {
       }
       return '';
     },
+    // 搜索
     search() {
       this.currentPage = 1;
       this.loadStaffList();
     },
+    // 重置筛选条件
     resetFilters() {
       this.filter = {
         serviceType: '',
@@ -160,13 +162,35 @@ export default {
       };
       this.loadStaffList();
     },
-    addStaff() {
-      this.$router.push('/staff/addstaff');
+    // 加载员工列表
+    loadStaffList() {
+      const params = {
+        pageSize: this.pageSize,
+        pageNum: this.currentPage,
+        params: {
+          serviceType: this.filter.serviceType,
+          keyword: this.filter.keyword,
+        },
+      };
+
+      if (this.filter.joinDate && this.filter.joinDate.length > 0) {
+        params.params.startDate = this.filter.joinDate[0];
+        params.params.endDate = this.filter.joinDate[1];
+      }
+
+      getStaffList(params).then((res) => {
+        if (res.code === 200) {
+          this.tableData = res.data || []; // 后端返回的员工列表
+          this.total = res.total || 0; // 总记录数
+        } else {
+          ElMessage.error('获取数据失败');
+        }
+      }).catch((err) => {
+        console.error('Error loading staff list:', err);
+        ElMessage.error('加载员工列表时发生错误');
+      });
     },
-    editStaff(row) {
-      console.log('编辑服务人员', row);
-      // 跳转到编辑页面
-    },
+    // 删除单个员工
     removeStaff(row) {
       ElMessageBox.confirm(
         '确定要删除此服务人员吗?',
@@ -177,98 +201,63 @@ export default {
           type: 'warning',
         }
       ).then(() => {
-        deleteStaff(row.staffId).then(res => {
+        deleteStaff(row.staffId).then((res) => {
           if (res.code === 200) {
             ElMessage.success('删除成功');
             this.loadStaffList();
           } else {
             ElMessage.error('删除失败');
           }
-        }).catch(err => {
+        }).catch((err) => {
           console.error('Delete error:', err);
         });
       }).catch(() => {
         ElMessage.info('已取消删除');
       });
     },
-    batchDelete() {
-      if (this.selectedRows.length === 0) {
-        ElMessage.warning('请至少选择一条记录');
-        return;
-      }
+    // 切换状态
+    toggleStatus(row) {
+      const newStatus = row.status === '启用' ? '禁用' : '启用';
+      const updatedRow = { ...row, status: newStatus };
 
-      ElMessageBox.confirm('确定要批量删除选中的服务人员吗?', '提示', {
+      // 调用后端接口更新状态
+      this.$confirm(`确定要将状态更改为 "${newStatus}" 吗？`, '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning',
       }).then(() => {
-        const staffIds = this.selectedRows.map(row => row.staffId);
-        deleteStaff(staffIds).then(res => {
+        this.$api.addOrUpdateStaff(updatedRow).then((res) => {
           if (res.code === 200) {
-            ElMessage.success('批量删除成功');
-            this.loadStaffList();
-            this.selectedRows = [];
+            this.$message.success('状态更新成功');
+            row.status = newStatus; // 更新本地状态
           } else {
-            ElMessage.error('批量删除失败');
+            this.$message.error('状态更新失败');
           }
+        }).catch((err) => {
+          console.error('Error updating status:', err);
+          this.$message.error('状态更新失败');
         });
       }).catch(() => {
-        ElMessage.info('已取消批量删除');
+        // 恢复原状态
+        row.status = row.status === '启用' ? '禁用' : '启用';
       });
     },
-    handleSelectionChange(selection) {
-      this.selectedRows = selection;
+    // 编辑员工信息
+    editStaff(row) {
+      if (!row.staffId) {
+        this.$message.error('员工ID不存在');
+        return;
+      }
+      this.$router.push({ path: '/staff/addstaff', query: { staffId: row.staffId } });
     },
+    // 分页切换
     handlePageChange(page) {
       this.currentPage = page;
       this.loadStaffList();
     },
-    handleStatusChange(row) {
-      const staffData = {
-        ...row,
-        tag: row.tag.split(','),
-      };
-      // 更新状态的逻辑
-    },
-    loadStaffList() {
-      const params = {
-        pageSize: this.pageSize,
-        pageNum: this.currentPage,
-        params: {
-          serviceType: this.filter.serviceType,
-          tag: this.filter.tag,
-          keyword: this.filter.keyword,
-        },
-      };
-
-      if (this.filter.joinDate && this.filter.joinDate.length > 0) {
-        params.params.startDate = this.filter.joinDate[0];
-        params.params.endDate = this.filter.joinDate[1];
-      }
-
-      getStaffList(params).then(res => {
-        if (res.code === 200) {
-          this.tableData = (res.data.records || []).map(item => ({
-            ...item,
-            tag: item.tag || '', // 确保 tag 字段存在
-          }));
-          this.total = res.data.total || 0;
-        } else {
-          ElMessage.error('获取数据失败');
-        }
-      });
-    },
-    viewOrders(row) {
-      console.log('查看工单记录', row);
-      // 跳转到工单记录页面
-    },
-    viewCommissions(row) {
-      console.log('查看佣金记录', row);
-      // 跳转到佣金记录页面
-    },
   },
   mounted() {
-    this.loadStaffList();
+    this.loadStaffList(); // 页面加载时获取员工列表
   },
 };
 </script>

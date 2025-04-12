@@ -26,3 +26,12 @@ export function addOrUpdateStaff(staffData) {
     data: staffData
   });
 }
+
+// 获取服务人员详情
+export function getStaffDetail(staffId) {
+  return ajax({
+    url: '/service-staff/query',
+    method: 'POST',
+    data: { params: { staffId } }
+  });
+}

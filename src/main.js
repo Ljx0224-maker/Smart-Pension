@@ -19,7 +19,7 @@ import store from './store/index'
 const app = createApp(App)
 // app.config.globalProperties.$axios = axios
 // app.config.globalProperties.$httpUrl = axios.defaults.baseURL
-
+app.use(ElementPlus); // 确保全局引入 Element Plus
 app.use(router)
 
 // 将全局状态store挂载到app实例上

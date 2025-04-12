@@ -75,9 +75,9 @@ export function addProduct(productData) {
 // 删除商品
 export function deleteProduct(productId) {
   return ajax({
-    url: '/products/delete', 
+    url: `/products/delete?productId=${productId}`, // 修复拼接错误
     method: 'DELETE',
-    params: { productId }
+    params: {productId},
   });
 }
 
@@ -89,3 +89,28 @@ export function updateProduct(productData) {
     data: productData
   });
 }
+
+// 获取商品分类统计列表
+export function getProductClassList() {
+  return ajax({
+    url: '/products/class/list',
+    method: 'GET',
+  });
+}
+
+export function editProduct(editData) {
+  return ajax({
+    url: '/products/class/edit', // 后端提供的编辑接口路径
+    method: 'POST',
+    data: editData,
+  });
+}
+
+export function deleteClassProduct(deleteData) {
+  return ajax({
+    url: `/products/class/delete?serviceType=${deleteData.serviceType}&category=${deleteData.category}`,
+    method: 'delete',
+    params: { serviceType: deleteData.serviceType, category: deleteData.category }
+  });
+}
+

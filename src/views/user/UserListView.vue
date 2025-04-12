@@ -54,7 +54,7 @@
         </div>
   
         <el-table
-          :data="filteredUsers"
+          :data="tableData"
           style="width: 100%"
           @selection-change="handleSelectionChange"
         >
@@ -270,10 +270,9 @@
           const params = {
             userId: this.tagForm.userId,
             tags: this.tagForm.selectedTags.map(tagName => {
-              // 根据 tagName 找到对应的 tagId
               const tag = this.allTags.find(tag => tag.tagName === tagName);
-              return tag ? tag.tagId : null;
-            }).filter(tagId => tagId), // 过滤掉无效的 tagId
+              return tag ? { tagId: tag.tagId, type: 'manual' } : null; // 设置 type 为 "manual"
+            }).filter(tag => tag),
           };
           const res = await addOrUpdateTag(params);
           if (res.code === 200) {
@@ -289,7 +288,11 @@
       },
       // 删除用户
       deleteUser(userId) {
-        console.log('删除用户ID:', userId); // 调试日志
+        
+        if (!userId) {
+          ElMessage.error('用户ID不存在');
+          return;
+        }
         ElMessageBox.confirm(
           '确定要删除此用户吗?',
           '提示',
@@ -299,19 +302,19 @@
             type: 'warning',
           }
         ).then(() => {
-          deleteUser(userId).then(res => {
-            if (res.code === 200) {
-              ElMessage.success('删除成功');
-            } else if (res.code === 403) {
-              ElMessage.error('权限不足，无法删除用户');
-            } else {
-              ElMessage.error('删除失败: ' + res.message);
-            }
-            this.loadUsers();
-          }).catch(err => {
-            console.error('删除接口错误:', err);
-            ElMessage.error('删除失败');
-          });
+          deleteUser(userId) // 调用 API
+            .then(res => {
+              if (res.code === 200) {
+                ElMessage.success('删除成功');
+                this.loadUsers(); // 重新加载用户列表
+              } else {
+                ElMessage.error('删除失败: ' + res.message);
+              }
+            })
+            .catch(err => {
+              console.error('删除接口错误:', err);
+              ElMessage.error('删除失败');
+            });
         }).catch(() => {
           ElMessage.info('已取消删除');
         });
@@ -328,41 +331,13 @@
       // 加载用户列表
       async loadUsers() {
         try {
-          // 确保标签数据已加载
-          if (Object.keys(this.tagMap).length === 0) {
-            await this.loadTags();
-          }
-      
-          const params = {
-            pageSize: this.pageSize,
-            pageNum: this.currentPage,
-            params: {
-              status: this.statusFilter,
-              tag: this.tagFilter,
-              keyword: this.searchKeyword,
-            },
-          };
-      
-          if (this.dateRange) {
-            params.params.startDate = this.dateRange[0];
-            params.params.endDate = this.dateRange[1];
-          }
-      
-          const res = await getUserList(params);
+          const res = await getUserList();
           if (res.code === 200) {
-            console.log('后端返回的用户数据:', res.data); // 调试日志
-      
-            // 将用户数据与标签数据结合
-            this.tableData = res.data.map(user => ({
-              ...user,
-              tags: (user.tagIds || []).map(tagId => {
-                if (!this.tagMap[tagId]) {
-                  console.warn(`未找到标签ID: ${tagId}`);
-                }
-                return this.tagMap[tagId] || '未知标签';
-              }),
+            this.tableData = res.data.map(item => ({
+              ...item.user,
+              tags: item.tags.map(tag => tag.tagName), // 提取标签名称
             }));
-            this.total = res.total;
+            this.total = this.tableData.length;
           } else {
             ElMessage.error('获取用户列表失败: ' + res.message);
           }
@@ -371,27 +346,26 @@
           ElMessage.error('加载用户列表失败');
         }
       },
-      // 加载所有标签
+      // 加载标签列表
       async loadTags() {
         try {
           const res = await getTagsList();
           if (res.code === 200) {
-            // 将标签数据转换为 Map，方便后续查找
-            this.tagMap = res.data.reduce((map, tag) => {
-              map[tag.tagId] = tag.tagName;
-              return map;
-            }, {});
-            this.allTags = res.data; // 保留原始标签列表用于编辑
+            this.allTags = res.data.map(tag => ({
+              tagId: tag.tagId,
+              tagName: tag.tagName,
+            }));
           } else {
             ElMessage.error('加载标签列表失败: ' + res.message);
           }
         } catch (error) {
-          ElMessage.error('加载标签列表失败: ' + error.message);
+          console.error('加载标签列表失败:', error);
+          ElMessage.error('加载标签列表失败');
         }
       },
       // 加载用户详情
       async loadUserDetail() {
-        const userId = this.$route.query.userId;
+        const res = await getUserDetail(userId.toString());
         if (!userId) {
           ElMessage.error('用户ID不存在');
           return;
@@ -432,7 +406,7 @@
     },
     mounted() {
       this.loadUsers();
-      this.loadTags(); // 加载标签列表
+      this.loadTags();
     },
   };
 </script>

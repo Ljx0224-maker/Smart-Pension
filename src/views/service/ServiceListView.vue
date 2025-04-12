@@ -1,226 +1,272 @@
 <template>
-  <div class="service-list-view">
-    <el-card class="box-card" shadow="hover">
-      <div class="clearfix">
-        <span>商品管理</span>
-        <el-button style="float: right;" type="primary" @click="addProduct">新增</el-button>
-        <el-button style="float: right; margin-right: 10px;" @click="batchAction">批量操作</el-button>
+  <div class="service-container">
+    <div class="filter-section">
+      <div class="page-header">
+        <h2>商品分类统计</h2>
       </div>
-      <el-form :inline="true" class="demo-form-inline">
-        <el-form-item label="分类">
-          <el-select v-model="filter.category" placeholder="请选择">
-            <el-option label="全部" value=""></el-option>
-            <el-option label="生活照料" value="livingCare"></el-option>
-            <!-- Add more categories as needed -->
-          </el-select>
+      <div class="search-box">
+        <el-input
+          v-model="searchKeyword"
+          placeholder="请输入服务类型或分类进行搜索"
+          clearable
+          class="search-input"
+        >
+          <template #append>
+            <el-button type="primary" @click="searchServices">搜索</el-button>
+          </template>
+        </el-input>
+      </div>
+    </div>
+
+    <div class="action-table-box">
+      <el-card class="box-card" shadow="hover">
+        <el-table :data="filteredClassTableData" style="width: 100%;">
+          <el-table-column prop="serviceType" label="服务类型" width="150"></el-table-column>
+          <el-table-column prop="category" label="分类" width="150"></el-table-column>
+          <el-table-column prop="count" label="数量" width="100"></el-table-column>
+          <el-table-column prop="status" label="状态" width="100">
+            <template #default="scope">
+              <el-tag :type="scope.row.status === '已上架' ? 'success' : 'danger'">
+                {{ scope.row.status }}
+              </el-tag>
+            </template>
+          </el-table-column>
+          <el-table-column prop="lastUpdatedBy" label="最后更新人" width="150"></el-table-column>
+          <el-table-column prop="lastUpdatedAt" label="最后更新时间" width="200"></el-table-column>
+          <el-table-column label="操作" width="200">
+            <template #default="scope">
+              <el-button type="text" @click="openEditDialog(scope.row)">编辑</el-button>
+              <el-button type="text" @click="confirmDelete(scope.row)" style="color: #FF4D4F;">删除</el-button>
+            </template>
+          </el-table-column>
+        </el-table>
+      </el-card>
+    </div>
+
+    <!-- 编辑弹窗 -->
+    <el-dialog title="编辑商品" :visible.sync="editDialogVisible" width="500px">
+      <el-form :model="editForm" label-width="100px">
+        <el-form-item label="服务类型">
+          <el-input v-model="editForm.serviceType" disabled></el-input>
+        </el-form-item>
+        <el-form-item label="旧分类">
+          <el-input v-model="editForm.oldCategory" disabled></el-input>
+        </el-form-item>
+        <el-form-item label="新分类">
+          <el-input v-model="editForm.newCategory"></el-input>
         </el-form-item>
         <el-form-item label="状态">
-          <el-select v-model="filter.status" placeholder="请选择">
-            <el-option label="全部" value=""></el-option>
-            <el-option label="已上架" value="listed"></el-option>
-            <el-option label="已下架" value="unlisted"></el-option>
+          <el-select v-model="editForm.status" placeholder="请选择状态">
+            <el-option label="已上架" value="已上架"></el-option>
+            <el-option label="已下架" value="已下架"></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="价格">
-          <el-input v-model="filter.minPrice" placeholder="最低价格"></el-input>
-          <el-input v-model="filter.maxPrice" placeholder="最高价格"></el-input>
-        </el-form-item>
-        <el-form-item label="日期">
-          <el-date-picker v-model="filter.date" type="daterange" placeholder="选择日期范围"></el-date-picker>
-        </el-form-item>
-        <el-form-item>
-          <el-input v-model="filter.keyword" placeholder="请输入关键字"></el-input>
-        </el-form-item>
-        <el-form-item>
-          <el-button type="primary" @click="search">搜索</el-button>
-          <el-button @click="resetFilters">重置</el-button>
-        </el-form-item>
       </el-form>
-      <el-table :data="tableData" style="width: 100%">
-        <el-table-column prop="category" label="分类" width="150"></el-table-column>
-        <el-table-column prop="serviceType" label="服务类型" width="150"></el-table-column>
-        <el-table-column prop="status" label="状态" width="100">
-          <template #default="scope">
-            <el-tag :type="scope.row.status === '已上架' ? 'success' : 'danger'">
-              {{ scope.row.status }}
-            </el-tag>
-          </template>
-        </el-table-column>
-        <el-table-column prop="lastUpdatedBy" label="最后更新人" width="150"></el-table-column>
-        <el-table-column prop="lastUpdatedAt" label="最后更新时间" width="200"></el-table-column>
-        <el-table-column label="操作" width="180">
-          <template #default="scope">
-            <el-button size="mini" type="text" @click="editProduct(scope.row)">编辑</el-button>
-            <el-button size="mini" type="text" class="delete-btn" @click="removeProduct(scope.row)">删除</el-button>
-          </template>
-        </el-table-column>
-      </el-table>
-      <el-pagination
-        background
-        layout="total, prev, pager, next, jumper"
-        :total="total"
-        v-model:current-page="currentPage"
-        :page-size="pageSize"
-        @current-change="fetchProductList"
-      />
-    </el-card>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="editDialogVisible = false">取消</el-button>
+        <el-button type="primary" @click="submitEdit">保存</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
 <script>
-import { ref, onMounted } from 'vue';
-import { getProductList, addProduct, deleteProduct, updateProduct } from '@/api/service';
-import { useRouter } from 'vue-router';
-import { ElMessage, ElMessageBox } from 'element-plus';
+import { ref, computed, onMounted } from 'vue';
+import { getProductClassList, deleteProduct } from '@/api/service';
+import { ElMessageBox, ElMessage } from 'element-plus';
+import { editProduct, deleteClassProduct } from '@/api/service'; // 引入编辑和删除接口
 
 export default {
   setup() {
-    const router = useRouter();
-    const tableData = ref([]);
-    const filter = ref({
-      category: '',
+    const classTableData = ref([]);
+    const searchKeyword = ref('');
+    const editDialogVisible = ref(false);
+    const editForm = ref({
+      serviceType: '',
+      oldCategory: '',
+      newCategory: '',
       status: '',
-      minPrice: '',
-      maxPrice: '',
-      date: [],
-      keyword: ''
     });
-    const total = ref(0);
-    const currentPage = ref(1);
-    const pageSize = ref(10);
 
-    // 获取商品列表
-    const fetchProductList = async () => {
+    const fetchProductClassList = async () => {
       try {
-        const params = {
-          category: filter.value.category,
-          status: filter.value.status,
-          minPrice: filter.value.minPrice,
-          maxPrice: filter.value.maxPrice,
-          keyword: filter.value.keyword,
-          pageNum: currentPage.value, // 当前页码
-          pageSize: pageSize.value,   // 每页条数
-        };
-
-        // 转换日期范围
-        if (filter.value.date.length === 2) {
-          params.startDate = filter.value.date[0];
-          params.endDate = filter.value.date[1];
-        }
-
-        const res = await getProductList(params);
+        const res = await getProductClassList();
         if (res.code === 200) {
-          tableData.value = res.data; // 将后端返回的商品列表赋值给表格数据
-          total.value = res.total;   // 设置总记录数
+          classTableData.value = res.data;
         } else {
-          console.error('获取商品列表失败:', res.message);
-          tableData.value = [];
+          console.error('获取商品分类统计失败:', res.message);
         }
       } catch (error) {
-        console.error('获取商品列表失败:', error);
-        ElMessage.error('获取商品列表失败');
-        tableData.value = [];
+        console.error('获取商品分类统计失败:', error);
       }
+    };
+
+    const filteredClassTableData = computed(() => {
+      if (!searchKeyword.value) {
+        return classTableData.value;
+      }
+      return classTableData.value.filter(
+        (item) =>
+          item.serviceType.includes(searchKeyword.value) ||
+          item.category.includes(searchKeyword.value)
+      );
+    });
+
+    const searchServices = () => {
+      console.log('搜索关键字:', searchKeyword.value);
+    };
+
+    const openEditDialog = (row) => {
+      editForm.value = {
+        serviceType: row.serviceType,
+        oldCategory: row.category,
+        newCategory: row.category,
+        status: row.status,
+      };
+      editDialogVisible.value = true;
+    };
+
+    const submitEdit = async () => {
+      try {
+        const res = await editProduct(editForm.value);
+        if (res.code === 200) {
+          ElMessage.success('编辑成功');
+          editDialogVisible.value = false;
+          fetchProductClassList(); // 刷新列表
+        } else {
+          ElMessage.error('编辑失败: ' + res.message);
+        }
+      } catch (error) {
+        ElMessage.error('编辑失败: ' + error.message);
+      }
+    };
+
+    const confirmDelete = (row) => {
+      ElMessageBox.confirm(
+        `确定要删除服务类型 "${row.serviceType}" 下的分类 "${row.category}" 吗？`,
+        '提示',
+        {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning',
+        }
+      )
+        .then(async () => {
+          try {
+            const res = await deleteClassProduct({
+              serviceType: row.serviceType,
+              category: row.category,
+            });
+            if (res.code === 200) {
+              ElMessage.success('删除成功');
+              fetchProductClassList(); // 刷新列表
+            } else {
+              ElMessage.error('删除失败: ' + res.message);
+            }
+          } catch (error) {
+            ElMessage.error('删除失败: ' + error.message);
+          }
+        })
+        .catch(() => {
+          ElMessage.info('已取消删除');
+        });
+    };
+
+    const removeProduct = (row) => {
+      ElMessageBox.confirm(
+        '确定要删除此商品吗?',
+        '提示',
+        {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning',
+        }
+      ).then(() => {
+        deleteProduct(row.productId)
+          .then(res => {
+            if (res.code === 200) {
+              ElMessage.success('删除成功');
+              fetchProductClassList();
+            } else {
+              ElMessage.error('删除失败: ' + (res.message || '未知错误'));
+            }
+          })
+          .catch(err => {
+            console.error('Delete error:', err);
+            ElMessage.error('删除失败: ' + (err.message || '未知错误'));
+          });
+      }).catch(() => {
+        ElMessage.info('已取消删除');
+      });
     };
 
     onMounted(() => {
-      fetchProductList();
+      fetchProductClassList();
     });
 
-    const search = () => {
-      fetchProductList();
-    };
-
-    const resetFilters = () => {
-      filter.value = {
-        category: '',
-        status: '',
-        minPrice: '',
-        maxPrice: '',
-        date: [],
-        keyword: ''
-      };
-      fetchProductList(); // 重置后重新加载数据
-    };
-
-    const addProduct = () => {
-      // 跳转到添加商品页面
-      router.push('/product/addProduct');
-    };
-
-    const batchAction = () => {
-      // 批量操作的逻辑
-      console.log('批量操作');
-    };
-
-    const editProduct = (row) => {
-      // 跳转到编辑商品页面
-      router.push({ path: '/product/editProduct', query: { productId: row.productCode } });
-    };
-
-    const removeProduct = async (row) => {
-      try {
-        const confirm = await ElMessageBox.confirm(
-          '确定要删除该商品吗？',
-          '提示',
-          {
-            confirmButtonText: '确定',
-            cancelButtonText: '取消',
-            type: 'warning',
-          }
-        );
-
-        if (confirm) {
-          const res = await deleteProduct(row.productCode);
-          if (res.code === 200) {
-            ElMessage.success('商品删除成功');
-            fetchProductList(); // 重新加载商品列表
-          } else {
-            ElMessage.error('商品删除失败');
-          }
-        }
-      } catch (error) {
-        console.error('删除商品失败:', error);
-        ElMessage.error('删除商品失败');
-      }
-    };
-
     return {
-      tableData,
-      filter,
-      total,
-      currentPage,
-      pageSize,
-      search,
-      resetFilters,
-      addProduct,
-      batchAction,
-      editProduct,
+      classTableData,
+      searchKeyword,
+      filteredClassTableData,
+      searchServices,
+      editDialogVisible,
+      editForm,
+      openEditDialog,
+      submitEdit,
+      confirmDelete,
       removeProduct,
     };
-  }
+  },
 };
 </script>
 
 <style scoped>
-.service-list-view {
+.service-container {
   padding: 20px;
+  background-color: #f5f7fa;
+}
+
+.page-header {
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+}
+
+.page-header::before {
+  content: '';
+  display: inline-block;
+  width: 8px;
+  height: 20px;
+  background-color: #4fc3f7;
+  margin-right: 10px;
+  border-radius: 2px;
+}
+
+.filter-section {
   background-color: #fff;
-}
-
-.box-card {
+  padding: 20px;
   border-radius: 8px;
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
+  margin-bottom: 20px;
 }
 
-.product-image {
-  width: 100px;
-  height: 100px;
-  object-fit: cover;
+.search-box {
+  margin-top: 10px;
 }
 
-.delete-btn {
-  color: #f56c6c;
-  border: none;
+.search-input {
+  width: 400px;
+}
+
+.action-table-box {
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.el-table {
+  border-radius: 8px;
+  overflow: hidden;
+  margin-bottom: 15px;
 }
 </style>

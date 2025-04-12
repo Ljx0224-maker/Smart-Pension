@@ -47,6 +47,9 @@
   </template>
   
   <script>
+  import { addOrUpdateTag } from '@/api/user';
+  import { useRouter } from 'vue-router';
+
   export default {
     data() {
       return {
@@ -64,18 +67,35 @@
         },
         products: [
           { id: '1', name: '商品1' },
-          { id: '2', name: '商品2' },
-          // Add more products as needed
+          { id: '2', name: '商品2' }
         ]
       };
     },
     methods: {
-      saveTag() {
-        console.log('Saving tag:', this.tagForm);
-        // Add your save logic here
+      async saveTag() {
+        try {
+          const tagData = {
+            tagName: this.tagForm.name,
+            status: this.tagForm.status,
+            type: this.tagForm.type,
+            conditionType: this.tagForm.conditionType,
+            conditions: this.tagForm.conditions,
+            hasProduct: this.tagForm.hasProduct,
+            product: this.tagForm.product
+          };
+          const res = await addOrUpdateTag(tagData);
+          if (res.code === 200) {
+            this.$message.success('标签保存成功');
+            this.$router.push('/user/usertag'); // 跳转到用户标签页面
+          } else {
+            this.$message.error('保存失败: ' + res.message);
+          }
+        } catch (error) {
+          this.$message.error('保存失败: ' + error.message);
+        }
       },
       resetForm() {
-        this.$refs.tagForm.resetFields();
+        this.$router.push('/user/tag'); // 返回用户标签页面
       }
     }
   };

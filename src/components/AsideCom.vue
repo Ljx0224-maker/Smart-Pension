@@ -180,7 +180,7 @@ export default{
             <!--跟路由配置有关-->
             <el-menu-item index="/user/userlist"><el-icon><User /></el-icon>用户列表</el-menu-item>
             <el-menu-item index="/user/usertag"><el-icon><UserFilled /></el-icon>用户标签</el-menu-item>
-            <el-menu-item index="/user/adduser"><el-icon><User /></el-icon>添加用户</el-menu-item>
+            <el-menu-item index="/user/adduser"><el-icon><User /></el-icon>新增/修改用户信息</el-menu-item>
             <el-menu-item index="/user/addtag"><el-icon><UserFilled /></el-icon>添加标签</el-menu-item>
         </el-sub-menu>
 

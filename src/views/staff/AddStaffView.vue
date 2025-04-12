@@ -69,6 +69,8 @@
   </template>
   
   <script>
+  import { getStaffDetail } from '@/api/staff'; // 假设有获取员工详情的接口
+
   export default {
     data() {
       return {
@@ -91,15 +93,36 @@
     },
     methods: {
       handleAvatarSuccess(response, file, fileList) {
-       // Handle avatar upload success
+        // Handle avatar upload success
       },
       submitForm() {
         console.log('Submitting form:', this.staffForm);
         // Add your submission logic here
       },
       resetForm() {
-        this.$refs.staffForm.resetFields();
+        this.$router.push('/staff/stafflist'); // 返回员工列表页面
+      },
+      // 加载员工详情
+      async loadStaffDetail() {
+        const staffId = this.$route.query.staffId;
+        if (!staffId) {
+          this.$message.error('员工ID不存在');
+          return;
+        }
+        try {
+          const res = await getStaffDetail(staffId); // 调用接口获取员工详情
+          if (res.code === 200) {
+            this.staffForm = res.data; // 将返回的数据填充到表单中
+          } else {
+            this.$message.error('获取员工详情失败: ' + res.message);
+          }
+        } catch (error) {
+          this.$message.error('获取员工详情失败: ' + error.message);
+        }
       }
+    },
+    mounted() {
+      this.loadStaffDetail(); // 页面加载时获取员工详情
     }
   };
   </script>

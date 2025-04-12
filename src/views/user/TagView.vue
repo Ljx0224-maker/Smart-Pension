@@ -6,6 +6,7 @@
       </div>
       <div class="action-section">
         <el-button type="primary" @click="addTag">新增标签</el-button>
+        <el-button @click="batchDelete">批量操作</el-button>
       </div>
     </div>
 
@@ -14,7 +15,11 @@
         <el-table-column type="selection" width="55" v-model="selectedTags" />
         <el-table-column label="标签名称" prop="tagName" width="150" />
         <el-table-column label="用户数量" prop="usersNum" width="150" />
-        <el-table-column label="最后更新人" prop="lastUpdatedBy" width="180" />
+        <el-table-column label="最后更新人" prop="lastUpdatedBy" width="180">
+          <template #default="scope">
+            <span>{{ scope.row.lastUpdatedBy || '无' }}</span>
+          </template>
+        </el-table-column>
         <el-table-column label="最后更新时间" prop="lastUpdatedTime" width="200">
           <template #default="scope">
             <span>{{ formatDate(scope.row.lastUpdatedTime) }}</span>
@@ -26,6 +31,8 @@
               v-model="scope.row.status"
               :active-text="'启用'"
               :inactive-text="'禁用'"
+              :active-value="true"
+              :inactive-value="false"
             />
           </template>
         </el-table-column>
@@ -38,6 +45,14 @@
           </template>
         </el-table-column>
       </el-table>
+      <el-pagination
+        background
+        v-model:current-page="currentPage"
+        :page-size="pageSize"
+        layout="total, prev, pager, next, jumper"
+        :total="total"
+        @current-change="handlePageChange"
+      />
     </div>
   </div>
 </template>
@@ -46,6 +61,9 @@
 import { ref, onMounted } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { getTagsList, addOrUpdateTag, deleteTag } from '@/api/user'
+import { useRouter } from 'vue-router';
+
+const router = useRouter();
 
 interface Tag {
   tagId: string
@@ -59,18 +77,27 @@ interface Tag {
 const tableData = ref<Tag[]>([]) // 标签数据
 const selectedTags = ref<Tag[]>([]) // 选中的标签
 const table = ref(null) // 表格引用
+const currentPage = ref(1); // 当前页码
+const pageSize = ref(10); // 每页显示的条数
+const total = ref(0); // 数据总条数
 
 // 获取标签列表
 const fetchTags = async () => {
   try {
-    const res = await getTagsList();
+    const params = {
+      pageSize: pageSize.value, // 每页显示的条数
+      pageNum: currentPage.value, // 当前页码
+    };
+    const res = await getTagsList(params); // 传递分页参数
     console.log('后端返回的数据:', res); // 调试日志
     if (res.code === 200) {
-      // 映射 lastUpdatedAt 到 lastUpdatedTime
       tableData.value = res.data.map((tag: any) => ({
         ...tag,
         lastUpdatedTime: tag.lastUpdatedAt || '无', // 如果没有 lastUpdatedAt，设置默认值
+        lastUpdatedBy: tag.lastUpdatedBy || '无', // 如果没有 lastUpdatedBy，设置默认值
+        status: tag.usersNum >= 1, // 根据用户数量动态设置状态
       }));
+      total.value = res.total; // 设置总条数
     } else {
       ElMessage.error('获取标签列表失败: ' + res.message);
     }
@@ -84,6 +111,7 @@ const fetchTags = async () => {
 const formatDate = (dateString: string) => {
   if (!dateString || dateString === '无') return '无';
   const date = new Date(dateString);
+  if (isNaN(date.getTime())) return '无'; // 检查日期是否有效
   const options: Intl.DateTimeFormatOptions = {
     year: 'numeric',
     month: '2-digit',
@@ -97,27 +125,8 @@ const formatDate = (dateString: string) => {
 
 // 新增标签
 const addTag = () => {
-  ElMessageBox.prompt('请输入标签名称', '新增标签', {
-    confirmButtonText: '确定',
-    cancelButtonText: '取消',
-  })
-    .then(async ({ value }) => {
-      try {
-        const newTag = { tagName: value, status: true }
-        const res = await addOrUpdateTag(newTag)
-        if (res.code === 200) {
-          ElMessage.success('新增标签成功')
-          fetchTags() // 重新获取标签列表
-        } else {
-          ElMessage.error('新增标签失败: ' + res.message)
-        }
-      } catch (error) {
-        ElMessage.error('新增标签失败: ' + error.message)
-      }
-    })
-    .catch(() => {
-      ElMessage.info('已取消新增标签')
-    })
+  // 跳转到新增标签页面
+  router.push('/user/addtag');
 }
 
 // 编辑标签
@@ -129,21 +138,21 @@ const editTag = (row: Tag) => {
   })
     .then(async ({ value }) => {
       try {
-        const updatedTag = { ...row, tagName: value }
-        const res = await addOrUpdateTag(updatedTag)
+        const updatedTag = { ...row, tagName: value };
+        const res = await addOrUpdateTag(updatedTag);
         if (res.code === 200) {
-          ElMessage.success('编辑标签成功')
-          fetchTags() // 重新获取标签列表
+          ElMessage.success('编辑标签成功');
+          fetchTags(); // 重新获取标签列表
         } else {
-          ElMessage.error('编辑标签失败: ' + res.message)
+          ElMessage.error('编辑标签失败: ' + res.message);
         }
       } catch (error) {
-        ElMessage.error('编辑标签失败: ' + error.message)
+        ElMessage.error('编辑标签失败: ' + error.message);
       }
     })
     .catch(() => {
-      ElMessage.info('已取消编辑标签')
-    })
+      ElMessage.info('已取消编辑标签');
+    });
 }
 
 // 删除标签
@@ -155,20 +164,26 @@ const deleteTagHandler = (tagId: string) => {
   })
     .then(async () => {
       try {
-        const res = await deleteTag(tagId)
+        const res = await deleteTag(tagId); // 确保 tagId 正确传递
         if (res.code === 200) {
-          ElMessage.success('删除标签成功')
-          fetchTags() // 重新获取标签列表
+          ElMessage.success('删除标签成功');
+          fetchTags(); // 重新获取标签列表
         } else {
-          ElMessage.error('删除标签失败: ' + res.message)
+          ElMessage.error('删除标签失败: ' + res.message);
         }
       } catch (error) {
-        ElMessage.error('删除标签失败: ' + error.message)
+        ElMessage.error('删除标签失败: ' + error.message);
       }
     })
     .catch(() => {
-      ElMessage.info('已取消删除标签')
-    })
+      ElMessage.info('已取消删除标签');
+    });
+};
+
+// 分页处理
+const handlePageChange = (page: number) => {
+  currentPage.value = page; // 更新当前页码
+  fetchTags(); // 重新获取数据
 }
 
 // 页面加载时获取标签列表

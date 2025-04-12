@@ -67,13 +67,20 @@
         @selection-change="handleSelectionChange"
       >
         <el-table-column type="selection" width="55"></el-table-column>
+        <el-table-column label="商品编码" width="200">
+          <template #default="scope">
+            <div>
+              <div>{{ scope.row.productId }}</div>
+              <div>{{ scope.row.productCode }}</div>
+            </div>
+          </template>
+        </el-table-column>
         <el-table-column prop="image" label="商品信息" width="180">
           <template #default="scope">
             <img :src="scope.row.image" alt="商品图片" class="product-image">
             <div>{{ scope.row.name }}</div>
           </template>
         </el-table-column>
-        <el-table-column prop="productCode" label="商品编码" width="150"></el-table-column>
         <el-table-column prop="category" label="分类" width="100"></el-table-column>
         <el-table-column prop="price" label="价格（元）" width="100"></el-table-column>
         <el-table-column label="状态" width="80">
@@ -265,6 +272,7 @@ export default {
       this.dialogVisible = true;
     },
     removeProduct(row) {
+      console.log('删除的行数据:', row); // 调试信息
       ElMessageBox.confirm(
         '确定要删除此商品吗?',
         '提示',
@@ -274,16 +282,21 @@ export default {
           type: 'warning',
         }
       ).then(() => {
-        deleteProduct(row.productCode).then(res => {
-          if (res.success) {
-            ElMessage.success('删除成功');
-            this.loadProducts();
-          } else {
-            ElMessage.error('删除失败');
-          }
-        }).catch(err => {
-          console.error('Delete error:', err);
-        });
+        console.log('删除参数:', row.productId); // 调试信息
+        deleteProduct(row.productId) // 修改为传递 productId
+          .then(res => {
+            console.log('删除接口返回:', res); // 调试信息
+            if (res.code === 200) { // 根据后端返回值调整判断条件
+              ElMessage.success('删除成功');
+              this.loadProducts(); // 重新加载商品列表
+            } else {
+              ElMessage.error('删除失败: ' + (res.message || '未知错误'));
+            }
+          })
+          .catch(err => {
+            console.error('Delete error:', err); // 打印错误信息
+            ElMessage.error('删除失败: ' + (err.message || '未知错误'));
+          });
       }).catch(() => {
         ElMessage.info('已取消删除');
       });
@@ -328,11 +341,14 @@ export default {
         deleteProduct(productCodes).then(res => {
           if (res.success) {
             ElMessage.success('批量删除成功');
-            this.loadProducts();
+            this.loadProducts(); // 重新加载商品列表
             this.selectedRows = [];
           } else {
             ElMessage.error('批量删除失败');
           }
+        }).catch(err => {
+          console.error('Batch delete error:', err);
+          ElMessage.error('批量删除失败');
         });
       }).catch(() => {
         ElMessage.info('已取消批量删除');
