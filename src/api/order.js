@@ -1,4 +1,5 @@
 import ajax from '@/utils/request.js';
+import request from '@/utils/request';
 
 // 获取订单列表
 export function getOrders(params) {
@@ -27,93 +28,69 @@ export function addOrUpdateOrder(data) {
   });
 }
 
-// 获取售后列表
+// 获取售后订单列表
 export function afterSalesList(params) {
-    return ajax({
-      url: '/after-sales/list',
-      method: 'get',
-      params,
-    });
-  }
-  
-  // 更新售后状态
-  export function updateAfterSalesStatus(data) {
-    return ajax({
-      url: '/after-sales/update-status',
-      method: 'post',
-      data,
-    });
-  }
-  
-  // 关闭售后
-  export function closeAfterSales(data) {
-    return ajax({
-      url: '/after-sales/close',
-      method: 'post',
-      data,
-    });
-  }
-  
-  // 获取售后详情
-  export function getAfterSalesDetails(id) {
-    return ajax({
-      url: `/after-sales/details/${id}`,
-      method: 'get',
-    });
-  }
+  return ajax({
+    url: '/orders/refund-list',
+    method: 'post',
+    data: params,
+  });
+}
+
+// 获取售后订单详情
+export function afterSalesDetail(orderId) {
+  return ajax({
+    url: `/orders/refund-detail`,
+    method: 'get',
+    params: { orderId },
+  });
+}
+
+// 查询售后订单
+export function queryAfterSales(params) {
+  return ajax({
+    url: '/orders/refund-query',
+    method: 'post',
+    data: params,
+  });
+}
+
 
 // 获取退款原因列表
 export function getRefundReasons(params) {
-    return ajax({
-      url: '/refund-reasons/list',
-      method: 'get',
-      params,
-    });
-  }
-  
-  // 更新退款原因状态
-  export function updateRefundReasonStatus(id, data) {
-    return ajax({
-      url: `/refund-reasons/${id}/status`,
-      method: 'put',
-      data,
-    });
-  }
-  
-  // 删除退款原因
-  export function deleteRefundReason(id) {
-    return ajax({
-      url: `/refund-reasons/${id}`,
-      method: 'delete',
-    });
-  }
-  
-  // 批量删除退款原因
-  export function batchDeleteRefundReasons(ids) {
-    return ajax({
-      url: `/refund-reasons/batch-delete`,
-      method: 'post',
-      data: { ids },
-    });
-  }
-  
-  // 添加新退款原因
-  export function addRefundReason(data) {
-    return ajax({
-      url: '/refund-reasons',
-      method: 'post',
-      data,
-    });
-  }
-  
-  // 更新退款原因
-  export function updateRefundReason(id, data) {
-    return ajax({
-      url: `/refund-reasons/${id}`,
-      method: 'put',
-      data,
-    });
-  }
+  return request({
+    url: '/orders/refund-reason/list',
+    method: 'post',
+    data: params,
+  });
+}
+
+// 新增或编辑退款原因
+export function addOrUpdateRefundReason(data) {
+  return request({
+    url: '/orders/refund-reason/addOrUpdate',
+    method: 'post',
+    data,
+  });
+}
+
+// 删除退款原因
+export function deleteRefundReason(refundReasonId) {
+  return request({
+    url: `/orders/refund-reason/delete?refundReasonId=${refundReasonId}`,
+    method: 'delete',
+    params: { refundReasonId },
+  });
+}
+
+// 批量删除退款原因
+export function batchDeleteRefundReasons(ids) {
+  return request({
+    url: '/orders/refund-reason/delete',
+    method: 'delete',
+    data: { ids },
+  });
+}
 
   // 获取订单设置
 export function getOrderSettings() {
@@ -132,20 +109,21 @@ export function getOrderSettings() {
     });
   }
 
-  // 获取交易记录列表
-export function getTransactionList(params) {
+
+    // 获取收支明细列表
+  export function getTransactionList(params) {
     return ajax({
-      url: '/transactions/list',
-      method: 'get',
-      params,
+      url: '/orders/income-payment/list',
+      method: 'post',
+      data: params,
     });
   }
   
-  // 批量删除交易记录
-  export function batchDeleteTransactions(ids) {
+  // 查询收支明细
+  export function queryTransaction(params) {
     return ajax({
-      url: `/transactions/batch-delete`,
+      url: '/orders/income-payment/query',
       method: 'post',
-      data: { ids },
+      data: params,
     });
   }

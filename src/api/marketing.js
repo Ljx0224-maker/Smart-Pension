@@ -1,46 +1,37 @@
 import ajax from '@/utils/request.js';
 
-// 获取优惠券列表
-export function getCoupons(params) {
+// 查询优惠券
+export function queryCoupons(data) {
   return ajax({
-    url: '/coupons/list',
-    method: 'get',
-    params,
-  });
-}
-
-// 添加新优惠券
-export function addCoupon(data) {
-  return ajax({
-    url: '/coupons',
+    url: '/discount-coupons/query',
     method: 'post',
     data,
   });
 }
 
-// 更新优惠券
-export function updateCoupon(id, data) {
+// 新增或更新优惠券
+export function addOrUpdateCoupon(data) {
   return ajax({
-    url: `/coupons/${id}`,
-    method: 'put',
+    url: '/discount-coupons/addOrUpdate',
+    method: 'post',
     data,
   });
 }
 
 // 删除优惠券
-export function deleteCoupon(id) {
+export function deleteCouponById(discountId) {
   return ajax({
-    url: `/coupons/${id}`,
+    url: `/discount-coupons/delete?discountId=${discountId}`,
     method: 'delete',
+    params: { discountId },
   });
 }
 
-// 批量删除优惠券
-export function batchDeleteCoupons(ids) {
+// 获取优惠券列表
+export function fetchCouponList() {
   return ajax({
-    url: `/coupons/batch-delete`,
+    url: '/discount-coupons/list',
     method: 'post',
-    data: { ids },
   });
 }
 

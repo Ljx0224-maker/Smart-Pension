@@ -239,8 +239,10 @@ export default {
       });
     },
     toggleStatus(row) {
-      row.status = row.status === '启用' ? '禁用' : '启用';
+      console.log('切换状态:', row);
+      
       addOrUpdateBanner(row).then(res => {
+        console.log('状态更新响应:', res);
         if (res.code === 200) {
           ElMessage.success('状态更新成功');
         } else {

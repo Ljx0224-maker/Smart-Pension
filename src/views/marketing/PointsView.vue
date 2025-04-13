@@ -11,10 +11,10 @@
             <div class="rule-item">
               <el-radio v-model="pointsForm.acquisitionRule" label="perAmount">每消费</el-radio>
               <el-input v-model="pointsForm.amount" style="width: 100px;"></el-input>
-              <span>元</span>
-              <span>获取</span>
+              <span style="margin-left: 10px;margin-right: 20px;">  元  </span>
+              <span style="margin-left: 10px;margin-right: 10px;">  获取  </span>
               <el-input v-model="pointsForm.pointsPerAmount" style="width: 100px;"></el-input>
-              <span>分</span>
+              <span style="margin-left: 10px;margin-right: 20px;">  分  </span>
             </div>
           </el-form-item>
         </div>
@@ -23,10 +23,10 @@
             <div class="rule-item">
               <el-radio v-model="pointsForm.acquisitionRule" label="perOrder">每消费</el-radio>
               <el-input v-model="pointsForm.orders" style="width: 100px;"></el-input>
-              <span>笔</span>
-              <span>获取</span>
+              <span style="margin-left: 10px;margin-right: 20px;">笔</span>
+              <span style="margin-left: 10px;margin-right: 10px;">获取</span>
               <el-input v-model="pointsForm.pointsPerOrder" style="width: 100px;"></el-input>
-              <span>分</span>
+              <span style="margin-left: 10px;margin-right: 20px;">分</span>
             </div>
           </el-form-item>
         </div>
@@ -35,7 +35,7 @@
           <el-form-item label="积分有效期" style="margin-left: 14px;">
             <el-radio v-model="pointsForm.expirationRule" label="permanent">永久有效</el-radio>
             <div class="form-item-content">
-              <el-radio v-model="pointsForm.expirationRule" label="days">获取后</el-radio>
+              <el-radio v-model="pointsForm.expirationRule" label="days" style="margin-left: 30px;margin-right: 20px;">获取后</el-radio>
               <el-input v-model="pointsForm.validDays" style="width: 100px;"></el-input>
               <span>天内有效</span>
             </div>
@@ -60,7 +60,7 @@
               :disabled="!pointsForm.maxDeductionEnabled"
               style="width: 100px; margin-left: 10px;"
             ></el-input>
-            <span>分</span>
+            <span style="margin-left: 10px;margin-right: 20px;">分</span>
           </el-form-item>
         </div>
 

@@ -127,7 +127,7 @@ export default{
               </el-icon>
               <span>设置</span>
               </template>
-              <el-menu-item index="/order/setting/orderrefund"><el-icon><Edit /></el-icon>退款原因设置</el-menu-item>
+              <el-menu-item index="/order/setting/orderrefund"><el-icon><Edit /></el-icon>退款原因</el-menu-item>
               <el-menu-item index="/order/setting/ordersetting"><el-icon><EditPen /></el-icon>通用设置</el-menu-item>
             </el-sub-menu>
             <el-menu-item index="/order/ordermoney"><el-icon><Document /></el-icon>收支明细</el-menu-item>
