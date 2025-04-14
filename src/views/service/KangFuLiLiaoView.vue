@@ -211,6 +211,8 @@ export default {
         image: '',
       },
       selectedRows: [],
+      userInfo: this.$store.state.userInfo,
+
     };
   },
   components: {
@@ -297,6 +299,8 @@ export default {
         servicePeople: 0, // 服务人数
         serviceDuration: 0, // 服务时长（分钟）
         serviceType: '康复理疗', // 设置服务类型为康复理疗
+        lastUpdatedBy: this.userInfo.staffName || '未知', // 自动填充更新人
+
       };
       this.dialogVisible = true;
     },
@@ -340,7 +344,7 @@ export default {
         ...this.form,
         productName: this.form.name, // 映射为后端字段
         status: this.form.status === 'listed' ? '已上架' : '下架', // 映射状态值
-        lastUpdatedBy: '管理员', // 设置默认值为管理员
+       
         serviceType: '康复理疗', // 确保服务类型为康复理疗
       };
 

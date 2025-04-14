@@ -371,7 +371,7 @@ export const routes=[
               {
                 path: 'shangmentiyan',
                 name: 'shangmentiyan',
-                label: '上门体验',
+                label: '上门体检',
                 component: ShangMenTiYanView,
               }
             ]
