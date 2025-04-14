@@ -32,6 +32,6 @@ export function getStaffDetail(staffId) {
   return ajax({
     url: '/service-staff/query?staffId=' + staffId,
     method: 'POST',
-     params: { staffId } ,
+    params: { staffId }
   });
 }

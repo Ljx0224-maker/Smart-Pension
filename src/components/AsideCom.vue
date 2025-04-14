@@ -243,6 +243,7 @@ export default{
             <!--跟路由配置有关-->
             <el-menu-item index="/settings/pepolelist"><el-icon><User /></el-icon>员工管理</el-menu-item>
             <el-menu-item index="/settings/protocol"><el-icon><Collection /></el-icon>协议管理</el-menu-item>
+            <el-menu-item index="/settings/resetpassword"><el-icon><Collection /></el-icon>重置密码</el-menu-item>
         </el-sub-menu>
 
 

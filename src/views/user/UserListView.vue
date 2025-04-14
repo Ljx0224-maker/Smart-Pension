@@ -153,7 +153,7 @@
       return {
         tableData: [],
         currentPage: 1,
-        pageSize: 10,
+        pageSize: 10, // 每页显示10条信息
         total: 0,
         statusFilter: '',
         tagFilter: '',
@@ -261,7 +261,7 @@
       // 编辑用户标签
       editTags(row) {
         this.tagForm.userId = row.userId;
-        this.tagForm.selectedTags = [...row.tags]; // 直接使用 tagName
+        this.tagForm.selectedTags = [...row.tags]; // 加载当前用户的标签
         this.tagDialogVisible = true;
       },
       // 保存用户标签
@@ -269,16 +269,24 @@
         try {
           const params = {
             userId: this.tagForm.userId,
-            tags: this.tagForm.selectedTags.map(tagName => {
-              const tag = this.allTags.find(tag => tag.tagName === tagName);
-              return tag ? { tagId: tag.tagId, type: 'manual' } : null; // 设置 type 为 "manual"
-            }).filter(tag => tag),
+            tags: this.tagForm.selectedTags
+              .filter(tagName => tagName && tagName.trim() !== '') // 过滤掉空白标签
+              .map(tagName => {
+                const tag = this.allTags.find(tag => tag.tagName === tagName);
+                return tag
+                  ? { tagId: tag.tagId, tagName: tag.tagName, type: 'manual' }
+                  : { tagName, type: 'manual' };
+              }),
           };
-          const res = await addOrUpdateTag(params);
+          const res = await addOrUpdateTag(params); // 调用接口更新用户绑定的标签
           if (res.code === 200) {
             ElMessage.success('标签保存成功');
             this.tagDialogVisible = false;
-            this.loadUsers(); // 重新加载用户列表
+            // 更新当前用户的标签数据
+            const userIndex = this.tableData.findIndex(user => user.userId === this.tagForm.userId);
+            if (userIndex !== -1) {
+              this.tableData[userIndex].tags = this.tagForm.selectedTags.filter(tagName => tagName && tagName.trim() !== ''); // 更新本地数据
+            }
           } else {
             ElMessage.error('标签保存失败: ' + res.message);
           }
@@ -326,18 +334,30 @@
       // 分页切换
       handlePageChange(page) {
         this.currentPage = page;
-        this.loadUsers();
+        this.loadUsers(); // 根据当前页加载数据
       },
       // 加载用户列表
       async loadUsers() {
         try {
-          const res = await getUserList();
+          // 传递分页参数
+          const params = {
+            page: this.currentPage,
+            pageSize: this.pageSize
+          };
+          const res = await getUserList(params);
+          console.log('接口返回的原始数据:', res); // 打印原始数据
           if (res.code === 200) {
-            this.tableData = res.data.map(item => ({
-              ...item.user,
-              tags: item.tags.map(tag => tag.tagName), // 提取标签名称
-            }));
-            this.total = this.tableData.length;
+            // 直接使用 res.data 作为用户列表
+            this.tableData = res.data.map(item => {
+              const user = item.user || {};
+              const tags = item.tags ? item.tags.map(tag => tag.tagName) : [];
+              return {
+                ...user,
+                tags
+              };
+            });
+            // 从响应对象顶层获取 total
+            this.total = res.total || 0; 
           } else {
             ElMessage.error('获取用户列表失败: ' + res.message);
           }

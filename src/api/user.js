@@ -59,7 +59,7 @@ export function getUserList(params) {
   return request({
     url: '/users/list',
     method: 'get',
-    params,
+    params, // 传递分页参数
   });
 }
 

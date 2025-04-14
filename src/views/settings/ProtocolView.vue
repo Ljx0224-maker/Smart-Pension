@@ -1,108 +1,139 @@
 <template>
-    <div class="container">
-      <!-- 隐私政策切换按钮 -->
-      <div class="privacy-buttons">
-        <el-button @click="togglePrivacyPolicy('user')" :type="activePolicy === 'user' ? 'primary' : 'default'">
-          用户端隐私政策
-        </el-button>
-        <el-button @click="togglePrivacyPolicy('server')" :type="activePolicy === 'server' ? 'primary' : 'default'">
-          服务端隐私政策
-        </el-button>
-      </div>
-  
-      <!-- 输入框 -->
-      <el-input
-        v-model="textarea"
-        style="width: 500px"
-        :rows="2"
-        type="textarea"
-        placeholder="Please input"
-        :style="inputStyle"
-      />
-  
-      <!-- 字体样式调节 -->
-      <div class="font-controls">
-        <el-button @click="toggleBold" :type="isBold ? 'primary' : 'default'">
-          <el-icon> </el-icon>加粗
-        </el-button>
-        <el-button @click="increaseFontSize">
-          <el-icon><Plus /></el-icon>
-        </el-button>
-        <el-button @click="decreaseFontSize">
-          <el-icon><Minus /></el-icon>
-        </el-button>
-        <el-button @click="copyText">
-          <el-icon><CopyDocument /></el-icon>
-        </el-button>
-
-      </div>
+  <div class="protocol-management">
+    <div class="page-header">
+      <span>协议管理</span>
     </div>
-  </template>
-  
-  <script lang="ts" setup>
-  import { ref, computed } from 'vue'
-  import { Plus, Minus, CopyDocument, Link, Delete } from '@element-plus/icons-vue' // Import icons from Element Plus
-  
-  const textarea = ref('')
-  const activePolicy = ref<'user' | 'server'>('user') // 默认为用户端隐私政策
-  const isBold = ref(false)
-  const fontSize = ref(14) // 默认字体大小
-  
-  // 控制输入框样式
-  const inputStyle = computed(() => ({
-    fontWeight: isBold.value ? 'bold' : 'normal',
-    fontSize: `${fontSize.value}px`
-  }))
-  
-  // 切换隐私政策
-  const togglePrivacyPolicy = (policy: 'user' | 'server') => {
-    activePolicy.value = policy
-    console.log(`Current active policy: ${policy}`)
-  }
-  
-  // 加粗字体
-  const toggleBold = () => {
-    isBold.value = !isBold.value
-  }
-  
-  // 增大字体
-  const increaseFontSize = () => {
-    fontSize.value += 2
-  }
-  
-  // 减小字体
-  const decreaseFontSize = () => {
-    if (fontSize.value > 10) fontSize.value -= 2
-  }
-  
-  // 复制文本
-  const copyText = () => {
-    navigator.clipboard.writeText(textarea.value)
-    alert('文本已复制！')
-  }
-  
+    <el-tabs v-model="activeTab" class="protocol-tabs">
+      <el-tab-pane label="用户端隐私政策" name="user"></el-tab-pane>
+      <el-tab-pane label="服务端隐私政策" name="server"></el-tab-pane>
+    </el-tabs>
+    <div class="editor-container">
+      <el-input
+        v-model="content"
+        type="textarea"
+        :rows="15"
+        placeholder="请输入内容"
+        class="editor-textarea"
+      ></el-input>
+    </div>
+    <div class="button-container">
+      <!-- 修改按钮文本并绑定跳转方法 -->
+      <el-button type="primary" @click="goToEditPage">编辑</el-button>
+    </div>
+  </div>
+</template>
 
-  </script>
-  
-  <style scoped>
-  .container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    margin-top: 50px;
+<script>
+import { getPolicyDetail } from '@/api/setting'; 
+import { useRouter } from 'vue-router';
+
+export default {
+  data() {
+    return {
+      activeTab: 'user',
+      content: '', 
+      // 更新ID为POL001，确保跳转时使用此ID
+      policyIdMap: {
+        user: 'POL001', 
+        server: 'POL002' // 你可以为服务端隐私政策提供不同的ID
+      }
+    };
+  },
+  setup() {
+    const router = useRouter();
+    return {
+      router
+    };
+  },
+  mounted() {
+    this.fetchPolicyDetail(); 
+  },
+  watch: {
+    activeTab(newVal) {
+      this.fetchPolicyDetail();
+    }
+  },
+  methods: {
+    fetchPolicyDetail() {
+      const policyId = this.policyIdMap[this.activeTab];
+      console.log('请求的协议 ID:', policyId);
+      if (!policyId) {
+        console.error('未找到对应的协议 ID');
+        return;
+      }
+      getPolicyDetail(policyId)
+        .then(response => {
+          console.log('接口返回数据:', response);
+          if (response && response.content) {
+            this.content = response.content;
+          } else {
+            console.error('没有获取到协议内容，接口返回数据:', response);
+          }
+        })
+        .catch(error => {
+          console.error('获取隐私政策失败:', error);
+        });
+    },
+    // 新增跳转方法
+    goToEditPage() {
+      const policyId = this.policyIdMap[this.activeTab];
+      // 确保使用POL001等实际的ID值
+      this.router.push({
+        name: 'editprotocol', // 确保路由配置中有对应的路由名称
+        query: { policyId } // 传递具体的policyId
+      });
+    },
+   
   }
-  
-  .privacy-buttons {
-    margin-bottom: 20px;
-  }
-  
-  .font-controls {
-    margin-top: 10px;
-  }
-  
-  .el-button {
-    margin: 5px;
-  }
-  </style>
-  
+};
+</script>
+
+
+<style scoped>
+.protocol-management {
+  max-width: 800px;
+  margin: 50px auto;
+  padding: 20px;
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
+}
+
+.page-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.page-header::before {
+  content: '';
+  display: inline-block;
+  width: 4px;
+  height: 24px;
+  background-color: #4fc3f7;
+  margin-right: 15px;
+  border-radius: 2px;
+}
+
+.page-header span {
+  font-size: 24px;
+  font-weight: bold;
+}
+
+.protocol-tabs {
+  margin-bottom: 20px;
+}
+
+.editor-container {
+  margin-bottom: 20px;
+}
+
+
+
+
+
+
+.button-container {
+  text-align: left;
+}
+</style>
