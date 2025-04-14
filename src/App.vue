@@ -16,5 +16,10 @@ body,
 .el-container{
   height:100%;
 }
+@import "./assets/font.css";
+body{
+    font-family: pingfang;
+    font-weight: 100;
+}
 
 </style>

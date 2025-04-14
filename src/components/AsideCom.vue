@@ -205,7 +205,7 @@ export default{
             <!--跟路由配置有关-->
         
             <el-menu-item index="/service/management/jiazhenghuli"><el-icon><School /></el-icon>家政护理</el-menu-item>
-            <el-menu-item index="/service/management/shangmentiyan"><el-icon><Coordinate /></el-icon>上门体验</el-menu-item>
+            <el-menu-item index="/service/management/shangmentiyan"><el-icon><Coordinate /></el-icon>上门体检</el-menu-item>
             <el-menu-item index="/service/management/kangfuliliao"><el-icon><Bicycle /></el-icon>康复理疗</el-menu-item>
         </el-sub-menu></el-sub-menu>
 

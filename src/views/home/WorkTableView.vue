@@ -105,7 +105,7 @@
         <el-col :span="12">
           <el-card>
             <h3>各服务类型商品订单量占比</h3>
-            <div ref="serviceDistributionChart" style="height: 300px;"></div>
+            <div ref="serviceDistributionChart" style="height: 250px;"></div>
           </el-card>
         </el-col>
       </el-row>

@@ -237,7 +237,7 @@ export default {
         activityTime: '',
         activityAdress: '',
         lastUpdatedAt: new Date().toISOString(), // 设置当前时间为更新时间
-        lastUpdatedBy: this.$store.state.userInfo.staffName || '未知用户', // 自动填充更新人
+        lastUpdatedBy: this.$store.state.userInfo.staffName || '未知', // 自动填充更新人
       };
       this.dialogVisible = true;
     },

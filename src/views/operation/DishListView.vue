@@ -258,7 +258,7 @@ export default {
         share: 0, // 默认分享数为 0
         collect: 0, // 默认收藏数为 0
         lastUpdatedAt: new Date().toISOString(), // 设置当前时间
-        lastUpdatedBy: this.userInfo.staffName || '未知用户', // 自动填充更新人
+        lastUpdatedBy: this.userInfo.staffName || '未知', // 自动填充更新人
       };
       this.dialogVisible = true;
     },

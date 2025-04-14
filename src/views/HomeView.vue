@@ -69,7 +69,7 @@ export default{
       <el-aside>
         <div class="logo-box">
           <el-image style="width:50px;height:auto" :src="url"></el-image>
-          <h3 class="manager-title" v-show="!collapse">颐康云护</h3>
+          <h3 class="manager-title" v-show="!collapse" >颐康云护</h3>
         </div>
 
         <!--使用自定义组件-->
@@ -90,7 +90,7 @@ export default{
           
           <span>
             {{ $store.state.userInfo?.staffName || '未登录' }}
-            <el-button @click="logout" plain>退出</el-button>
+            <el-button type="primary" round @click="logout" plain>退出</el-button>
           </span>
         </el-header>
 
@@ -147,7 +147,7 @@ export default{
   background:white;
   display: flex;
   justify-content: space-between;
-  height:35px
+  height:32px
 }
 .el-main{
   background:#f7f8fa;

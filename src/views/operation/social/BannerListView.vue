@@ -163,7 +163,7 @@ export default {
         picture: '',
         link: '',
         status: '启用',
-        lastUpdatedBy: this.userInfo.staffName || '未知用户', // 自动填充更新人
+        lastUpdatedBy: this.userInfo.staffName || '未知', // 自动填充更新人
       };
       this.dialogVisible = true;
     },
