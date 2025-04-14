@@ -261,7 +261,7 @@
       // 编辑用户标签
       editTags(row) {
         this.tagForm.userId = row.userId;
-        this.tagForm.selectedTags = [...row.tags]; // 直接使用 tagName
+        this.tagForm.selectedTags = [...row.tags]; // 加载当前用户的标签
         this.tagDialogVisible = true;
       },
       // 保存用户标签
@@ -269,16 +269,24 @@
         try {
           const params = {
             userId: this.tagForm.userId,
-            tags: this.tagForm.selectedTags.map(tagName => {
-              const tag = this.allTags.find(tag => tag.tagName === tagName);
-              return tag ? { tagId: tag.tagId, type: 'manual' } : null; // 设置 type 为 "manual"
-            }).filter(tag => tag),
+            tags: this.tagForm.selectedTags
+              .filter(tagName => tagName && tagName.trim() !== '') // 过滤掉空白标签
+              .map(tagName => {
+                const tag = this.allTags.find(tag => tag.tagName === tagName);
+                return tag
+                  ? { tagId: tag.tagId, tagName: tag.tagName, type: 'manual' }
+                  : { tagName, type: 'manual' };
+              }),
           };
-          const res = await addOrUpdateTag(params);
+          const res = await addOrUpdateTag(params); // 调用接口更新用户绑定的标签
           if (res.code === 200) {
             ElMessage.success('标签保存成功');
             this.tagDialogVisible = false;
-            this.loadUsers(); // 重新加载用户列表
+            // 更新当前用户的标签数据
+            const userIndex = this.tableData.findIndex(user => user.userId === this.tagForm.userId);
+            if (userIndex !== -1) {
+              this.tableData[userIndex].tags = this.tagForm.selectedTags.filter(tagName => tagName && tagName.trim() !== ''); // 更新本地数据
+            }
           } else {
             ElMessage.error('标签保存失败: ' + res.message);
           }
@@ -331,13 +339,13 @@
       // 加载用户列表
       async loadUsers() {
         try {
-          const res = await getUserList();
+          const res = await getUserList(); // 调用后端接口获取用户列表
           if (res.code === 200) {
             this.tableData = res.data.map(item => ({
               ...item.user,
               tags: item.tags.map(tag => tag.tagName), // 提取标签名称
             }));
-            this.total = this.tableData.length;
+            this.total = this.tableData.length; // 更新总数
           } else {
             ElMessage.error('获取用户列表失败: ' + res.message);
           }

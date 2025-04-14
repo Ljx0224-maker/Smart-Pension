@@ -77,6 +77,8 @@ import UserView from '@/views/data/UserView.vue';
 import ProtocolView from '@/views/settings/ProtocolView.vue';
 import SettingIndexView from '@/views/settings/SettingIndexView.vue';
 import PepoleListView from '@/views/settings/PepoleListView.vue';
+import ResetPasswordView from '@/views/settings/ResetPasswordView.vue';
+import EditStaffView from '@/views/settings/EditStaffView.vue';
 
 // import DataIndexView from '@/views/data/DataIndexView.vue';
 
@@ -450,6 +452,18 @@ export const routes=[
             name:'protocol',
             label:'系统设置',
             component:ProtocolView,
+          },
+          {
+            path:'resetpassword',
+            name:'resetpassword',
+            label:'重置密码',
+            component:ResetPasswordView,
+          },
+          {
+            path:'editstaff',
+            name:'editstaff',
+            label:'编辑员工信息',
+            component:EditStaffView,
           }
         ]
       },

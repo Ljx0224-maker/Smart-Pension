@@ -6,7 +6,7 @@
       </div>
       <div class="action-section">
         <el-button type="primary" @click="addTag">新增标签</el-button>
-        <el-button @click="batchDelete">批量操作</el-button>
+        <el-button >批量操作</el-button>
       </div>
     </div>
 
