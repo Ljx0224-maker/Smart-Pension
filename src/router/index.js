@@ -79,6 +79,7 @@ import SettingIndexView from '@/views/settings/SettingIndexView.vue';
 import PepoleListView from '@/views/settings/PepoleListView.vue';
 import ResetPasswordView from '@/views/settings/ResetPasswordView.vue';
 import EditStaffView from '@/views/settings/EditStaffView.vue';
+import EditProtocolView from '@/views/settings/EditProtocolView.vue';
 
 // import DataIndexView from '@/views/data/DataIndexView.vue';
 
@@ -443,7 +444,7 @@ export const routes=[
         children:[
           {
             path:'pepolelist',
-            name:'pepolelist',
+            name:'PepoleListView',
             label:'员工管理',
             component:PepoleListView,
           },
@@ -461,9 +462,15 @@ export const routes=[
           },
           {
             path:'editstaff',
-            name:'editstaff',
+            name:'EditStaffView',
             label:'编辑员工信息',
             component:EditStaffView,
+          },
+          {
+            path:'editprotocol',
+            name:'editprotocol',
+            label:'编辑协议信息',
+            component:EditProtocolView,
           }
         ]
       },

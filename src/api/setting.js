@@ -26,3 +26,21 @@ export function getStaffList(params) {
       params: { staffId } // 参数名必须与Java接口的@RequestParam一致
     });
   }
+
+  // 获取用户隐私协议详情
+export function getPolicyDetail(policyId) {
+  return ajax({
+    url: '/setting/policy/detail?policyId=' + policyId,
+    method: 'GET',
+    params: { policyId } // 参数名必须与Java接口的@RequestParam一致
+  });
+}
+
+// 编辑用户隐私协议信息
+export function updatePolicyInfo(userPolicyInfo) {
+  return ajax({
+    url: '/setting/policy/update',
+    method: 'POST',
+    data: userPolicyInfo, // 使用POST请求的请求体传递用户隐私协议信息
+  });
+}

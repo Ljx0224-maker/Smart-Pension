@@ -153,7 +153,7 @@
       return {
         tableData: [],
         currentPage: 1,
-        pageSize: 10,
+        pageSize: 10, // 每页显示10条信息
         total: 0,
         statusFilter: '',
         tagFilter: '',
@@ -334,18 +334,30 @@
       // 分页切换
       handlePageChange(page) {
         this.currentPage = page;
-        this.loadUsers();
+        this.loadUsers(); // 根据当前页加载数据
       },
       // 加载用户列表
       async loadUsers() {
         try {
-          const res = await getUserList(); // 调用后端接口获取用户列表
+          // 传递分页参数
+          const params = {
+            page: this.currentPage,
+            pageSize: this.pageSize
+          };
+          const res = await getUserList(params);
+          console.log('接口返回的原始数据:', res); // 打印原始数据
           if (res.code === 200) {
-            this.tableData = res.data.map(item => ({
-              ...item.user,
-              tags: item.tags.map(tag => tag.tagName), // 提取标签名称
-            }));
-            this.total = this.tableData.length; // 更新总数
+            // 直接使用 res.data 作为用户列表
+            this.tableData = res.data.map(item => {
+              const user = item.user || {};
+              const tags = item.tags ? item.tags.map(tag => tag.tagName) : [];
+              return {
+                ...user,
+                tags
+              };
+            });
+            // 从响应对象顶层获取 total
+            this.total = res.total || 0; 
           } else {
             ElMessage.error('获取用户列表失败: ' + res.message);
           }

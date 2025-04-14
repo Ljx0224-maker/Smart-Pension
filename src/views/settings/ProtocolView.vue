@@ -17,27 +17,77 @@
       ></el-input>
     </div>
     <div class="button-container">
-      <el-button type="primary" @click="savePolicy">保存</el-button>
+      <!-- 修改按钮文本并绑定跳转方法 -->
+      <el-button type="primary" @click="goToEditPage">编辑</el-button>
     </div>
   </div>
 </template>
 
 <script>
+import { getPolicyDetail } from '@/api/setting'; 
+import { useRouter } from 'vue-router';
+
 export default {
   data() {
     return {
       activeTab: 'user',
-      content: '',
+      content: '', 
+      // 更新ID为POL001，确保跳转时使用此ID
+      policyIdMap: {
+        user: 'POL001', 
+        server: 'POL002' // 你可以为服务端隐私政策提供不同的ID
+      }
     };
   },
-  methods: {
-    savePolicy() {
-      console.log('Saving policy:', this.content);
-      // 添加您的保存逻辑
+  setup() {
+    const router = useRouter();
+    return {
+      router
+    };
+  },
+  mounted() {
+    this.fetchPolicyDetail(); 
+  },
+  watch: {
+    activeTab(newVal) {
+      this.fetchPolicyDetail();
     }
+  },
+  methods: {
+    fetchPolicyDetail() {
+      const policyId = this.policyIdMap[this.activeTab];
+      console.log('请求的协议 ID:', policyId);
+      if (!policyId) {
+        console.error('未找到对应的协议 ID');
+        return;
+      }
+      getPolicyDetail(policyId)
+        .then(response => {
+          console.log('接口返回数据:', response);
+          if (response && response.content) {
+            this.content = response.content;
+          } else {
+            console.error('没有获取到协议内容，接口返回数据:', response);
+          }
+        })
+        .catch(error => {
+          console.error('获取隐私政策失败:', error);
+        });
+    },
+    // 新增跳转方法
+    goToEditPage() {
+      const policyId = this.policyIdMap[this.activeTab];
+      // 确保使用POL001等实际的ID值
+      this.router.push({
+        name: 'editprotocol', // 确保路由配置中有对应的路由名称
+        query: { policyId } // 传递具体的policyId
+      });
+    },
+   
   }
 };
 </script>
+
 
 <style scoped>
 .protocol-management {
@@ -78,10 +128,10 @@ export default {
   margin-bottom: 20px;
 }
 
-.editor-textarea {
-  width: 100%;
-  font-size: 16px;
-}
+
+
+
+
 
 .button-container {
   text-align: left;
