@@ -125,7 +125,8 @@
       >
         <el-form :model="form" label-width="100px">
           <el-form-item label="商品名称">
-            <el-input v-model="form.productName"></el-input>
+            <!-- 确保 v-model 绑定到 productName -->
+            <el-input v-model="form.productName"></el-input> 
           </el-form-item>
           <el-form-item label="分类">
             <el-select v-model="form.category" placeholder="请选择">
@@ -250,14 +251,14 @@ export default {
         }
 
         // 筛选关键字
-        if (this.searchKeyword && !product.name.includes(this.searchKeyword)) {
+        if (this.searchKeyword && !product.productName.includes(this.searchKeyword)) { // 确保使用 productName
           return false;
         }
 
         return true;
       });
 
-      console.log('筛选后的表格数据:', filtered); // 调试信息
+      console.log('筛选后的表格数据:', filtered); 
       return filtered;
     },
   },
@@ -289,6 +290,7 @@ export default {
     },
     addNewProduct() {
       this.dialogTitle = '新增商品';
+      console.log('新增商品信息:', this.form); // 调试信息
       this.form = {
         id: null,
         name: '', // 商品名称
@@ -299,7 +301,7 @@ export default {
         productRemark: '', // 商品备注
         serviceDetails: '', // 服务详情
         sales: 0, // 销量
-        servicePeople: 0, // 服务人数
+        servicePeople: 0, // 服务人数d
         serviceDuration: 0, // 服务时长（分钟）
         lastUpdatedBy: this.userInfo.staffName || '未知', // 自动填充更新人
       };
@@ -341,10 +343,14 @@ export default {
       });
     },
     saveProduct() {
+      // 确保 payload 里包含正确的商品名称
       const payload = {
         ...this.form,
         productName: this.form.name, // 映射为后端字段
         status: this.form.status === '已上架' ? '已上架' : '下架', // 映射状态值
+        // 注意这里 this.form.name 可能有误，根据表单绑定，商品名称应该是 productName
+        productName: this.form.productName, 
+        status: this.form.status === '已上架' ? '已上架' : '下架',
       };
 
       if (this.form.id) {
@@ -402,9 +408,10 @@ export default {
 
       getJZProductList(params).then(res => {
         if (res.code === 200) {
-          this.tableData = res.data;
+          console.log('接口返回的商品数据:', res.data); 
+          // 确保返回的数据里有 productName 字段
+          this.tableData = res.data; 
           this.total = res.total;
-          console.log('加载的商品数据:', this.tableData); // 调试信息
         } else {
           ElMessage.error('获取数据失败');
         }

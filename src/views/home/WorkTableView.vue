@@ -2,64 +2,77 @@
   <div class="work-table-container">
     <!-- 顶部欢迎信息 -->
     <div class="welcome-section">
-      <h2>👋 早上好！Daisy</h2>
+      <!-- 显示欢迎信息，使用 staffName -->
+      <h2>👋 你好！{{ staffName }}</h2>
     </div>
 
     <!-- 数据统计卡片 -->
     <div class="statistics-cards">
       <el-row :gutter="20">
+        <!-- 新增用户数量卡片 -->
         <el-col :span="6">
           <el-card class="statistic-card">
             <div class="statistic-content">
-              <div class="statistic-info">
-                <h3>新增用户数量</h3>
-                <p>1080</p>
-                <span class="trend-up">较上周 +20%</span>
-              </div>
-              <div class="statistic-chart">
-                <div ref="userChart" style="height: 60px;"></div>
+              <div class="left-right-container">
+                <div class="left-content">
+                  <h3>新增用户数量</h3>
+                  <p>1080</p>
+                  <span class="trend-up">较上周 +20%</span>
+                </div>
+                <div class="right-content">
+                  <img :src="userImage" alt="新增用户图片"> 
+                </div>
               </div>
             </div>
           </el-card>
         </el-col>
+        <!-- 新增工单数量卡片 -->
         <el-col :span="6">
           <el-card class="statistic-card">
             <div class="statistic-content">
-              <div class="statistic-info">
-                <h3>新增工单数量</h3>
-                <p>3400</p>
-                <span class="trend-up">较上周 +30%</span>
-              </div>
-              <div class="statistic-chart">
-                <div ref="workOrderChart" style="height: 60px;"></div>
+              <div class="left-right-container">
+                <div class="left-content">
+                  <h3>新增工单数量</h3>
+                  <p>3400</p>
+                  <span class="trend-up">较上周 +30%</span>
+                </div>
+                <div class="right-content">
+                  <img :src="workOrderImage" alt="新增工单图片"> 
+                </div>
               </div>
             </div>
           </el-card>
         </el-col>
+        <!-- 新增订单数量卡片 -->
         <el-col :span="6">
           <el-card class="statistic-card">
             <div class="statistic-content">
-              <div class="statistic-info">
-                <h3>新增订单数量</h3>
-                <p>300</p>
-                <span class="trend-down">较上周 -30%</span>
-              </div>
-              <div class="statistic-chart">
-                <div ref="orderChart" style="height: 60px;"></div>
+              <div class="left-right-container">
+                <div class="left-content">
+                  <h3>新增订单数量</h3>
+                  <p>300</p>
+                  <span class="trend-down">较上周 -30%</span>
+                </div>
+                <div class="right-content">
+                  <img :src="orderImage" alt="新增订单图片"> 
+                </div>
               </div>
             </div>
           </el-card>
         </el-col>
+        <!-- 新增动态数量卡片 -->
         <el-col :span="6">
           <el-card class="statistic-card">
             <div class="statistic-content">
-              <div class="statistic-info">
-                <h3>新增动态数量</h3>
-                <p>8890</p>
-                <span class="trend-up">较昨日 +38%</span>
-              </div>
-              <div class="statistic-chart">
-                <div ref="dynamicChart" style="height: 60px;"></div>
+              <div class="left-right-container">
+                <div class="left-content">
+                  <h3>新增动态数量</h3>
+                  <p>8890</p>
+                  <span class="trend-up">较上周 +38%</span>
+                </div>
+                <div class="right-content">
+                  <img :src="dynamicImage" alt="新增动态图片"> 
+                </div>
               </div>
             </div>
           </el-card>
@@ -69,20 +82,17 @@
 
     <!-- 快捷入口 -->
     <div class="quick-access">
-      <div class="quick-access-item" v-for="item in quickAccess" :key="item.label">
+      <div 
+        class="quick-access-item" 
+        v-for="item in quickAccess" 
+        :key="item.label"
+        @click="handleQuickAccessClick(item.label)" 
+      >
         <el-icon :size="30" :color="item.color">
           <component :is="item.icon"></component>
         </el-icon>
         <span>{{ item.label }}</span>
       </div>
-    </div>
-
-    <!-- 用户趋势统计 -->
-    <div class="user-trend">
-      <h3>用户趋势统计</h3>
-      <el-card>
-        <div ref="userTrendChart" style="height: 300px;"></div>
-      </el-card>
     </div>
 
     <!-- 用户标签分布和各服务类型商品订单量占比 -->
@@ -109,6 +119,14 @@
           </el-card>
         </el-col>
       </el-row>
+    </div>
+
+    <!-- 用户趋势统计 -->
+    <div class="user-trend">
+      <h3>用户趋势统计</h3>
+      <el-card>
+        <div ref="userTrendChart" style="height: 300px;"></div>
+      </el-card>
     </div>
 
     <!-- 支付榜和服务人员业绩 -->
@@ -156,7 +174,24 @@
 
 <script>
 import * as echarts from 'echarts';
-import { User, Document, ChatDotRound, ShoppingCart } from '@element-plus/icons-vue';
+import { 
+  User, 
+  Document, 
+  ChatDotRound, 
+  ShoppingCart, 
+  DocumentCopy, 
+  Check, 
+  Headset, 
+  ChatLineRound,
+  Promotion, 
+  UserFilled 
+} from '@element-plus/icons-vue';
+import userImage from '@/assets/1.png'; 
+import workOrderImage from '@/assets/2.png'; 
+import orderImage from '@/assets/3.png'; 
+import dynamicImage from '@/assets/4.png'; 
+import { useRouter } from 'vue-router'; 
+import { useStore } from 'vuex'; 
 
 export default {
   components: {
@@ -164,14 +199,37 @@ export default {
     Document,
     ChatDotRound,
     ShoppingCart,
+    DocumentCopy,
+    Check,
+    Headset,
+    ChatLineRound,
+    Promotion, 
+    UserFilled 
   },
-  data() {
-    return {
+  setup() {
+    const router = useRouter(); 
+    const store = useStore(); 
+    // 从仓库状态获取 userInfo
+    const userInfo = store.state.userInfo; 
+    // 从 userInfo 中获取 staffName
+    const staffName = userInfo?.staffName || ''; 
+
+    const data = {
+      userImage,
+      workOrderImage,
+      orderImage,
+      dynamicImage,
       quickAccess: [
         { label: '全部用户', icon: 'User', color: '#409EFF' },
-        { label: '报告管理', icon: 'Document', color: '#409EFF' },
+        { label: '收支明细', icon: 'Document', color: '#409EFF' },
         { label: '会话', icon: 'ChatDotRound', color: '#409EFF' },
         { label: '全部订单', icon: 'ShoppingCart', color: '#409EFF' },
+        { label: '服务人员', icon: 'DocumentCopy', color: '#409EFF' },
+        { label: '审核管理', icon: 'Check', color: '#409EFF' },
+        { label: '售后管理', icon: 'Headset', color: '#409EFF' },
+        { label: '动态管理', icon: 'ChatLineRound', color: '#409EFF' },
+        { label: '活动管理', icon: 'Promotion', color: '#409EFF' }, 
+        { label: '员工管理', icon: 'UserFilled', color: '#409EFF' } 
       ],
       userTags: [
         { name: '高血压', value: 80, color: '#409EFF' },
@@ -196,11 +254,42 @@ export default {
         { rank: 5, name: '王小倩', avatar: '/images/avatar1.jpg', type: '家政护工', orders: 2678 },
       ],
     };
+
+    const handleQuickAccessClick = (label) => {
+      if (label === '全部用户') {
+        router.push('/user/userlist'); 
+      } else if (label === '会话') {
+        router.push('/message/conversation'); 
+      } else if (label === '全部订单') {
+        router.push('/order/ordermanage/orderafter'); 
+      } else if (label === '审核管理') {
+        router.push('/operation/events/rigisterinfo'); 
+      } else if (label === '售后管理') {
+        router.push('/order/ordermanage/orderafter'); 
+      } else if (label === '动态管理') {
+        router.push('/operation/social/newslist'); 
+      } else if (label === '活动管理') {
+        router.push('/operation/events/eventslist'); 
+      } else if (label === '员工管理') {
+        router.push('/user/userlist'); 
+      } else if (label === '收支明细') {
+        router.push('/order/ordermoney'); 
+      } else if (label === '服务人员') {
+        router.push('/staff/stafflist'); 
+      }
+      // 后续可以根据需求为其他快捷入口添加跳转逻辑
+    };
+
+    return {
+      ...data,
+      handleQuickAccessClick,
+      userInfo,
+      staffName 
+    };
   },
   mounted() {
     this.initUserTrendChart();
     this.initServiceDistributionChart();
-    this.initStatisticCharts();
   },
   methods: {
     initUserTrendChart() {
@@ -314,153 +403,6 @@ export default {
       };
       myChart.setOption(option);
     },
-    initStatisticCharts() {
-      this.initUserChart();
-      this.initWorkOrderChart();
-      this.initOrderChart();
-      this.initDynamicChart();
-    },
-    initUserChart() {
-      const chartDom = this.$refs.userChart;
-      const myChart = echarts.init(chartDom);
-      const option = {
-        xAxis: {
-          type: 'category',
-          data: ['03-01', '03-02', '03-03', '03-04', '03-05', '03-06', '03-07'],
-          show: false
-        },
-        yAxis: {
-          show: false
-        },
-        series: [
-          {
-            data: [3000, 3200, 3100, 3500, 3300, 3400, 3600],
-            type: 'line',
-            smooth: true,
-            areaStyle: {
-              color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
-                { offset: 0, color: 'rgba(64, 158, 255, 0.5)' },
-                { offset: 1, color: 'rgba(64, 158, 255, 0.1)' }
-              ])
-            },
-            lineStyle: {
-              color: '#409EFF'
-            }
-          }
-        ],
-        grid: {
-          left: 0,
-          right: 0,
-          bottom: 0,
-          top: 0,
-          containLabel: true
-        }
-      };
-      myChart.setOption(option);
-    },
-    initWorkOrderChart() {
-      const chartDom = this.$refs.workOrderChart;
-      const myChart = echarts.init(chartDom);
-      const option = {
-        xAxis: {
-          type: 'category',
-          data: ['03-01', '03-02', '03-03', '03-04', '03-05', '03-06', '03-07'],
-          show: false
-        },
-        yAxis: {
-          show: false
-        },
-        series: [
-          {
-            data: [3000, 3200, 3100, 3500, 3300, 3400, 3600],
-            type: 'bar',
-            itemStyle: {
-              color: '#E6A23C'
-            }
-          }
-        ],
-        grid: {
-          left: 0,
-          right: 0,
-          bottom: 0,
-          top: 0,
-          containLabel: true
-        }
-      };
-      myChart.setOption(option);
-    },
-    initOrderChart() {
-      const chartDom = this.$refs.orderChart;
-      const myChart = echarts.init(chartDom);
-      const option = {
-        xAxis: {
-          type: 'category',
-          data: ['03-01', '03-02', '03-03', '03-04', '03-05', '03-06', '03-07'],
-          show: false
-        },
-        yAxis: {
-          show: false
-        },
-        series: [
-          {
-            data: [300, 320, 310, 250, 330, 340, 360],
-            type: 'line',
-            smooth: true,
-            areaStyle: {
-              color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
-                { offset: 0, color: 'rgba(245, 108, 108, 0.5)' },
-                { offset: 1, color: 'rgba(245, 108, 108, 0.1)' }
-              ])
-            },
-            lineStyle: {
-              color: '#F56C6C'
-            }
-          }
-        ],
-        grid: {
-          left: 0,
-          right: 0,
-          bottom: 0,
-          top: 0,
-          containLabel: true
-        }
-      };
-      myChart.setOption(option);
-    },
-    initDynamicChart() {
-      const chartDom = this.$refs.dynamicChart;
-      const myChart = echarts.init(chartDom);
-      const option = {
-        xAxis: {
-          type: 'category',
-          data: ['03-01', '03-02', '03-03', '03-04', '03-05', '03-06', '03-07'],
-          show: false
-        },
-        yAxis: {
-          show: false
-        },
-        series: [
-          {
-            data: [8000, 8200, 8500, 8300, 8700, 8900, 9000],
-            type: 'bar',
-            itemStyle: {
-              color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
-                { offset: 0, color: '#67C23A' },
-                { offset: 1, color: '#909399' }
-              ])
-            }
-          }
-        ],
-        grid: {
-          left: 0,
-          right: 0,
-          bottom: 0,
-          top: 0,
-          containLabel: true
-        }
-      };
-      myChart.setOption(option);
-    }
   }
 };
 </script>
@@ -610,5 +552,51 @@ export default {
   height: 40px;
   border-radius: 4px;
   margin-right: 10px;
+}
+
+/* 新增样式 */
+.left-right-container {
+  display: flex;
+  width: 100%;
+}
+
+.left-content, .right-content {
+  flex: 1; /* 让左右两部分等宽 */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.right-content {
+  align-items: center; /* 让图片在右侧居中显示 */
+}
+
+.right-content img {
+  max-width: 100%; /* 确保图片不会超出容器 */
+  max-height: 100%;
+}
+
+/* 明确设置左侧内容字体大小，和原样式保持一致 */
+.left-content h3 {
+  font-size: 16px;
+  margin-bottom: 10px;
+  color: #333;
+}
+
+.left-content p {
+  font-size: 24px;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 5px;
+}
+
+.left-content .trend-up {
+  color: #409EFF;
+  font-size: 14px;
+}
+
+.left-content .trend-down {
+  color: #f56c6c;
+  font-size: 14px;
 }
 </style>

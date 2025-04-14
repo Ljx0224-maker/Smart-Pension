@@ -60,7 +60,7 @@
 <script lang="ts" setup>
 import { ref, onMounted } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
-import { getTagsList, addOrUpdateTag, deleteTag } from '@/api/user'
+import { getTagsList, addOrUpdateTag, deleteTag } from '@/api/user.js'
 import { useRouter } from 'vue-router';
 
 const router = useRouter();
