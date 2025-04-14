@@ -40,7 +40,7 @@ import CommentsListView from '@/views/operation/CommentsListView.vue';
 import DiseaseListView from '@/views/operation/DiseaseListView.vue'
 import DishListView from '@/views/operation/DishListView.vue'
 import HealthInfoListView from '@/views/operation/HealthInfoListView.vue'
-import InstitutionListView from '@/views/operation/InstitutionListVIew.vue'
+import InstitutionListView from '@/views/operation/InstitutionListView.vue'
 import MediaListView from '@/views/operation/MediaListView.vue'
   // 导入生活圈管理相关组件
 import BannerIndexView from '@/views/operation/social/BannerIndexView.vue';
@@ -222,7 +222,7 @@ export const routes=[
               {
                 path:'orderrefund',
                 name:'orderrefund',
-                label:'退款原因设置',
+                label:'退款原因',
                 component:OrderRefundView,
               },
               {
