@@ -117,6 +117,7 @@ export default {
         status: '启用', // 默认状态
       },
       selectedRows: [],
+      userInfo: this.$store.state.userInfo, // 从 Vuex 获取当前登录用户信息
     };
   },
   components: {
@@ -181,6 +182,7 @@ export default {
         id: null,
         reason: '',
         status: '启用',
+        lastUpdatedBy: this.userInfo.staffName || '未知用户', // 自动填充更新人
       };
       this.dialogVisible = true;
     },

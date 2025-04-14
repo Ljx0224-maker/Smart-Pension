@@ -27,6 +27,10 @@ app.use(router)
 
 // 将全局状态store挂载到app实例上
 app.use(store)
+const userInfo = JSON.parse(localStorage.getItem('userInfo'));
+if (userInfo) {
+  store.commit('updateUserInfo', userInfo); // 恢复 Vuex 状态
+}
 
 app.mount('#app')
 

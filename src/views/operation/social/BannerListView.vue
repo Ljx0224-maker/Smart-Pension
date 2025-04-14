@@ -129,6 +129,7 @@ export default {
         status: '启用',
       },
       selectedRows: [],
+      userInfo: this.$store.state.userInfo,
     };
   },
   components: {
@@ -162,6 +163,7 @@ export default {
         picture: '',
         link: '',
         status: '启用',
+        lastUpdatedBy: this.userInfo.staffName || '未知用户', // 自动填充更新人
       };
       this.dialogVisible = true;
     },

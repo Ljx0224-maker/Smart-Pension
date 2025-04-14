@@ -165,6 +165,7 @@ export default {
         activityAdress: '',
       },
       selectedRows: [],
+      userInfo: this.$store.state.userInfo, // 从 Vuex 获取当前登录用户信息
     };
   },
   components: {
@@ -236,6 +237,7 @@ export default {
         activityTime: '',
         activityAdress: '',
         lastUpdatedAt: new Date().toISOString(), // 设置当前时间为更新时间
+        lastUpdatedBy: this.$store.state.userInfo.staffName || '未知用户', // 自动填充更新人
       };
       this.dialogVisible = true;
     },

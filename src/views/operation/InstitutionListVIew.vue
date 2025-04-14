@@ -170,6 +170,7 @@ export default {
         status: '',
       },
       selectedRows: [],
+      userInfo: this.$store.state.userInfo, // 从 Vuex 获取当前登录用户信息
     };
   },
   components: {
@@ -243,6 +244,7 @@ export default {
         share: 0, // 默认分享数为 0
         collect: 0, // 默认收藏数为 0
         lastUpdatedAt: new Date().toISOString(), // 默认更新时间为当前时间
+        lastUpdatedBy: this.userInfo.staffName || '未知用户', // 自动填充更新人
       };
       this.dialogVisible = true;
     },

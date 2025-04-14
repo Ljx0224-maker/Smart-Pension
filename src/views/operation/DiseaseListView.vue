@@ -178,6 +178,7 @@ export default {
         lastUpdatedAt: '',
       },
       selectedRows: [],
+      userInfo: this.$store.state.userInfo, // 从 Vuex 获取当前登录用户信息
     };
   },
   components: {
@@ -236,8 +237,8 @@ export default {
         status: '',
         share: 0,
         collect: 0,
-        lastUpdatedBy: '',
         lastUpdatedAt: new Date().toISOString(),
+        lastUpdatedBy: this.userInfo.staffName || '未知用户', // 自动填充更新人
       };
       this.dialogVisible = true;
     },

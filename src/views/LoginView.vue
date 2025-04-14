@@ -1,48 +1,48 @@
 <script>
 import { ElMessage } from 'element-plus';
 import md5 from 'md5';
-import axios from 'axios';
 import { loginFn } from '@/api/user';
 import { mapState, mapMutations } from 'vuex';
 import logo from "../assets/logo.png";
-import WorkTableView from '@/views/home/WorkTableView.vue';
-
+import logo1 from "../assets/logo1.png";
 
 export default {
-  name: 'LoginView',
   data() {
     return {
-      url:logo,
-      adminname: '',
-      password: '',
+      staffId: '', // 用户名
+      password: '', // 密码
+      url: logo,
+      url1: logo1,
     };
   },
-  computed: {
-    ...mapState(['count']),
-  },
   methods: {
-    ...mapMutations(['updateUserInfo']),
-    submitForm() {
-      loginFn({
-        adminname: this.adminname,
-        password: this.password,
-      }).then((res) => {
-        console.log(res);
-        if (res.code == '10005') {
-          ElMessage.error(res.message);
-          return;
-        } else if (res.code == '10003') {
-          ElMessage.error(res.message);
-          return;
+    async submitForm() {console.log(this.staffId, md5(this.password));
+      if (!this.staffId || !this.password) {
+        
+        
+        ElMessage.error('账号和密码不能为空');
+        return;
+      }
+    
+      try {
+        const res = await loginFn(this.staffId, this.password); // 确保传递正确的参数
+        if (res.code === 200) {
+          ElMessage.success(res.message);
+          localStorage.setItem('token', res.data.token); // 保存 token
+          localStorage.setItem('userInfo', JSON.stringify(res.data)); // 保存用户信息
+          this.$store.commit('updateUserInfo', res.data); // 更新 Vuex 的 userInfo
+          this.$router.push('/home/worktable'); // 跳转到工作台
         } else {
-          this.updateUserInfo(res.data);
-          localStorage.setItem('token', res.data.token);
-          this.$router.push('/home/worktable');
+          ElMessage.error(res.message);
         }
-      });
+      } catch (error) {
+        console.error(error);
+        ElMessage.error('登录失败，请稍后重试');
+      }
     },
   },
 };
+
 </script>
 
 <template>
@@ -50,12 +50,13 @@ export default {
     <div class="left-section">
       <h1 style="margin-left: 250px">颐康云护</h1>
       <p style="margin-left: 200px">智慧养老后台管理系统后台端</p>
+      <el-image style="width: 300px; height: auto" :src="url1" :fit="fit" />
     </div>
     <div class="right-section">
       <div class="form-wrap">
         <el-image style="width: 100px; height: 100px" :src="url" :fit="fit" />
         <h2>欢迎登录</h2>
-        <el-input v-model="adminname" placeholder="请输入用户名" />
+        <el-input v-model="staffId" placeholder="请输入账号" />
         <el-input
           class="psw"
           v-model="password"
@@ -63,9 +64,7 @@ export default {
           placeholder="请输入密码"
           show-password
         />
-        <el-checkbox>我已阅读并同意《用户隐私政策》</el-checkbox>
         <el-button type="primary" round @click="submitForm">登录</el-button>
-        <a href="#" class="forgot-password">忘记密码请联系系统管理员</a>
       </div>
     </div>
   </div>
@@ -75,7 +74,7 @@ export default {
 .login-container {
   display: flex;
   height: 100vh;
-  background-color: #f5f7fa;
+  background-color: white;
 
   .left-section {
     flex: 1;
@@ -84,7 +83,7 @@ export default {
     flex-direction: column;
     justify-content: center;
     align-items: flex-start;
-    background: linear-gradient(to right, #bde5f4, #ffffff);
+    background:#407BFD; //linear-gradient(to right, #407BFD, #ffffff);
 
     h1 {
       font-size: 28px;

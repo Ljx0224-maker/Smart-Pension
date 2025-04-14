@@ -124,6 +124,7 @@ export default {
         status: '',
       },
       selectedRows: [],
+      userInfo: this.$store.state.userInfo, // 从 Vuex 获取当前登录用户信息
     };
   },
   components: {
@@ -226,6 +227,7 @@ export default {
         comment: 0, // 评论数默认值
         share: 0, // 分享数默认值
         releaseTime: new Date().toISOString(), // 发布时间设置为当前时间
+        publisher: this.userInfo.staffName, // 发布人设置为当前登录用户的用户名
       };
       this.dialogVisible = true;
     },

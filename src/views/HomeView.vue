@@ -16,11 +16,11 @@ export default{
       collapse:false
     }
   },
-  mounted(){
-    console.log(this.$store.state.userInfo.adminname);
-    if(!this.$store.state.userInfo.adminname){
+  mounted() {
+    const userInfo = this.$store.state.userInfo;
+    if (!userInfo || !userInfo.staffId) {
       // 用户没有登录
-      this.$router.push('/login')
+      this.$router.push('/login');
     }
   },
   computed:{
@@ -88,8 +88,10 @@ export default{
             <component :is="headerLeft"></component>
           </el-icon>
           
-          <span>  {{ $store.state.userInfo.adminname }} <el-button @click="logout" plain>退出</el-button></span>
-
+          <span>
+            {{ $store.state.userInfo?.staffName || '未登录' }}
+            <el-button @click="logout" plain>退出</el-button>
+          </span>
         </el-header>
 
         <!--主体内容-->

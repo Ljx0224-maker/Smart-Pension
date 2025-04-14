@@ -4,7 +4,7 @@ import { Avatar,House,UserFilled,User,Star,Guide,Collection,DataAnalysis,Documen
   CreditCard,ShoppingCart,ShoppingCartFull,ShoppingTrolley,Setting,DataBoard,
   EditPen,Edit,Monitor,VideoPause,VideoCamera,Picture,PictureRounded,DocumentAdd,
   Plus,Reading,Dish,ChatRound,Drizzling,PartlyCloudy,Pointer,Coordinate,CollectionTag,
-  Discount,OfficeBuilding,Notification,View,Goods,SoldOut,School,DataLine,PriceTag
+  Discount,OfficeBuilding,Notification,View,Goods,SoldOut,School,DataLine,PriceTag,CirclePlus
 } from '@element-plus/icons-vue'
 import { mapState } from 'vuex';
 
@@ -35,7 +35,7 @@ export default{
         CreditCard,CollectionTag,
         ShoppingCart,
         ShoppingCartFull,Guide,
-        ShoppingTrolley,
+        ShoppingTrolley,CirclePlus,
         Setting,DocumentAdd,
         Edit,Goods,DocumentCopy,
         EditPen,Monitor,VideoPause,VideoCamera,Picture,PictureRounded,Plus,Reading,Dish,
@@ -178,10 +178,10 @@ export default{
             <span>用户管理</span>
             </template>
             <!--跟路由配置有关-->
-            <el-menu-item index="/user/userlist"><el-icon><User /></el-icon>用户列表</el-menu-item>
-            <el-menu-item index="/user/usertag"><el-icon><UserFilled /></el-icon>用户标签</el-menu-item>
-            <el-menu-item index="/user/adduser"><el-icon><User /></el-icon>新增/修改用户信息</el-menu-item>
-            <el-menu-item index="/user/addtag"><el-icon><UserFilled /></el-icon>添加标签</el-menu-item>
+            <el-menu-item index="/user/userlist"><el-icon><Document /></el-icon>用户列表</el-menu-item>
+            <el-menu-item index="/user/usertag"><el-icon><CollectionTag /></el-icon>用户标签</el-menu-item>
+            <el-menu-item index="/user/adduser"><el-icon><CirclePlus /></el-icon>新增/修改用户信息</el-menu-item>
+            <el-menu-item index="/user/addtag"><el-icon><PriceTag /></el-icon>添加标签</el-menu-item>
         </el-sub-menu>
 
 

@@ -17,8 +17,11 @@ const request=axios.create({
     // baseURL: isDev ? '开发环境' : '生产环境'
     // baseURL用来配置基础路径的，以后数据请求的时候不需要每次都写对应的地址了
     // baseURL:isDev? 'http://121.89.205.189:3000/admin':'http://121.89.205.189:3000/admin',
-    baseURL:'http://localhost:8080/smartcare',
-    timeout:60000
+    baseURL:'/smartcare',
+    timeout:60000,
+    headers: {
+      'Content-Type': 'application/json', // 设置默认 Content-Type
+    },
 })
 
 // 添加请求拦截器
@@ -29,8 +32,12 @@ request.interceptors.request.use(function (config) {
   // 1.先获取token
   const token = localStorage.getItem('token') || '';
   // 2. 设置token
-  config.headers.token = token;
-
+      // 如果 token 存在，则将其添加到请求头中
+      if (token) {
+        config.headers['Authorization'] = `${token}`; // 常见的 token 携带方式，可根据后端要求调整
+    }
+    console.log('请求配置:', config); // 打印请求配置，检查是否包含 token
+    console.log('请求头:', config.headers);
   // console.log(config);    
 
   return config;

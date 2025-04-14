@@ -26,4 +26,12 @@ export default defineConfig({
       '@': fileURLToPath(new URL('./src', import.meta.url))
     },
   },
+  server: {
+    proxy: {
+      '/smartcare': {
+        target: 'http://localhost:8888', // 后端接口地址
+        changeOrigin: true, // 是否改变源
+      },
+    },
+  }
 })

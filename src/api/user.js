@@ -2,15 +2,23 @@
 // ajax是自己在request.js中设的，可以改，不一定要叫这个名字
 import request from '@/utils/request';
 
-// 管理系统登录接口的封装
-export function loginFn(params){
+//管理系统登录接口的封装
+export function loginFn(staffId, password){
 
     return request({
         method:'POST',
-        url:'/admin/login',
-        data:params
+        url:`/login?staffId=${staffId}&password=${password}`,
+        params: { staffId, password},
     })
 }
+// export function loginFn(staffId, password) {
+//   return request({
+//     method: 'POST',
+//     url: '/login', // 移除 URL 参数拼接
+//     data: { staffId, password }, // 参数通过 data 传递
+//   });
+// }
+
 
 // 获取管理员列表
 export function adminList(){
