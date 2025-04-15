@@ -102,13 +102,13 @@ export const routes=[
           {
             path:'board',
             name:'board',
-            label:'工作台',
+            label:'预约看板',
             component:BoardView,
           },
           {
             path:'worktable',
             name:'worktable',
-            label:'预约看板',
+            label:'工作台',
             component:WorkTableView,
           }
         ]

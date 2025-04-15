@@ -44,3 +44,14 @@ export function updatePolicyInfo(userPolicyInfo) {
     data: userPolicyInfo, // 使用POST请求的请求体传递用户隐私协议信息
   });
 }
+// 重置员工密码
+
+// 重置员工密码
+export const updatePassword = (staffId, oldPassword, newPassword) => {
+  const querystring = `staff_id=${encodeURIComponent(staffId)}&oldPassword=${encodeURIComponent(oldPassword)}&newPassword=${encodeURIComponent(newPassword)}`;
+  
+  return ajax({
+    method: 'POST',
+    url: `/updatePassword?${querystring}`,  // 将查询参数添加到 URL 后面
+  });
+};

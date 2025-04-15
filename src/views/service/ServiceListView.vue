@@ -49,16 +49,15 @@
         <el-form-item label="服务类型">
           <el-input v-model="editForm.serviceType" disabled></el-input>
         </el-form-item>
-        <el-form-item label="旧分类">
-          <el-input v-model="editForm.oldCategory" disabled></el-input>
-        </el-form-item>
-        <el-form-item label="新分类">
-          <el-input v-model="editForm.newCategory"></el-input>
+        <!-- Remove old and new category fields -->
+        <!-- Add a single category name field -->
+        <el-form-item label="分类名称">
+          <el-input v-model="editForm.category" disabled></el-input>
         </el-form-item>
         <el-form-item label="状态">
           <el-select v-model="editForm.status" placeholder="请选择状态">
-            <el-option label="已上架" value="listed"></el-option>
-            <el-option label="已下架" value="unlisted"></el-option>
+            <el-option label="已上架" value="已上架"></el-option>
+            <el-option label="下架" value="下架"></el-option>
           </el-select>
         </el-form-item>
       </el-form>
@@ -72,20 +71,24 @@
 
 <script>
 import { ref, computed, onMounted } from 'vue';
+import { useStore } from 'vuex'; // Import useStore
 import { getProductClassList, deleteProduct } from '@/api/service';
 import { ElMessageBox, ElMessage } from 'element-plus';
 import { editProduct, deleteClassProduct } from '@/api/service'; // 引入编辑和删除接口
 
 export default {
   setup() {
+    const store = useStore(); // Get the store instance
     const classTableData = ref([]);
     const searchKeyword = ref('');
     const editDialogVisible = ref(false);
+    // Update the editForm object
     const editForm = ref({
       serviceType: '',
-      oldCategory: '',
-      newCategory: '',
+      category: '',
       status: '',
+      lastUpdatedBy: '',
+      lastUpdatedAt: ''
     });
 
     const fetchProductClassList = async () => {
@@ -117,11 +120,15 @@ export default {
     };
 
     const openEditDialog = (row) => {
+      const userInfo = store.state.userInfo;
+      const currentDate = new Date().toISOString();  // Get the current time
+      // Update the editForm value
       editForm.value = {
         serviceType: row.serviceType,
-        oldCategory: row.category,
-        newCategory: row.category,
-        status: row.status === '已上架' ? '已上架' : '下架', // 映射为中文
+        category: row.category,
+        status: row.status === '已上架' ? '已上架' : '下架',
+        lastUpdatedBy: userInfo?.staffName || 'Unknown',  // Set the last updater
+        lastUpdatedAt: currentDate  // Set the last update time
       };
       editDialogVisible.value = true;
     };
@@ -130,15 +137,16 @@ export default {
       try {
         const res = await editProduct({
           serviceType: editForm.value.serviceType,
-          oldCategory: editForm.value.oldCategory,
-          category: editForm.value.newCategory,
-          status: editForm.value.status === '已上架' ? '已上架' : '下架', // 映射为英文
+          category: editForm.value.category,
+          status: editForm.value.status === '已上架' ? '已上架' : '下架',
+          lastUpdatedBy: editForm.value.lastUpdatedBy,
+          lastUpdatedAt: editForm.value.lastUpdatedAt  // Submit the last update time
         });
 
         if (res.code === 200) {
           ElMessage.success('编辑成功');
           editDialogVisible.value = false;
-          fetchProductClassList();
+          fetchProductClassList();  // Refresh the list
         } else {
           ElMessage.error('编辑失败: ' + res.message);
         }
@@ -165,7 +173,7 @@ export default {
             });
             if (res.code === 200) {
               ElMessage.success('删除成功');
-              fetchProductClassList(); // 刷新列表
+              fetchProductClassList(); // Refresh the list
             } else {
               ElMessage.error('删除失败: ' + res.message);
             }

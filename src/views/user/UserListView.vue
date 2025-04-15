@@ -13,8 +13,10 @@
               <span style="margin-left: 7px;">用户标签</span>
               <el-select v-model="tagFilter" placeholder="请选择" style="width: 202px;">
                 <el-option label="全部" value=""></el-option>
-                <el-option label="VIP" value="VIP"></el-option>
-                <el-option label="普通" value="普通"></el-option>
+                <el-option label="高血压" value="高血压"></el-option>
+                <el-option label="糖尿病" value="糖尿病"></el-option>
+                <el-option label="慢性病" value="慢性病"></el-option>
+                <el-option label="多次购买" value="多次购买"></el-option>
               </el-select>
             </div>
           </div>
@@ -54,10 +56,10 @@
         </div>
   
         <el-table
-          :data="tableData"
-          style="width: 100%"
-          @selection-change="handleSelectionChange"
-        >
+    :data="paginatedData"
+    style="width: 100%"
+    @selection-change="handleSelectionChange"
+  >
           <el-table-column type="selection" width="55"></el-table-column>
           <el-table-column label="用户信息" width="150">
             <template #default="scope">
@@ -101,13 +103,13 @@
         </el-table>
   
         <el-pagination
-          background
-          v-model:current-page="currentPage"
-          :page-size="pageSize"
-          layout="total, prev, pager, next, jumper"
-          :total="total"
-          @current-change="handlePageChange"
-        ></el-pagination>
+    background
+    v-model:current-page="currentPage"
+    :page-size="pageSize"
+    layout="total, prev, pager, next, jumper"
+    :total="tableData.length" 
+    @current-change="handlePageChange"
+  ></el-pagination>
       </div>
     </div>
 
@@ -206,23 +208,29 @@
       }
 
       // 筛选标签
-      if (this.tagFilter && !user.tags.some(tag => tag.tagName === this.tagFilter)) {
-        return false;
+      if (this.tagFilter) {
+        return user.tags.some(tag => tag === this.tagFilter);
       }
 
       // 筛选日期范围
       if (this.dateRange && user.lastLoginTime) {
         const userDate = new Date(user.lastLoginTime);
-        const startDate = this.dateRange[0];
-        const endDate = this.dateRange[1];
+        const startDate = new Date(this.dateRange[0]);
+        const endDate = new Date(this.dateRange[1]);
         if (userDate < startDate || userDate > endDate) {
           return false;
         }
       }
 
       // 筛选关键字
-      if (this.searchKeyword && !user.nickname.includes(this.searchKeyword)) {
-        return false;
+      if (this.searchKeyword) {
+        const keyword = this.searchKeyword.toLowerCase();
+        return Object.values(user).some(value => {
+          if (typeof value === 'string') {
+            return value.toLowerCase().includes(keyword);
+          }
+          return false;
+        });
       }
 
       return true;
@@ -230,9 +238,16 @@
       ...user,
       // 将标签数组组合成一个字符串
       tagString: user.tags ? user.tags.map(tag => tag.tagName).join('、') : ''
-    }));
+    })
+  );
   },
-},
+  paginatedData() {
+      const start = (this.currentPage - 1) * this.pageSize;
+      const end = start + this.pageSize;
+      return this.filteredUsers.slice(start, end);
+    }
+  },
+
     methods: {
       // 搜索框
       searchUsers() {

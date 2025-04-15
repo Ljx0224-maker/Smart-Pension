@@ -1,6 +1,6 @@
 import ajax from '@/utils/request.js';
 
-// 获取服务人员列表
+// Get service staff list
 export function getStaffList(params) {
   return ajax({
     url: '/service-staff/list',
@@ -33,5 +33,14 @@ export function getStaffDetail(staffId) {
     url: '/service-staff/query?staffId=' + staffId,
     method: 'POST',
     params: { staffId }
+  });
+}
+
+// 查询服务人员详情
+export function queryStaffDetails(queryParams) {
+  return ajax({
+    url: '/service-staff/query',
+    method: 'POST',
+    data: queryParams
   });
 }
