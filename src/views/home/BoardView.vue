@@ -158,15 +158,16 @@
     margin-bottom: 20px;
   }
   
+
   .page-header::before {
-    content: '';
-    display: inline-block;
-    width: 4px;
-    height: 24px;
-    background-color: #4fc3f7;
-    margin-right: 15px;
-    border-radius: 2px;
-  }
+  content: '';
+  display: inline-block;
+  width: 8px;
+  height: 20px;
+  background-color: #4fc3f7;
+  margin-right: 10px;
+  border-radius: 2px;
+}
   
   .page-header span {
     font-size: 24px;

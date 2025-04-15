@@ -77,6 +77,56 @@ export default{
             <el-menu-item v-for="child in item.children" :key="child.path" :index="`/${item.path}/${child.path}`"><el-icon><UserFilled /></el-icon>{{child.label}}</el-menu-item>
         </el-sub-menu> -->
 
+        <el-sub-menu index="/user">
+            <template #title>
+            <el-icon>
+                <User />
+            </el-icon>
+            <span>用户管理</span>
+            </template>
+            <!--跟路由配置有关-->
+            <el-menu-item index="/user/userlist"><el-icon><Document /></el-icon>用户列表</el-menu-item>
+            <el-menu-item index="/user/usertag"><el-icon><CollectionTag /></el-icon>用户标签</el-menu-item>
+            <el-menu-item index="/user/adduser"><el-icon><CirclePlus /></el-icon>新增/修改用户信息</el-menu-item>
+            <el-menu-item index="/user/addtag"><el-icon><PriceTag /></el-icon>添加标签</el-menu-item>
+        </el-sub-menu>
+
+        <el-sub-menu index="/staff">
+            <template #title>
+            <el-icon>
+                <User />
+            </el-icon>
+            <span>服务人员管理</span>
+            </template>
+            <!--跟路由配置有关-->
+            <el-menu-item index="/staff/stafflist"><el-icon><DocumentCopy /></el-icon>全部服务人员列表</el-menu-item>
+            <el-menu-item index="/staff/addstaff"><el-icon><CopyDocument /></el-icon>新增服务人员</el-menu-item>
+        </el-sub-menu>
+
+        <el-sub-menu index="/service">
+            <template #title>
+            <el-icon>
+                <Goods />
+            </el-icon>
+            <span>商品服务管理</span>
+            </template>
+            <el-menu-item index="/service/servicelist"><el-icon><Guide /></el-icon>分类管理</el-menu-item>
+            <!-- <el-menu-item index="/service/addservice"><el-icon><Plus /></el-icon>新增商品信息</el-menu-item> -->
+    
+
+            <el-sub-menu index="/service/management">
+
+              <template #title>
+      
+              <span><el-icon><SoldOut /></el-icon>商品列表</span>
+              </template>
+            <!--跟路由配置有关-->
+        
+            <el-menu-item index="/service/management/jiazhenghuli"><el-icon><School /></el-icon>家政护理</el-menu-item>
+            <el-menu-item index="/service/management/shangmentiyan"><el-icon><Coordinate /></el-icon>上门体检</el-menu-item>
+            <el-menu-item index="/service/management/kangfuliliao"><el-icon><Bicycle /></el-icon>康复理疗</el-menu-item>
+        </el-sub-menu></el-sub-menu>
+
 
         <el-sub-menu index="/marketing">
             <template #title>
@@ -88,18 +138,6 @@ export default{
             <!--跟路由配置有关-->
             <el-menu-item index="/marketing/couponlist"><el-icon><Tickets /></el-icon>优惠券</el-menu-item>
             <el-menu-item index="/marketing/points"><el-icon><Star /></el-icon>积分</el-menu-item>
-        </el-sub-menu>
-
-        <el-sub-menu index="/message">
-            <template #title>
-            <el-icon>
-                <ChatLineRound />
-            </el-icon>
-            <span>消息管理</span>
-            </template>
-            <!--跟路由配置有关-->
-            <el-menu-item index="/message/messagesort"><el-icon><ChatDotSquare /></el-icon>消息群发</el-menu-item>
-            <el-menu-item index="/message/conversation"><el-icon><Service /></el-icon>会话</el-menu-item>
         </el-sub-menu>
 
         <el-sub-menu index="/order">
@@ -131,6 +169,18 @@ export default{
               <el-menu-item index="/order/setting/ordersetting"><el-icon><EditPen /></el-icon>通用设置</el-menu-item>
             </el-sub-menu>
             <el-menu-item index="/order/ordermoney"><el-icon><Document /></el-icon>收支明细</el-menu-item>
+        </el-sub-menu>
+
+        <el-sub-menu index="/message">
+            <template #title>
+            <el-icon>
+                <ChatLineRound />
+            </el-icon>
+            <span>消息管理</span>
+            </template>
+            <!--跟路由配置有关-->
+            <el-menu-item index="/message/messagesort"><el-icon><ChatDotSquare /></el-icon>消息群发</el-menu-item>
+            <el-menu-item index="/message/conversation"><el-icon><Service /></el-icon>会话</el-menu-item>
         </el-sub-menu>
 
 
@@ -170,56 +220,6 @@ export default{
             <el-menu-item index="/operation/commentslist"><el-icon><ChatRound /></el-icon>评论管理</el-menu-item>
         </el-sub-menu>
 
-        <el-sub-menu index="/user">
-            <template #title>
-            <el-icon>
-                <User />
-            </el-icon>
-            <span>用户管理</span>
-            </template>
-            <!--跟路由配置有关-->
-            <el-menu-item index="/user/userlist"><el-icon><Document /></el-icon>用户列表</el-menu-item>
-            <el-menu-item index="/user/usertag"><el-icon><CollectionTag /></el-icon>用户标签</el-menu-item>
-            <el-menu-item index="/user/adduser"><el-icon><CirclePlus /></el-icon>新增/修改用户信息</el-menu-item>
-            <el-menu-item index="/user/addtag"><el-icon><PriceTag /></el-icon>添加标签</el-menu-item>
-        </el-sub-menu>
-
-
-        <el-sub-menu index="/service">
-            <template #title>
-            <el-icon>
-                <Goods />
-            </el-icon>
-            <span>商品服务管理</span>
-            </template>
-            <el-menu-item index="/service/servicelist"><el-icon><Guide /></el-icon>分类管理</el-menu-item>
-            <!-- <el-menu-item index="/service/addservice"><el-icon><Plus /></el-icon>新增商品信息</el-menu-item> -->
-    
-
-            <el-sub-menu index="/service/management">
-
-              <template #title>
-      
-              <span><el-icon><SoldOut /></el-icon>商品列表</span>
-              </template>
-            <!--跟路由配置有关-->
-        
-            <el-menu-item index="/service/management/jiazhenghuli"><el-icon><School /></el-icon>家政护理</el-menu-item>
-            <el-menu-item index="/service/management/shangmentiyan"><el-icon><Coordinate /></el-icon>上门体检</el-menu-item>
-            <el-menu-item index="/service/management/kangfuliliao"><el-icon><Bicycle /></el-icon>康复理疗</el-menu-item>
-        </el-sub-menu></el-sub-menu>
-
-        <el-sub-menu index="/staff">
-            <template #title>
-            <el-icon>
-                <User />
-            </el-icon>
-            <span>服务人员管理</span>
-            </template>
-            <!--跟路由配置有关-->
-            <el-menu-item index="/staff/stafflist"><el-icon><DocumentCopy /></el-icon>全部服务人员列表</el-menu-item>
-
-        </el-sub-menu>
 
         <el-sub-menu index="/data">
             <template #title>

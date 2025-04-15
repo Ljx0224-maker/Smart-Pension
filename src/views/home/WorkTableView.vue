@@ -232,12 +232,12 @@ export default {
         { label: '员工管理', icon: 'UserFilled', color: '#409EFF' } 
       ],
       userTags: [
-        { name: '高血压', value: 80, color: '#409EFF' },
-        { name: '冠心病', value: 120, color: '#409EFF' },
-        { name: '高血糖', value: 40, color: '#409EFF' },
-        { name: '高血脂', value: 30, color: '#409EFF' },
-        { name: '慢病护理', value: 110, color: '#409EFF' },
-        { name: '多动症', value: 88, color: '#409EFF' },
+        { name: '高血压', value: 80, color: '#90caf9' },
+        { name: '冠心病', value: 120, color: '#90caf9' },
+        { name: '高血糖', value: 40, color: '#90caf9' },
+        { name: '高血脂', value: 30, color: '#90caf9' },
+        { name: '慢病护理', value: 110, color: '#90caf9' },
+        { name: '多动症', value: 88, color: '#90caf9' },
       ],
       topProducts: [
         { rank: 1, name: '日常清洁 2小时1人急速清洁全程质保', image: '/images/product1.jpg', orders: 1300 },
@@ -397,7 +397,7 @@ export default {
               { value: 55, name: '康复理疗' },
               { value: 17, name: '上门体检' }
             ],
-            color: ['#409EFF', '#67C23A', '#F56C6C']
+            color: ['#90caf9', '#f8bbd0', '#80deea']
           }
         ]
       };
