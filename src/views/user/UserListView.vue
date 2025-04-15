@@ -61,15 +61,15 @@
     @selection-change="handleSelectionChange"
   >
           <el-table-column type="selection" width="55"></el-table-column>
-          <el-table-column label="用户信息" width="150">
+          <el-table-column label="用户信息" width="180">
             <template #default="scope">
               <img :src="scope.row.avatar" alt="用户头像" class="user-avatar">
               <div>{{ scope.row.nickname }}</div>
             </template>
           </el-table-column>
           <el-table-column prop="userId" label="ID" width="180"></el-table-column>
-          <el-table-column prop="realName" label="真实姓名" width="120"></el-table-column>
-          <el-table-column prop="tags" label="用户标签" width="180">
+          <el-table-column prop="realName" label="真实姓名" width="180"></el-table-column>
+          <el-table-column prop="tags" label="用户标签" width="200">
             <template #default="scope">
               <div>
                 <el-tag
@@ -83,20 +83,28 @@
               </div>
             </template>
           </el-table-column>
-          <el-table-column prop="lastLoginTime" label="最后登录时间" width="180"></el-table-column>
-          <el-table-column label="操作" width="240">
+          <el-table-column prop="lastLoginTime" label="最后登录时间" width="200"></el-table-column>
+          <el-table-column label="操作" width="300">
             <template #default="scope">
               <div class="operation-links">
-                <span class="edit-link" @click="editUser(scope.row)">编辑</span>
-                <span class="delete-link" @click="deleteUser(scope.row.userId)">删除</span>
-                <el-button
-                  type="text"
-                  size="small"
-                  @click="editTags(scope.row)"
-                  style="color: #409eff;"
-                >
-                  标签编辑
-                </el-button>
+                <!-- First row: Edit, Tag Edit -->
+                <div class="first-row-buttons">
+                  <span class="edit-link operation-button" @click="editUser(scope.row)">编辑</span>
+                  <el-button
+                    class="operation-button"
+                    type="text"
+                    size="small"
+                    @click="editTags(scope.row)"
+                    style="color: #409eff;"
+                  >
+                    标签编辑
+                  </el-button>
+                </div>
+                <!-- Second row: Delete, User Details -->
+                <div class="second-row-buttons">
+                  <span class="delete-link operation-button" @click="deleteUser(scope.row.userId)">删除</span>
+                  <span class="delete-link operation-button" @click="viewUserDetail(scope.row.userId)" style="margin-left: 11px;">用户详情</span>
+                </div>
               </div>
             </template>
           </el-table-column>
@@ -309,6 +317,18 @@
           ElMessage.error('标签保存失败: ' + error.message);
         }
       },
+      viewUserDetail(userId) {
+      if (!userId) {
+        ElMessage.error('User ID does not exist');
+        return;
+      }
+      this.$router.push({
+        path: '/user/userdetails/singledetail',
+        query: {
+          userId: userId
+        }
+      });
+    },
       // 删除用户
       deleteUser(userId) {
         
@@ -444,6 +464,7 @@
       this.loadTags();
     },
   };
+
 </script>
 
 <style scoped>
@@ -552,16 +573,26 @@
 
 .operation-links {
   display: flex;
-  justify-content: center;
-  gap: 10px;
+  flex-direction: column;
+  /* Align all button rows to the left */
+  align-items: flex-start; 
+  gap: 5px; 
 }
 
-.el-tag {
-  margin-bottom: 5px;
+.first-row-buttons,
+.second-row-buttons {
+  display: flex;
+  /* Align items vertically in the center */
+  align-items: center; 
+  /* Ensure consistent spacing between buttons in each row */
+  gap: 20px; 
 }
 
-.dialog-footer {
-  text-align: right;
+.operation-button {
+  font-size: 14px; 
+  line-height: 1; 
 }
 </style>
+
+
 

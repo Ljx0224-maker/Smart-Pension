@@ -72,13 +72,13 @@
         <el-table-column type="selection" width="55"></el-table-column>
         
         <!-- 商品名称列 -->
-        <el-table-column prop="productName" label="商品名称" width="200">
+        <el-table-column prop="productName" label="商品名称" width="150">
           <template #default="scope">
             <div>{{ scope.row.productName }}</div>
           </template>
         </el-table-column>
         
-        <el-table-column label="商品编码" width="200">
+        <el-table-column label="商品编码" width="120">
           <template #default="scope">
             <div>
               <div>{{ scope.row.productId }}</div>
@@ -86,7 +86,7 @@
             </div>
           </template>
         </el-table-column>
-        <el-table-column prop="image" label="商品信息" width="180">
+        <el-table-column prop="image" label="商品信息" width="120">
           <template #default="scope">
             <img :src="scope.row.image" alt="商品图片" class="product-image">
             <div>{{ scope.row.name }}</div>
@@ -94,19 +94,19 @@
         </el-table-column>
         <el-table-column prop="category" label="分类" width="100"></el-table-column>
         <el-table-column prop="price" label="价格（元）" width="100"></el-table-column>
-        <el-table-column label="状态" width="80">
+        <el-table-column label="状态" width="100">
           <template #default="scope">
             <el-tag :type="scope.row.status === '已上架' ? 'success' : 'danger'">
               {{ scope.row.status === '已上架' ? '已上架' : '已下架' }}
             </el-tag>
           </template>
         </el-table-column>
-        <el-table-column prop="lastUpdatedBy" label="最后更新人" width="180"></el-table-column>
-        <el-table-column prop="lastUpdatedAt" label="最后更新时间" width="200"></el-table-column>
+        <el-table-column prop="lastUpdatedBy" label="最后更新人" width="120"></el-table-column>
+        <el-table-column prop="lastUpdatedAt" label="最后更新时间" width="180"></el-table-column>
         <el-table-column label="操作" width="180">
           <template #default="scope">
             <el-button size="mini" type="text" @click="editProduct(scope.row)">编辑</el-button>
-            <el-button size="mini" type="text" class="delete-btn" @click="removeProduct(scope.row)">删除</el-button>
+            <el-button size="mini" type="text" class="delete-btn" @click="removeProduct(scope.row)" style="color: #FFB800;">删除</el-button>
           </template>
         </el-table-column>
       </el-table>

@@ -217,7 +217,7 @@ export default {
     },
     // 切换状态
     toggleStatus(row) {
-      const newStatus = row.status === '启用' ? '禁用' : '启用';
+      const newStatus = row.status === '启用' ? '启用' : '禁用';
       const updatedRow = { ...row, status: newStatus };
 
       this.$confirm(`确定要将状态更改为 "${newStatus}" 吗？`, '提示', {
@@ -238,7 +238,7 @@ export default {
         });
       }).catch(() => {
         // 恢复原状态
-        row.status = row.status === '启用' ? '禁用' : '启用';
+        row.status = row.status === '启用' ? '启用' : '禁用';
       });
     },
     // 编辑员工信息

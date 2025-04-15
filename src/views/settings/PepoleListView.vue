@@ -33,39 +33,39 @@
     <!-- 表格展示 -->
     <div class="action-table-box">
       <el-table :data="tableData" style="width: 100%">
-        <el-table-column prop="staffId" label="员工ID" width="150" />
+        <el-table-column prop="staffId" label="员工ID" width="120" />
         <el-table-column prop="staffName" label="姓名" width="150">
           <template #default="scope">
             {{ scope.row.staffName || '未填写' }}
           </template>
         </el-table-column>
-        <el-table-column prop="position" label="职位" width="180"> 
+        <el-table-column prop="position" label="职位" width="150"> 
           <template #default="scope">
             {{ scope.row.position || '未填写' }}
           </template>
         </el-table-column>
-        <el-table-column prop="phoneNumber" label="联系电话" width="180">
+        <el-table-column prop="phoneNumber" label="联系电话" width="200">
           <template #default="scope">
             <!-- 将电话号码转为字符串显示 -->
             {{ String(scope.row.phoneNumber) }} 
           </template>
         </el-table-column>
-        <el-table-column prop="lastUpdatedAt" label="最后更新时间" width="200">
+        <el-table-column prop="lastUpdatedAt" label="最后更新时间" width="220">
           <template #default="scope">
             {{ scope.row.lastUpdatedAt ? new Date(scope.row.lastUpdatedAt).toLocaleString() : '未知' }}
           </template>
         </el-table-column>
-        <el-table-column prop="status" label="状态" width="100">
+        <el-table-column prop="status" label="状态" width="150">
           <template #default="scope">
             <!-- 校验状态值 -->
             {{ ['在职', '离职'].includes(scope.row.status) ? scope.row.status : '未知' }} 
           </template>
         </el-table-column>
-        <el-table-column label="操作" width="240">
+        <el-table-column label="操作" width="100">
           <template #default="scope">
             <div class="operation-links">
               <span class="edit-link" @click="editStaff(scope.row)">编辑</span>
-              <span class="delete-link" @click="deleteStaff(scope.row)">删除</span>
+              <span class="delete-link" @click="deleteStaff(scope.row)" style="color: #FFB800;">删除</span>
             </div>
           </template>
         </el-table-column>

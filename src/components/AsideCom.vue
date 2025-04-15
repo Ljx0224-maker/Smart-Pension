@@ -218,7 +218,7 @@ export default{
             </template>
             <!--跟路由配置有关-->
             <el-menu-item index="/staff/stafflist"><el-icon><DocumentCopy /></el-icon>全部服务人员列表</el-menu-item>
-            <el-menu-item index="/staff/addstaff"><el-icon><CopyDocument /></el-icon>新增服务人员</el-menu-item>
+
         </el-sub-menu>
 
         <el-sub-menu index="/data">

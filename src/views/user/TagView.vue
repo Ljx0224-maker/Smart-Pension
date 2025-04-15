@@ -11,16 +11,16 @@
     </div>
 
     <div class="action-table-box">
-      <el-table :data="tableData" style="width: 100%" ref="table">
+      <el-table :data="paginatedTableData" style="width: 100%" ref="table">
         <el-table-column type="selection" width="55" v-model="selectedTags" />
-        <el-table-column label="标签名称" prop="tagName" width="150" />
+        <el-table-column label="标签名称" prop="tagName" width="180" />
         <el-table-column label="用户数量" prop="usersNum" width="150" />
         <el-table-column label="最后更新人" prop="lastUpdatedBy" width="180">
           <template #default="scope">
             <span>{{ scope.row.lastUpdatedBy || '无' }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="最后更新时间" prop="lastUpdatedTime" width="200">
+        <el-table-column label="最后更新时间" prop="lastUpdatedTime" width="240">
           <template #default="scope">
             <span>{{ formatDate(scope.row.lastUpdatedTime) }}</span>
           </template>
@@ -36,7 +36,7 @@
             />
           </template>
         </el-table-column>
-        <el-table-column label="操作" width="200">
+        <el-table-column label="操作" width="100">
           <template #default="scope">
             <div class="operation-links">
               <span class="edit-link" @click="editTag(scope.row)">编辑</span>
@@ -58,7 +58,8 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, onMounted } from 'vue'
+// 添加对 computed 的导入
+import { ref, onMounted, computed } from 'vue'
 import { useStore } from 'vuex'; 
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { getTagsList, addOrUpdateTag, deleteTag } from '@/api/user.js'
@@ -81,30 +82,34 @@ const selectedTags = ref<Tag[]>([])
 const table = ref(null) 
 const currentPage = ref(1); 
 const pageSize = ref(10); 
-const total = ref(0); 
+// 根据 tableData 的长度计算总数
+const total = computed(() => tableData.value.length); 
 
-// Get the tag list
+// 当前页面的数据
+const paginatedTableData = computed(() => {
+  const start = (currentPage.value - 1) * pageSize.value;
+  const end = start + pageSize.value;
+  return tableData.value.slice(start, end);
+});
+
+// 获取标签列表
 const fetchTags = async () => {
   try {
-    const params = {
-      pageSize: pageSize.value, 
-      pageNum: currentPage.value, 
-    };
-    const res = await getTagsList(params); 
-    console.log('Data returned from the backend:', res); 
+    // 不传递分页参数
+    const res = await getTagsList(); 
+    console.log('后端返回的数据:', res); 
     if (res.code === 200) {
       tableData.value = res.data.map((tag: any) => ({
         ...tag,
         lastUpdatedTime: tag.lastUpdatedAt || '无', 
         status: tag.usersNum >= 1, 
       }));
-      total.value = res.total; 
     } else {
-      ElMessage.error('Failed to get the tag list: ' + res.message);
+      ElMessage.error('获取标签列表失败: ' + res.message);
     }
   } catch (error) {
-    console.error('API call failed:', error); 
-    ElMessage.error('Failed to get the tag list: ' + error.message);
+    console.error('API 调用失败:', error); 
+    ElMessage.error('获取标签列表失败: ' + error.message);
   }
 }
 
@@ -220,7 +225,6 @@ const deleteTagHandler = (tagId: string) => {
 // 分页处理
 const handlePageChange = (page: number) => {
   currentPage.value = page; 
-  fetchTags(); 
 }
 
 // 页面加载时获取标签列表
