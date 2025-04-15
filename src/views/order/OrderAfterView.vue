@@ -174,9 +174,11 @@ export default {
         }
       });
     },
-    viewDetails(row) {
-      console.log('查看详情:', row);
-      // 可跳转到详情页或弹窗展示详情
+    viewDetails(order) {
+      this.$router.push({
+      path: '/order/ordermanage/orderdetails/refounddetail',
+      query: { orderId: order.orderId }, // 通过 query 参数传递订单 ID
+      });
     },
   },
   mounted() {

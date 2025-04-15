@@ -9,38 +9,21 @@
         <div class="filter-row">
           <div class="filter-item">
             <span>服务类型</span>
-            <el-select v-model="filter.serviceType" placeholder="请选择" style="width: 200px;">
+            <el-select 
+              v-model="filter.serviceType" 
+              placeholder="请选择" 
+              style="width: 200px;"
+              @change="search"
+            >
               <el-option label="全部" value=""></el-option>
-              <el-option label="家政护工" value="domestic"></el-option>
-              <el-option label="康复理疗" value="rehabilitation"></el-option>
-              <el-option label="上门体检" value="home-examination"></el-option>
-            </el-select>
-          </div>
-
-          <div class="filter-item">
-            <span style="margin-left: 70px;">标签</span>
-            <el-select v-model="filter.tag" placeholder="请选择" style="width: 200px;">
-              <el-option label="全部" value=""></el-option>
-              <el-option label="金牌家政" value="gold"></el-option>
-              <el-option label="资深理疗师" value="senior"></el-option>
-              <el-option label="专业体检师" value="professional"></el-option>
+              <el-option label="家政护理" value="家政护理"></el-option>
+              <el-option label="康复理疗" value="康复理疗"></el-option>
+              <el-option label="上门体检" value="上门体检"></el-option>
             </el-select>
           </div>
         </div>
 
         <div class="filter-row">
-          <div class="filter-item">
-            <span>加入日期</span>
-            <el-date-picker
-              v-model="filter.joinDate"
-              type="daterange"
-              range-separator="至"
-              start-placeholder="开始日期"
-              end-placeholder="结束日期"
-              style="width: 300px;"
-            ></el-date-picker>
-          </div>
-
           <div class="filter-item">
             <el-input v-model="filter.keyword" placeholder="请输入关键字" style="width: 300px;"></el-input>
             <el-button type="primary" @click="search" style="margin-left: 10px;">
@@ -63,7 +46,7 @@
       </div>
 
       <el-table
-        :data="tableData"
+        :data="filteredStaff"
         style="width: 100%"
         @selection-change="handleSelectionChange"
       >
@@ -111,6 +94,15 @@ import { ElMessage, ElMessageBox } from 'element-plus';
 import { Search, RefreshLeft } from '@element-plus/icons-vue';
 import { getStaffList, deleteStaff } from '@/api/staff';
 
+// 防抖函数
+function debounce(func, wait) {
+  let timeout;
+  return function (...args) {
+    clearTimeout(timeout);
+    timeout = setTimeout(() => func.apply(this, args), wait);
+  };
+}
+
 export default {
   data() {
     return {
@@ -119,10 +111,8 @@ export default {
       pageSize: 10, // 每页显示条数
       total: 0, // 总记录数
       filter: {
-        serviceType: '',
-        tag: '',
-        joinDate: [],
-        keyword: '',
+        serviceType: '', // 服务类型筛选
+        keyword: '', // 搜索框关键词
       },
       selectedRows: [], // 选中的行
     };
@@ -131,64 +121,74 @@ export default {
     Search,
     RefreshLeft,
   },
+  created() {
+    // 初始化防抖函数
+    this.debounceSearch = debounce(this.search, 300);
+  },
+  computed: {
+    filteredStaff() {
+      return this.tableData.filter(staff => {
+        // 筛选服务类型
+        if (this.filter.serviceType && staff.serviceType !== this.filter.serviceType) {
+          return false;
+        }
+  
+        // 筛选关键字
+        if (this.filter.keyword && !staff.name.includes(this.filter.keyword)) {
+          return false;
+        }
+  
+        return true;
+      });
+    },
+  },
   methods: {
     // 跳转到新增服务人员页面
     addStaff() {
       this.$router.push('/staff/addstaff');
     },
-    // 获取标签类型
-    getTagType(tag) {
-      if (tag === '金牌家政') {
-        return 'success';
-      } else if (tag === '资深理疗师') {
-        return 'warning';
-      } else if (tag === '专业体检师') {
-        return 'info';
-      }
-      return '';
-    },
-    // 搜索
+    // 搜索结果
     search() {
       this.currentPage = 1;
-      this.loadStaffList();
     },
     // 重置筛选条件
     resetFilters() {
       this.filter = {
         serviceType: '',
-        tag: '',
-        joinDate: [],
         keyword: '',
       };
-      this.loadStaffList();
+      this.currentPage = 1;
     },
     // 加载员工列表
     loadStaffList() {
-      const params = {
-        pageSize: this.pageSize,
-        pageNum: this.currentPage,
-        params: {
-          serviceType: this.filter.serviceType,
-          keyword: this.filter.keyword,
-        },
-      };
+      try {
+        const params = {
+          pageSize: this.pageSize,
+          pageNum: this.currentPage,
+          // Directly pass filtering and searching parameters
+          serviceType: this.filter.serviceType, 
+          keyword: this.filter.keyword
+        };
 
-      if (this.filter.joinDate && this.filter.joinDate.length > 0) {
-        params.params.startDate = this.filter.joinDate[0];
-        params.params.endDate = this.filter.joinDate[1];
+        console.log('Request parameters:', params); 
+
+        getStaffList(params)
+         .then((res) => {
+            if (res.code === 200) {
+              this.tableData = res.data || [];
+              this.total = res.total || 0;
+            } else {
+              this.$message.error('Failed to fetch data');
+            }
+          })
+         .catch((err) => {
+            console.error('Error loading staff list:', err);
+            this.$message.error('An error occurred while loading the staff list');
+          });
+      } catch (error) {
+        console.error('Error preparing staff list request:', error);
+        this.$message.error('An error occurred while preparing the staff list request');
       }
-
-      getStaffList(params).then((res) => {
-        if (res.code === 200) {
-          this.tableData = res.data || []; // 更新员工列表数据
-          this.total = res.total || 0; // 更新总记录数
-        } else {
-          this.$message.error('获取数据失败');
-        }
-      }).catch((err) => {
-        console.error('Error loading staff list:', err);
-        this.$message.error('加载员工列表时发生错误');
-      });
     },
     // 删除单个员工
     removeStaff(row) {
@@ -220,7 +220,6 @@ export default {
       const newStatus = row.status === '启用' ? '禁用' : '启用';
       const updatedRow = { ...row, status: newStatus };
 
-      // 调用后端接口更新状态
       this.$confirm(`确定要将状态更改为 "${newStatus}" 吗？`, '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
@@ -228,14 +227,14 @@ export default {
       }).then(() => {
         this.$api.addOrUpdateStaff(updatedRow).then((res) => {
           if (res.code === 200) {
-            this.$message.success('状态更新成功');
+            ElMessage.success('状态更新成功');
             row.status = newStatus; // 更新本地状态
           } else {
-            this.$message.error('状态更新失败');
+            ElMessage.error('状态更新失败');
           }
         }).catch((err) => {
           console.error('Error updating status:', err);
-          this.$message.error('状态更新失败');
+          ElMessage.error('状态更新失败');
         });
       }).catch(() => {
         // 恢复原状态
@@ -245,7 +244,7 @@ export default {
     // 编辑员工信息
     editStaff(row) {
       if (!row.staffId) {
-        this.$message.error('员工ID不存在');
+        ElMessage.error('员工ID不存在');
         return;
       }
       this.$router.push({ path: '/staff/addstaff', query: { staffId: row.staffId } });
@@ -261,6 +260,8 @@ export default {
   },
 };
 </script>
+
+
 
 <style scoped>
 .staff-container {

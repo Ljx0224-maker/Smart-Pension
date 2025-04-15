@@ -40,7 +40,7 @@ export function afterSalesList(params) {
 // 获取售后订单详情
 export function afterSalesDetail(orderId) {
   return ajax({
-    url: `/orders/refund-detail`,
+    url: '/orders/refund-detail?orderId=' + orderId,
     method: 'get',
     params: { orderId },
   });
@@ -127,3 +127,15 @@ export function getOrderSettings() {
       data: params,
     });
   }
+
+  
+  // 查看订单详情接口
+  export function getOrderDetail(orderId) {
+    return request({
+      url: '/orders/detail?orderId=' + orderId,
+      method: "get",
+      params: { orderId }, // 通过查询参数传递订单ID
+    });
+  }
+
+
