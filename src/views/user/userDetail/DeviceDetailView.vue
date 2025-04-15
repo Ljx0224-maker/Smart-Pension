@@ -1,14 +1,50 @@
 <template>
   <div>
-    <!-- 顶部选择跳转栏 -->
-    <div class="section-header">
-      <el-button size="large" style="margin-left: 150px;margin-right: 10px;" @click="goToUserDetail">个人信息</el-button>
-      <el-button size="large" style="margin-left: 40px;margin-right: 10px;" type="primary" @click="goToHealthDetail">健康信息</el-button>
-      <el-button size="large" style="margin-left: 40px;margin-right: 10px;" type="primary" @click="goToMedicineDetail">用药信息</el-button>
-      <el-button size="large" style="margin-left: 40px;margin-right: 10px;" type="primary" @click="goToDeviceDetail">设备信息</el-button>
-      <el-button size="large" style="margin-left: 40px;margin-right: 10px;" type="primary" @click="goToOrderDetail">订单信息</el-button>
-      <el-button size="large" style="margin-left: 40px;margin-right: 10px;" type="primary" @click="goToContentDetail">内容信息</el-button>
-    </div>
+      <!-- 顶部选择跳转栏 -->
+      <div class="section-header">
+        <el-button 
+            size="large" 
+            style="margin-left: 150px;margin-right: 10px;" 
+            @click="goToUserDetail"
+            :type="activeTab === 'singledetail' ? 'primary' : ''"
+            :class="{ 'active-tab': activeTab === 'singledetail' }"
+        >个人信息</el-button>
+        <el-button 
+            size="large" 
+            style="margin-left: 40px;margin-right: 10px;" 
+            @click="goToHealthDetail"
+            :type="activeTab === 'healthdetail' ? 'primary' : ''"
+            :class="{ 'active-tab': activeTab === 'healthdetail' }"
+        >健康信息</el-button>
+        <el-button 
+            size="large" 
+            style="margin-left: 40px;margin-right: 10px;" 
+            @click="goToMedicineDetail"
+            :type="activeTab === 'medicinedetail' ? 'primary' : ''"
+            :class="{ 'active-tab': activeTab === 'medicinedetail' }"
+        >用药信息</el-button>
+        <el-button 
+            size="large" 
+            style="margin-left: 40px;margin-right: 10px;" 
+            @click="goToDeviceDetail"
+            :type="activeTab === 'devicedetail' ? 'primary' : ''"
+            :class="{ 'active-tab': activeTab === 'devicedetail' }"
+        >设备信息</el-button>
+        <el-button 
+            size="large" 
+            style="margin-left: 40px;margin-right: 10px;" 
+            @click="goToOrderDetail"
+            :type="activeTab === 'ordersdetail' ? 'primary' : ''"
+            :class="{ 'active-tab': activeTab === 'ordersdetail' }"
+        >订单信息</el-button>
+        <el-button 
+            size="large" 
+            style="margin-left: 40px;margin-right: 10px;" 
+            @click="goToContentDetail"
+            :type="activeTab === 'contentdetail' ? 'primary' : ''"
+            :class="{ 'active-tab': activeTab === 'contentdetail' }"
+        >内容信息</el-button>
+      </div>
     <div class="user-detail">
       <el-row :gutter="20">
                     <!-- 左侧个人信息 -->
@@ -26,20 +62,6 @@
                                 <el-col :span="24">
                                     <el-form-item label="真实姓名">
                                         <span>{{ user.realName }}</span>
-                                    </el-form-item>
-                                </el-col>
-                            </el-row>
-                            <el-row>
-                                <el-col :span="24">
-                                    <el-form-item label="手机号">
-                                        <span>{{ user.phone }}</span>
-                                    </el-form-item>
-                                </el-col>
-                            </el-row>
-                            <el-row>
-                                <el-col :span="24">
-                                    <el-form-item label="注册时间">
-                                        <span>{{ user.registrationTime }}</span>
                                     </el-form-item>
                                 </el-col>
                             </el-row>
@@ -94,6 +116,7 @@ export default {
       user: {},
       userId: null,
       deviceInfo: [],
+      activeTab: 'devicedetail', 
       defaultAvatar: 'https://via.placeholder.com/150'
     };
   },
@@ -105,6 +128,7 @@ export default {
     } else {
       console.error('未获取到 userId');
       this.$message.error('未获取到用户 ID，无法获取设备信息');
+      this.activeTab = this.getActiveTab(); // 初始化 activeTab
     }
   },
   methods: {
@@ -133,53 +157,66 @@ export default {
       }
     },
     goToUserDetail() {
-      this.$router.push({
-        path: '/user/userdetails/singledetail',
-        query: { userId: this.userId }
-      });
-    },
-    goToHealthDetail() {
-      this.$router.push({
-        path: '/user/userdetails/healthdetail',
-        query: { userId: this.userId }
-      });
-    },
-    goToMedicineDetail() {
-      this.$router.push({
-        path: '/user/userdetails/medicinedetail',
-        query: { userId: this.userId }
-      });
-    },
-    goToDeviceDetail() {
-      // 当前页面，可根据需求处理
-    },
-    goToOrderDetail() {
-      this.$router.push({
-        path: '/user/userdetails/ordersdetail',
-        query: { userId: this.userId }
-      });
-    },
-    goToContentDetail() {
-      this.$router.push({
-        path: '/user/userdetails/contentdetail',
-        query: { userId: this.userId }
-      });
+        this.activeTab = 'singledetail';
+        this.$router.push({
+          path: '/user/userdetails/singledetail',
+          query: { userId: this.userId },
+        });
+      },
+      goToHealthDetail() {
+        this.activeTab = 'healthdetail';
+        this.$router.push({
+          path: '/user/userdetails/healthdetail',
+          query: { userId: this.userId },
+        });
+      },
+      goToMedicineDetail() {
+        this.activeTab = 'medicinedetail';
+        this.$router.push({
+          path: '/user/userdetails/medicinedetail',
+          query: { userId: this.userId },
+        });
+      },
+      goToDeviceDetail() {
+        this.activeTab = 'devicedetail';
+        this.$router.push({
+          path: '/user/userdetails/devicedetail',
+          query: { userId: this.userId },
+        });
+      },
+      goToOrderDetail() {
+        this.activeTab = 'ordersdetail';
+        this.$router.push({
+          path: '/user/userdetails/ordersdetail',
+          query: { userId: this.userId },
+        });
+      },
+      goToContentDetail() {
+        this.activeTab = 'contentdetail';
+        this.$router.push({
+          path: '/user/userdetails/contentdetail',
+          query: { userId: this.userId },
+        });
+      }
+  },
+  watch: {
+      '$route'() {
+        this.activeTab = this.getActiveTab(); // 路由变化时更新 activeTab
+      },
     }
-  }
 };
 </script>
 
 <style scoped>
 /* 定义激活状态下的按钮样式 */
-.active {
-    background-color: blue;
+.active-tab {
+    background-color: #4fc3f7;
     color: white;
-}
-/* 重置非激活状态下的按钮样式 */
-.el-button {
+  }
+  .el-button {
     background-color: white;
     color: inherit;
-}
+  }
 h3 {
   margin-top: 0px;
   margin-bottom: 20px;
