@@ -13,6 +13,14 @@ import UserListView from "@/views/user/UserListView.vue";
 import UserIndexView from "@/views/user/UserIndexView.vue";
 import AddUserView from "@/views/user/AddUserView.vue";
 import AddTagView from "@/views/user/AddTagView.vue";
+import ContentDetailView from "@/views/user/userDetail/ContentDetailView.vue";
+import DetailsIndexView from "@/views/user/userDetail/DetailsIndexView.vue";
+import DeviceDetailView from "@/views/user/userDetail/DeviceDetailView.vue";
+import HealthDetailVIew from "@/views/user/userDetail/HealthDetailVIew.vue";
+import MedicineDetailView from "@/views/user/userDetail/MedicineDetailView.vue";
+import OrdersDetailView from "@/views/user/userDetail/OrdersDetailView.vue";
+import SingleDetailView from "@/views/user/userDetail/SingleDetailView.vue";
+
 
 // 导入营销管理相关组件
 import MarketingIndexView from '@/views/marketing/MarketingIndexView.vue';
@@ -33,6 +41,9 @@ import OrderSettingView from '@/views/order/OrderSettingView.vue';
 import OrderMoneyView from '@/views/order/OrderMoneyView.vue';
 import OrderManageIndexView from '@/views/order/OrderManageIndexView.vue';
 import SettingsIndexView from '@/views/order/SettingsIndexView.vue';
+import OrderDetailView from '@/views/order/orderDetail/OrderDetailView.vue';
+import OrderDetailIndexView from '@/views/order/orderDetail/OrderDetailIndexView.vue';
+import OrderRefoundDetaliView from '@/views/order/orderDetail/OrderRefoundDetaliView.vue';
 
 // 导入运营相关组件
 import OperationIndexView from '@/views/operation/OperationIndexView.vue'
@@ -122,6 +133,50 @@ export const routes=[
         
         children:[
           {
+            path:'userdetails',
+            name:'userdetails',
+            label:'用户详情',
+            component:DetailsIndexView,
+            children:[
+              {
+                path:'contentdetail',
+                name:'contentdetail',
+                label:'内容信息',
+                component:ContentDetailView,
+              }, 
+              {
+                path:'devicedetail',
+                name:'devicedetail',
+                label:'设备信息',
+                component:DeviceDetailView,
+              },
+              {
+                path:'healthdetail',
+                name:'healthdetail',
+                label:'健康信息',
+                component:HealthDetailVIew,
+              },
+              {
+                path:'medicinedetail',
+                name:'medicinedetail',
+                label:'用药信息',
+                component:MedicineDetailView,
+              },
+              {
+                path:'ordersdetail',
+                name:'ordersdetail',
+                label:'订单信息',
+                component:OrdersDetailView,
+              },
+              {
+                path:'singledetail',
+                name:'singledetail',
+                label:'个人信息',
+                component:SingleDetailView,
+              }
+            ]
+          },
+          {
             path:'userlist',
             name:'userlist',
             label:'用户列表',
@@ -205,6 +260,26 @@ export const routes=[
                 name:'orderlist',
                 label:'订单列表',
                 component:OrderListView,
+              },
+              {
+                path:'orderdetails',
+                name:'orderdetails',
+                label:'详情',
+                component:OrderDetailIndexView,
+                children:[
+                  {
+                    path:'orderdetail',
+                    name:'orderdetail',
+                    label:'订单详情',
+                    component:OrderDetailView,
+                  },
+                  {
+                    path:'refounddetail',
+                    name:'refounddetail',
+                    label:'售后详情',
+                    component:OrderRefoundDetaliView,
+                  }
+                ]
               },
               {
                 path:'orderafter',

@@ -133,3 +133,48 @@ export function addUser(data) {
     data,
   });
 }
+
+// 获取健康信息
+export function getHealthDetail(userId) {
+  return request({
+    url: '/users/detail/health-record?userId=' + userId,
+    method: 'get',
+    params: { userId },
+  });
+}
+
+// 获取设备信息
+export function getDeviceDetail(userId) {
+  return request({
+    url: '/users/detail/device?userId=' + userId,
+    method: 'get',
+    params: { userId },
+  });
+}
+
+// 获取用药信息
+export function getMedicineDetail(userId) {
+  return request({
+    url: '/users/detail/medication-information?userId=' + userId,
+    method: 'get',
+    params: { userId },
+  }); 
+}
+
+// 获取订单信息
+export function getOrderDetail(userId) {
+  return request({
+    url: '/orders/users/detail/order?userId=' + userId,
+    method: 'get',
+    params: { userId },
+  }); 
+}
+
+// 获取内容信息
+export function getContentDetail(userId) {
+  return request({
+    url: '/operation/users/detail/dynamic?userId=' + userId,
+    method: 'get',
+    params: { userId },
+  }); 
+}

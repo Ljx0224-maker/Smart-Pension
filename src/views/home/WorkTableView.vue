@@ -3,7 +3,7 @@
     <!-- 顶部欢迎信息 -->
     <div class="welcome-section">
       <!-- 显示欢迎信息，使用 staffName -->
-      <h2>👋 你好！{{ staffName }}</h2>
+      <h2>☺ 你好！{{ staffName }}</h2>
     </div>
 
     <!-- 数据统计卡片 -->

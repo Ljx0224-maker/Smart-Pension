@@ -1,4 +1,5 @@
 <template>
+  <router-view></router-view> <!-- 渲染子路由 -->
   <div class="order-container">
     <div class="filter-section">
       <div class="page-header">
@@ -251,8 +252,12 @@ export default {
         });
     },
     viewOrderDetails(order) {
-      // 查看订单详情逻辑
-    },
+    // 跳转到订单详情页面，并传递订单 ID
+    this.$router.push({
+      path: '/order/ordermanage/orderdetails/orderdetail',
+      query: { orderId: order.orderId }, // 通过 query 参数传递订单 ID
+    });
+  },
     formatDate(date) {
       if (!date) return '';
       const d = new Date(date);
