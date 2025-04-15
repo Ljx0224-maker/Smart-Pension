@@ -17,6 +17,7 @@ const request=axios.create({
     // baseURL: isDev ? '开发环境' : '生产环境'
     // baseURL用来配置基础路径的，以后数据请求的时候不需要每次都写对应的地址了
     // baseURL:isDev? 'http://121.89.205.189:3000/admin':'http://121.89.205.189:3000/admin',
+    // baseURL: 'http://192.168.32.1:8888/', 
     baseURL:'/smartcare',
     timeout:60000,
     headers: {

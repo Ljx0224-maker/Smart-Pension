@@ -59,11 +59,13 @@
 
 <script lang="ts" setup>
 import { ref, onMounted } from 'vue'
+import { useStore } from 'vuex'; 
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { getTagsList, addOrUpdateTag, deleteTag } from '@/api/user.js'
 import { useRouter } from 'vue-router';
 
 const router = useRouter();
+const store = useStore(); 
 
 interface Tag {
   tagId: string
@@ -74,36 +76,35 @@ interface Tag {
   status: boolean
 }
 
-const tableData = ref<Tag[]>([]) // 标签数据
-const selectedTags = ref<Tag[]>([]) // 选中的标签
-const table = ref(null) // 表格引用
-const currentPage = ref(1); // 当前页码
-const pageSize = ref(10); // 每页显示的条数
-const total = ref(0); // 数据总条数
+const tableData = ref<Tag[]>([]) 
+const selectedTags = ref<Tag[]>([]) 
+const table = ref(null) 
+const currentPage = ref(1); 
+const pageSize = ref(10); 
+const total = ref(0); 
 
-// 获取标签列表
+// Get the tag list
 const fetchTags = async () => {
   try {
     const params = {
-      pageSize: pageSize.value, // 每页显示的条数
-      pageNum: currentPage.value, // 当前页码
+      pageSize: pageSize.value, 
+      pageNum: currentPage.value, 
     };
-    const res = await getTagsList(params); // 传递分页参数
-    console.log('后端返回的数据:', res); // 调试日志
+    const res = await getTagsList(params); 
+    console.log('Data returned from the backend:', res); 
     if (res.code === 200) {
       tableData.value = res.data.map((tag: any) => ({
         ...tag,
-        lastUpdatedTime: tag.lastUpdatedAt || '无', // 如果没有 lastUpdatedAt，设置默认值
-        lastUpdatedBy: tag.lastUpdatedBy || '无', // 如果没有 lastUpdatedBy，设置默认值
-        status: tag.usersNum >= 1, // 根据用户数量动态设置状态
+        lastUpdatedTime: tag.lastUpdatedAt || '无', 
+        status: tag.usersNum >= 1, 
       }));
-      total.value = res.total; // 设置总条数
+      total.value = res.total; 
     } else {
-      ElMessage.error('获取标签列表失败: ' + res.message);
+      ElMessage.error('Failed to get the tag list: ' + res.message);
     }
   } catch (error) {
-    console.error('接口调用失败:', error); // 调试日志
-    ElMessage.error('获取标签列表失败: ' + error.message);
+    console.error('API call failed:', error); 
+    ElMessage.error('Failed to get the tag list: ' + error.message);
   }
 }
 
@@ -111,7 +112,7 @@ const fetchTags = async () => {
 const formatDate = (dateString: string) => {
   if (!dateString || dateString === '无') return '无';
   const date = new Date(dateString);
-  if (isNaN(date.getTime())) return '无'; // 检查日期是否有效
+  if (isNaN(date.getTime())) return '无'; 
   const options: Intl.DateTimeFormatOptions = {
     year: 'numeric',
     month: '2-digit',
@@ -124,9 +125,39 @@ const formatDate = (dateString: string) => {
 }
 
 // 新增标签
-const addTag = () => {
-  // 跳转到新增标签页面
-  router.push('/user/addtag');
+const addTag = async () => {
+  try {
+    const userInfo = store.state.userInfo;
+    const newTag: Tag = {
+      tagId: '', // The backend should generate a unique ID
+      tagName: '',
+      usersNum: 0,
+      lastUpdatedBy: userInfo?.staffName || 'Unknown',
+      lastUpdatedTime: new Date().toISOString(),
+      status: false
+    };
+
+    ElMessageBox.prompt('请输入新的标签名称', '新增标签', {
+      confirmButtonText: '确定',
+      cancelButtonText: '取消',
+      inputValue: newTag.tagName,
+    }).then(async ({ value }) => {
+      if (value) {
+        newTag.tagName = value;
+        const res = await addOrUpdateTag(newTag);
+        if (res.code === 200) {
+          ElMessage.success('新增标签成功');
+          fetchTags(); 
+        } else {
+          ElMessage.error('新增标签失败: ' + res.message);
+        }
+      }
+    }).catch(() => {
+      ElMessage.info('已取消新增标签');
+    });
+  } catch (error) {
+    ElMessage.error('操作失败: ' + error.message);
+  }
 }
 
 // 编辑标签
@@ -138,11 +169,17 @@ const editTag = (row: Tag) => {
   })
     .then(async ({ value }) => {
       try {
-        const updatedTag = { ...row, tagName: value };
+        const userInfo = store.state.userInfo;
+        const updatedTag = { 
+          ...row, 
+          tagName: value,
+          // Set lastUpdatedBy to the current user's staffName
+          lastUpdatedBy: userInfo?.staffName || 'Unknown' 
+        };
         const res = await addOrUpdateTag(updatedTag);
         if (res.code === 200) {
           ElMessage.success('编辑标签成功');
-          fetchTags(); // 重新获取标签列表
+          fetchTags(); 
         } else {
           ElMessage.error('编辑标签失败: ' + res.message);
         }
@@ -164,10 +201,10 @@ const deleteTagHandler = (tagId: string) => {
   })
     .then(async () => {
       try {
-        const res = await deleteTag(tagId); // 确保 tagId 正确传递
+        const res = await deleteTag(tagId); 
         if (res.code === 200) {
           ElMessage.success('删除标签成功');
-          fetchTags(); // 重新获取标签列表
+          fetchTags(); 
         } else {
           ElMessage.error('删除标签失败: ' + res.message);
         }
@@ -182,8 +219,8 @@ const deleteTagHandler = (tagId: string) => {
 
 // 分页处理
 const handlePageChange = (page: number) => {
-  currentPage.value = page; // 更新当前页码
-  fetchTags(); // 重新获取数据
+  currentPage.value = page; 
+  fetchTags(); 
 }
 
 // 页面加载时获取标签列表
