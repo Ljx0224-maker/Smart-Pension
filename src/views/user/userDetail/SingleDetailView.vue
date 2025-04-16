@@ -87,7 +87,11 @@
           <!-- 右侧详细信息 -->
           <el-col :span="18">
             <el-card class="user-detail-card">
-              <h3>基础信息</h3>
+              <div style="display: flex; justify-content: space-between; align-items: center;">
+                <h3>基础信息</h3>
+                <!-- Add an edit button -->
+                <el-button type="primary" @click="goToEditUser">编辑信息</el-button>
+              </div>
               <el-form label-width="120px" class="user-info-form">
                 <el-row>
                   <el-col :span="12">
@@ -260,6 +264,12 @@
           path: '/user/userdetails/contentdetail',
           query: { userId: this.userId },
         });
+      },
+      goToEditUser() {
+          this.$router.push({
+              path: '/user/adduser',
+              query: { userId: this.userId },
+          });
       },
       async fetchUserDetail(userId) {
         try {

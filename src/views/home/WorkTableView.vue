@@ -140,7 +140,7 @@
               <el-table-column label="商品信息">
                 <template #default="scope">
                   <div class="product-info">
-                    <img :src="scope.row.image" alt="商品图片" />
+                    <img src="@\assets\jzhl.jpg" alt="商品图片" />
                     <span>{{ scope.row.name }}</span>
                   </div>
                 </template>
@@ -154,16 +154,20 @@
             <h3>服务人员业绩 TOP5 排行</h3>
             <el-table :data="topEmployees" style="width: 100%">
               <el-table-column prop="rank" label="序号" width="80"></el-table-column>
-              <el-table-column label="个人信息">
+              <el-table-column label="个人信息" width="170">
                 <template #default="scope">
                   <div class="employee-info">
-                    <img :src="scope.row.avatar" alt="头像" />
+                     <div class="demo-type" style="margin-right: 20px;">
+                                <div>
+                          <el-avatar>王</el-avatar>
+                               </div>
+                           </div>
                     <span>{{ scope.row.name }}</span>
                   </div>
                 </template>
               </el-table-column>
-              <el-table-column prop="type" label="服务类型"></el-table-column>
-              <el-table-column prop="orders" label="服务订单数"></el-table-column>
+              <el-table-column prop="type" label="服务类型" width="120"></el-table-column>
+              <el-table-column prop="orders" label="服务订单数" width="120"></el-table-column>
             </el-table>
           </el-card>
         </el-col>

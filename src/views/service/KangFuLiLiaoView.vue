@@ -11,8 +11,8 @@
             <span>状态</span>
             <el-select v-model="statusFilter" placeholder="请选择" style="width: 200px;">
               <el-option label="全部" value=""></el-option>
-              <el-option label="已上架" value="listed"></el-option>
-              <el-option label="已下架" value="unlisted"></el-option>
+              <el-option label="已上架" value="已上架"></el-option>
+              <el-option label="已下架" value="下架"></el-option>
             </el-select>
           </div>
 
@@ -85,7 +85,8 @@
         </el-table-column>
         <el-table-column prop="image" label="商品信息" width="120">
           <template #default="scope">
-            <img :src="scope.row.image" alt="商品图片" class="product-image">
+            <!-- 替换为默认图片 -->
+            <img :src="defaultImage" alt="商品图片" class="product-image">
             <div>{{ scope.row.name }}</div>
           </template>
         </el-table-column>
@@ -142,8 +143,8 @@
           </el-form-item>
           <el-form-item label="状态">
             <el-select v-model="form.status" placeholder="请选择">
-              <el-option label="已上架" value="listed"></el-option>
-              <el-option label="已下架" value="unlisted"></el-option>
+              <el-option label="已上架" value="已上架"></el-option>
+              <el-option label="已下架" value="下架"></el-option>
             </el-select>
           </el-form-item>
           <el-form-item label="商品备注">
@@ -162,16 +163,8 @@
             <el-input-number v-model="form.serviceDuration" :min="0"></el-input-number>
           </el-form-item>
           <el-form-item label="商品图片">
-            <el-upload
-              class="avatar-uploader"
-              action="https://jsonplaceholder.typicode.com/posts/"
-              :show-file-list="false"
-              :on-success="handleImageSuccess"
-              :before-upload="beforeImageUpload"
-            >
-              <img v-if="form.image" :src="form.image" class="avatar">
-              <el-icon v-else><Plus /></el-icon>
-            </el-upload>
+            <!-- 替换为默认图片，移除上传组件 -->
+            <img :src="defaultImage" alt="商品图片" class="product-image">
           </el-form-item>
         </el-form>
         <template #footer>
@@ -187,6 +180,9 @@
 import { ElMessage, ElMessageBox } from 'element-plus';
 import { Search, RefreshLeft, Plus } from '@element-plus/icons-vue';
 import { getKFProductList, addProduct, updateProduct, deleteProduct } from '@/api/service';
+
+// 导入默认图片
+import defaultImage from '@/assets/kfll.jpg';
 
 export default {
   data() {
@@ -208,11 +204,17 @@ export default {
         category: '',
         price: 0,
         status: '',
-        image: '',
+        // 移除原本的 image 字段
+        productRemark: '',
+        serviceDetails: '',
+        sales: 0,
+        servicePeople: 0,
+        serviceDuration: 0,
       },
       selectedRows: [],
       userInfo: this.$store.state.userInfo,
-
+      // 添加默认图片路径
+      defaultImage: defaultImage
     };
   },
   components: {
@@ -291,7 +293,7 @@ export default {
         productCode: this.generateRandomCode(), // 随机生成商品编码
         category: '', // 分类
         price: 0, // 价格
-        status: 'unlisted', // 默认状态为下架
+        status: '下架', // 默认状态为下架
         image: '', // 商品图片
         productRemark: '', // 商品备注
         serviceDetails: '', // 服务详情
@@ -343,7 +345,7 @@ export default {
       const payload = {
         ...this.form,
         productName: this.form.name, // 映射为后端字段
-        status: this.form.status === 'listed' ? '已上架' : '下架', // 映射状态值
+        status: this.form.status === '已上架' ? '已上架' : '下架', // 映射状态值
        
         serviceType: '康复理疗', // 确保服务类型为康复理疗
       };
@@ -523,7 +525,7 @@ export default {
 }
 
 .product-image {
-  width: 100px;
+  width: 150px;
   height: 100px;
   object-fit: cover;
 }

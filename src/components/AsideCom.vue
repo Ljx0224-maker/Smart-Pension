@@ -87,7 +87,7 @@ export default{
             <!--跟路由配置有关-->
             <el-menu-item index="/user/userlist"><el-icon><Document /></el-icon>用户列表</el-menu-item>
             <el-menu-item index="/user/usertag"><el-icon><CollectionTag /></el-icon>用户标签</el-menu-item>
-            <el-menu-item index="/user/adduser"><el-icon><CirclePlus /></el-icon>新增/修改用户信息</el-menu-item>
+            <!-- <el-menu-item index="/user/adduser"><el-icon><CirclePlus /></el-icon>新增/修改用户信息</el-menu-item> -->
             <el-menu-item index="/user/addtag"><el-icon><PriceTag /></el-icon>添加标签</el-menu-item>
         </el-sub-menu>
 
@@ -100,7 +100,7 @@ export default{
             </template>
             <!--跟路由配置有关-->
             <el-menu-item index="/staff/stafflist"><el-icon><DocumentCopy /></el-icon>全部服务人员列表</el-menu-item>
-            <el-menu-item index="/staff/addstaff"><el-icon><CopyDocument /></el-icon>新增服务人员</el-menu-item>
+            <!-- <el-menu-item index="/staff/addstaff"><el-icon><CopyDocument /></el-icon>新增服务人员</el-menu-item> -->
         </el-sub-menu>
 
         <el-sub-menu index="/service">

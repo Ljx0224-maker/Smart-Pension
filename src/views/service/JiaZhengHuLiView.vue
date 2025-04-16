@@ -69,13 +69,13 @@
         <el-table-column type="selection" width="55"></el-table-column>
         
         <!-- 商品名称列 -->
-        <el-table-column prop="productName" label="商品名称" width="150">
+        <el-table-column prop="productName" label="商品名称" width="120">
           <template #default="scope">
             <div>{{ scope.row.productName }}</div>
           </template>
         </el-table-column>
         
-        <el-table-column label="商品编码" width="120">
+        <el-table-column label="商品编码" width="100">
           <template #default="scope">
             <div>
               <div>{{ scope.row.productId }}</div>
@@ -83,9 +83,10 @@
             </div>
           </template>
         </el-table-column>
-        <el-table-column prop="image" label="商品信息" width="120">
+        <el-table-column prop="image" label="商品图片" width="150">
           <template #default="scope">
-            <img :src="scope.row.image" alt="商品图片" class="product-image">
+            <!-- 修改为显示默认图片 -->
+            <img :src="defaultImage" alt="商品图片" class="product-image"> 
             <div>{{ scope.row.name }}</div>
           </template>
         </el-table-column>
@@ -98,8 +99,8 @@
             </el-tag>
           </template>
         </el-table-column>
-        <el-table-column prop="lastUpdatedBy" label="最后更新人" width="120"></el-table-column>
-        <el-table-column prop="lastUpdatedAt" label="最后更新时间" width="200"></el-table-column>
+        <el-table-column prop="lastUpdatedBy" label="最后更新人" width="100"></el-table-column>
+        <el-table-column prop="lastUpdatedAt" label="最后更新时间" width="180"></el-table-column>
         <el-table-column label="操作" width="180">
           <template #default="scope">
             <el-button size="mini" type="text" @click="editProduct(scope.row)">编辑</el-button>
@@ -160,16 +161,8 @@
             <el-input-number v-model="form.serviceDuration" :min="0"></el-input-number>
           </el-form-item>
           <el-form-item label="商品图片">
-            <el-upload
-              class="avatar-uploader"
-              action="https://jsonplaceholder.typicode.com/posts/"
-              :show-file-list="false"
-              :on-success="handleImageSuccess"
-              :before-upload="beforeImageUpload"
-            >
-              <img v-if="form.image" :src="form.image" class="avatar">
-              <el-icon v-else><Plus /></el-icon>
-            </el-upload>
+            <!-- 直接显示默认图片，移除上传组件 -->
+            <img :src="defaultImage" alt="商品图片" class="product-image"> 
           </el-form-item>
         </el-form>
         <template #footer>
@@ -185,6 +178,7 @@
 import { ElMessage, ElMessageBox } from 'element-plus';
 import { Search, RefreshLeft, Plus } from '@element-plus/icons-vue';
 import { getJZProductList, addProduct, updateProduct, deleteProduct } from '@/api/service';
+import defaultImage from '@/assets/jzhl.jpg';
 
 export default {
   data() {
@@ -206,15 +200,16 @@ export default {
         category: '',
         price: 0,
         status: '',
-        image: '',
-        productRemark: '', // 商品备注
-        serviceDetails: '', // 服务详情
-        sales: 0, // 销量
-        servicePeople: 0, // 服务人数
-        serviceDuration: 0, // 服务时长（分钟）
+        productRemark: '', 
+        serviceDetails: '',
+        sales: 0,
+        servicePeople: 0,
+        serviceDuration: 0,
       },
       selectedRows: [],
       userInfo: this.$store.state.userInfo,
+      // 使用导入的默认图片
+      defaultImage: defaultImage 
     };
   },
   components: {
@@ -251,7 +246,7 @@ export default {
         }
 
         // 筛选关键字
-        if (this.searchKeyword && !product.productName.includes(this.searchKeyword)) { // 确保使用 productName
+        if (this.searchKeyword && !product.productName.includes(this.searchKeyword)) { 
           return false;
         }
 
@@ -263,21 +258,6 @@ export default {
     },
   },
   methods: {
-    handleImageSuccess(res, file) {
-      this.form.image = URL.createObjectURL(file.raw);
-    },
-    beforeImageUpload(file) {
-      const isJPG = file.type === 'image/jpeg';
-      const isLt2M = file.size / 1024 / 1024 < 2;
-
-      if (!isJPG) {
-        ElMessage.error('上传头像图片只能是 JPG 格式!');
-      }
-      if (!isLt2M) {
-        ElMessage.error('上传头像图片大小不能超过 2MB!');
-      }
-      return isJPG && isLt2M;
-    },
     searchProducts() {
       this.loadProducts();
     },
@@ -290,30 +270,29 @@ export default {
     },
     addNewProduct() {
       this.dialogTitle = '新增商品';
-      console.log('新增商品信息:', this.form); // 调试信息
+      console.log('新增商品信息:', this.form); 
       this.form = {
         id: null,
-        name: '', // 商品名称
-        category: '', // 分类
-        price: 0, // 价格
-        status: '', // 状态
-        image: '', // 商品图片
-        productRemark: '', // 商品备注
-        serviceDetails: '', // 服务详情
-        sales: 0, // 销量
-        servicePeople: 0, // 服务人数d
-        serviceDuration: 0, // 服务时长（分钟）
-        lastUpdatedBy: this.userInfo.staffName || '未知', // 自动填充更新人
+        name: '', 
+        category: '', 
+        price: 0, 
+        status: '', 
+        productRemark: '', 
+        serviceDetails: '', 
+        sales: 0, 
+        servicePeople: 0, 
+        serviceDuration: 0, 
+        lastUpdatedBy: this.userInfo.staffName || '未知', 
       };
       this.dialogVisible = true;
     },
     editProduct(row) {
       this.dialogTitle = '编辑商品';
-      this.form = { ...row }; // 将 row 的所有字段赋值到 form
+      this.form = { ...row }; 
       this.dialogVisible = true;
     },
     removeProduct(row) {
-      console.log('删除的行数据:', row); // 调试信息
+      console.log('删除的行数据:', row); 
       ElMessageBox.confirm(
         '确定要删除此商品吗?',
         '提示',
@@ -323,19 +302,19 @@ export default {
           type: 'warning',
         }
       ).then(() => {
-        console.log('删除参数:', row.productId); // 调试信息
-        deleteProduct(row.productId) // 修改为传递 productId
+        console.log('删除参数:', row.productId); 
+        deleteProduct(row.productId) 
           .then(res => {
-            console.log('删除接口返回:', res); // 调试信息
-            if (res.code === 200) { // 根据后端返回值调整判断条件
+            console.log('删除接口返回:', res); 
+            if (res.code === 200) { 
               ElMessage.success('删除成功');
-              this.loadProducts(); // 重新加载商品列表
+              this.loadProducts(); 
             } else {
               ElMessage.error('删除失败: ' + (res.message || '未知错误'));
             }
           })
           .catch(err => {
-            console.error('Delete error:', err); // 打印错误信息
+            console.error('Delete error:', err); 
             ElMessage.error('删除失败: ' + (err.message || '未知错误'));
           });
       }).catch(() => {
@@ -343,23 +322,18 @@ export default {
       });
     },
     saveProduct() {
-      // 确保 payload 里包含正确的商品名称
       const payload = {
         ...this.form,
-        productName: this.form.name, // 映射为后端字段
-        status: this.form.status === '已上架' ? '已上架' : '下架', // 映射状态值
-        // 注意这里 this.form.name 可能有误，根据表单绑定，商品名称应该是 productName
-        productName: this.form.productName, 
-        status: this.form.status === '已上架' ? '已上架' : '下架',
+        productName: this.form.name, 
+        status: this.form.status === '已上架' ? '已上架' : '下架', 
       };
 
       if (this.form.id) {
-        // 编辑商品
         updateProduct(payload).then(res => {
           if (res.code === 200) {
             ElMessage.success('编辑成功');
             this.dialogVisible = false;
-            this.loadProducts(); // 刷新商品列表
+            this.loadProducts(); 
           } else {
             ElMessage.error('编辑失败: ' + res.message);
           }
@@ -368,12 +342,11 @@ export default {
           ElMessage.error('编辑失败: ' + (err.message || '未知错误'));
         });
       } else {
-        // 新增商品
         addProduct(payload).then(res => {
           if (res.code === 200) {
             ElMessage.success('新增成功');
             this.dialogVisible = false;
-            this.loadProducts(); // 刷新商品列表
+            this.loadProducts(); 
           } else {
             ElMessage.error('新增失败: ' + res.message);
           }
@@ -409,7 +382,6 @@ export default {
       getJZProductList(params).then(res => {
         if (res.code === 200) {
           console.log('接口返回的商品数据:', res.data); 
-          // 确保返回的数据里有 productName 字段
           this.tableData = res.data; 
           this.total = res.total;
         } else {

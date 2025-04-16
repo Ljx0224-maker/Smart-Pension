@@ -24,11 +24,13 @@
           <el-form-item label="头像">
             <el-upload
               class="avatar-uploader"
-              action="#"
+              action="https://run.mocky.io/v3/9d059bf9-4660-45f2-925d-ce80ad6c4d15"
               :show-file-list="false"
-              :on-success="handleAvatarSuccess">
-              <img v-if="userForm.avatar" :src="userForm.avatar" class="avatar" />
-              <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+              :on-success="handleAvatarSuccess"
+              :before-upload="beforeAvatarUpload"
+            >
+              <img v-if="imageUrl" :src="imageUrl" class="avatar" />
+              <el-icon v-else class="avatar-uploader-icon"><Plus /></el-icon>
             </el-upload>
           </el-form-item>
         </el-col>
@@ -169,146 +171,161 @@
   </div>
 </template>
 
-<script>
+<script lang="ts" setup>
 import { addUser, getUserDetail } from '@/api/user';
 import { ref, onMounted } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
+import { ElMessage } from 'element-plus';
+import { Plus } from '@element-plus/icons-vue';
+import type { UploadProps } from 'element-plus';
 
-export default {
-  setup() {
-    const router = useRouter();
-    const route = useRoute();
-    const userForm = ref({
-      userId: '', // 新增 userId 字段
-      nickname: '',
-      username: '',
-      phone: '',
-      avatar: '',
-      realName: '',
-      idNumber: '',
-      gender: '',
-      birthDate: '',
-      address: '',
-      height: '',
-      weight: '',
-      origin: '',
-      ethnicity: '',
-      education: '',
-      maritalStatus: '',
-      occupation: '',
-      company: '',
-      emergencyContact: '',
-      emergencyPhone: '',
-      status: true,
-      password: '',
-      notes: '',
-    });
+const router = useRouter();
+const route = useRoute();
+const userForm = ref({
+  userId: '',
+  nickname: '',
+  username: '',
+  phone: '',
+  avatar: '',
+  realName: '',
+  idNumber: '',
+  gender: '',
+  birthDate: '',
+  address: '',
+  height: '',
+  weight: '',
+  origin: '',
+  ethnicity: '',
+  education: '',
+  maritalStatus: '',
+  occupation: '',
+  company: '',
+  emergencyContact: '',
+  emergencyPhone: '',
+  status: true,
+  password: '',
+  notes: '',
+});
 
-    // 获取用户详情
-    const loadUserDetail = async () => {
-      const userId = route.query.userId;
-      if (!userId) {
-        ElMessage.error('用户ID不存在');
-        return;
-      }
-      try {
-        const res = await getUserDetail(userId.toString());
-        if (res.code === 200) {
-          const data = res.data;
-          const emergencyContact = JSON.parse(data.emergencyContact || '[]')[0] || {};
-          userForm.value = {
-            userId: data.userId, // 赋值 userId
-            nickname: data.nickname,
-            username: data.username,
-            phone: data.phone || '',
-            avatar: data.avatar || '',
-            realName: data.realName,
-            idNumber: data.idNumber || '',
-            gender: data.gender,
-            birthDate: new Date(data.birthDate),
-            address: data.address,
-            height: data.height || '',
-            weight: data.weight || '',
-            origin: data.hometown || '',
-            ethnicity: data.ethnicity || '',
-            education: data.educationLevel || '',
-            maritalStatus: data.maritalStatus,
-            occupation: data.occupation || '',
-            company: data.company || '',
-            emergencyContact: emergencyContact.name || '',
-            emergencyPhone: emergencyContact.phone || '',
-            status: data.auditStatus === 'approved',
-            password: data.password || '',
-            notes: data.notes || '',
-          };
-          console.log('加载的用户数据:', userForm.value); // 调试日志
-        } else {
-          ElMessage.error('获取用户详情失败: ' + res.message);
-        }
-      } catch (error) {
-        ElMessage.error('获取用户详情失败: ' + error.message);
-      }
-    };
+const imageUrl = ref('');
 
-    // 保存用户
-    const saveUser = async () => {
-      try {
-        console.log('提交的用户数据:', userForm.value); // 调试日志
-
-        if (!userForm.value.maritalStatus) {
-          ElMessage.error('婚姻状态不能为空');
-          return;
-        }
-
-        if (!userForm.value.emergencyContact) {
-          ElMessage.error('紧急联系人不能为空');
-          return;
-        }
-
-        if (!userForm.value.emergencyPhone) {
-          ElMessage.error('紧急联系人电话不能为空');
-          return;
-        }
-
-        // 格式化紧急联系人信息为 JSON 字符串
-        userForm.value.emergencyContact = JSON.stringify([
-          {
-            name: userForm.value.emergencyContact,
-            phone: userForm.value.emergencyPhone,
-            relation: "朋友",
-          },
-        ]);
-
-        const res = await addUser(userForm.value); // 提交 userForm，包括 userId
-        console.log('保存接口返回:', res); // 调试日志
-        if (res.code === 200) {
-          router.push('/user/userlist'); // 返回用户列表页面
-          ElMessage.success('用户信息保存成功');
-        } else {
-          ElMessage.error('用户信息保存失败: ' + res.message);
-        }
-      } catch (error) {
-        console.error('保存用户失败:', error);
-        ElMessage.error('保存用户失败');
-      }
-    };
-
-    // 返回按钮
-    const resetForm = () => {
-      router.push('/user/userlist'); // 返回用户列表页面
-    };
-
-    onMounted(() => {
-      loadUserDetail();
-    });
-
-    return {
-      userForm,
-      saveUser,
-      resetForm,
-    };
-  },
+const handleAvatarSuccess: UploadProps['onSuccess'] = (
+  response,
+  uploadFile
+) => {
+  imageUrl.value = URL.createObjectURL(uploadFile.raw!);
+  userForm.value.avatar = imageUrl.value; // 将图片地址赋值给 userForm
 };
+
+const beforeAvatarUpload: UploadProps['beforeUpload'] = (rawFile) => {
+  if (rawFile.type !== 'image/jpeg') {
+    ElMessage.error('Avatar picture must be JPG format!');
+    return false;
+  } else if (rawFile.size / 1024 / 1024 > 2) {
+    ElMessage.error('Avatar picture size can not exceed 2MB!');
+    return false;
+  }
+  return true;
+};
+
+// 获取用户详情
+const loadUserDetail = async () => {
+  const userId = route.query.userId;
+  if (!userId) {
+    ElMessage.error('用户ID不存在');
+    return;
+  }
+  try {
+    const res = await getUserDetail(userId.toString());
+    if (res.code === 200) {
+      const data = res.data;
+      const emergencyContact = JSON.parse(data.emergencyContact || '[]')[0] || {};
+      userForm.value = {
+        userId: data.userId,
+        nickname: data.nickname,
+        username: data.username,
+        phone: data.phone || '',
+        avatar: data.avatar || '',
+        realName: data.realName,
+        idNumber: data.idNumber || '',
+        gender: data.gender,
+        birthDate: new Date(data.birthDate),
+        address: data.address,
+        height: data.height || '',
+        weight: data.weight || '',
+        origin: data.hometown || '',
+        ethnicity: data.ethnicity || '',
+        education: data.educationLevel || '',
+        maritalStatus: data.maritalStatus,
+        occupation: data.occupation || '',
+        company: data.company || '',
+        emergencyContact: emergencyContact.name || '',
+        emergencyPhone: emergencyContact.phone || '',
+        status: data.auditStatus === 'approved',
+        password: data.password || '',
+        notes: data.notes || '',
+      };
+      imageUrl.value = userForm.value.avatar; // 加载用户详情时更新图片预览
+      console.log('加载的用户数据:', userForm.value);
+    } else {
+      ElMessage.error('获取用户详情失败: ' + res.message);
+    }
+  } catch (error) {
+    ElMessage.error('获取用户详情失败: ' + error.message);
+  }
+};
+
+// 保存用户
+const saveUser = async () => {
+  try {
+    console.log('提交的用户数据:', userForm.value);
+
+    if (!userForm.value.maritalStatus) {
+      ElMessage.error('婚姻状态不能为空');
+      return;
+    }
+
+    if (!userForm.value.emergencyContact) {
+      ElMessage.error('紧急联系人不能为空');
+      return;
+    }
+
+    if (!userForm.value.emergencyPhone) {
+      ElMessage.error('紧急联系人电话不能为空');
+      return;
+    }
+
+    userForm.value.emergencyContact = JSON.stringify([
+      {
+        name: userForm.value.emergencyContact,
+        phone: userForm.value.emergencyPhone,
+        relation: "朋友",
+      },
+    ]);
+
+    const res = await addUser(userForm.value);
+    console.log('保存接口返回:', res);
+    if (res.code === 200) {
+      router.push('/user/userlist');
+      ElMessage.success('用户信息保存成功');
+    } else {
+      ElMessage.error('用户信息保存失败: ' + res.message);
+    }
+  } catch (error) {
+    console.error('保存用户失败:', error);
+    ElMessage.error('保存用户失败');
+  }
+};
+
+// 返回按钮
+const resetForm = () => {
+  router.push('/user/userlist');
+};
+
+onMounted(() => {
+  loadUserDetail();
+});
+
 </script>
 
 <style scoped>
@@ -340,27 +357,32 @@ export default {
   justify-content: flex-end;
 }
 
-.avatar-uploader {
-  display: inline-block;
-  cursor: pointer;
-  border: 1px dashed #d9d9d9;
+.avatar-uploader .avatar {
+  width: 178px;
+  height: 178px;
+  display: block;
+}
+</style>
+
+<style>
+.avatar-uploader .el-upload {
+  border: 1px dashed var(--el-border-color);
   border-radius: 6px;
-  padding: 20px;
-  background-color: #fafafa;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  transition: var(--el-transition-duration-fast);
 }
 
-.avatar-uploader:hover {
-  border-color: #20a0ff;
+.avatar-uploader .el-upload:hover {
+  border-color: var(--el-color-primary);
 }
 
-.avatar-uploader-icon {
+.el-icon.avatar-uploader-icon {
   font-size: 28px;
-  color: #8c939d;
-}
-
-.avatar {
-  width: 100px;
-  height: 100px;
-  border-radius: 50%;
+  color: #ffa94d;
+  width: 50px;
+  height: 50px;
+  text-align: center;
 }
 </style>

@@ -63,7 +63,8 @@
           <el-table-column type="selection" width="55"></el-table-column>
           <el-table-column label="用户信息" width="180">
             <template #default="scope">
-              <img :src="scope.row.avatar" alt="用户头像" class="user-avatar">
+              <!-- 将所有用户头像设置为固定图片 -->
+              <img  alt="用户头像" class="user-avatar">
               <div>{{ scope.row.nickname }}</div>
             </template>
           </el-table-column>
