@@ -86,9 +86,10 @@
             </div>
           </template>
         </el-table-column>
-        <el-table-column prop="image" label="商品信息" width="120">
+        <el-table-column prop="image" label="商品图片" width="120">
           <template #default="scope">
-            <img :src="scope.row.image" alt="商品图片" class="product-image">
+            <!-- 替换为默认图片 -->
+            <img :src="defaultImage" alt="商品图片" class="product-image">
             <div>{{ scope.row.name }}</div>
           </template>
         </el-table-column>
@@ -168,16 +169,8 @@
             <el-input-number v-model="form.serviceDuration" :min="0"></el-input-number>
           </el-form-item>
           <el-form-item label="商品图片">
-            <el-upload
-              class="avatar-uploader"
-              action="https://jsonplaceholder.typicode.com/posts/"
-              :show-file-list="false"
-              :on-success="handleImageSuccess"
-              :before-upload="beforeImageUpload"
-            >
-              <img v-if="form.image" :src="form.image" class="avatar">
-              <el-icon v-else><Plus /></el-icon>
-            </el-upload>
+            <!-- 替换为默认图片，移除上传组件 -->
+            <img :src="defaultImage" alt="商品图片" class="product-image">
           </el-form-item>
         </el-form>
         <template #footer>
@@ -193,6 +186,8 @@
 import { ElMessage, ElMessageBox } from 'element-plus';
 import { Search, RefreshLeft, Plus } from '@element-plus/icons-vue';
 import { getSMProductList, addProduct, updateProduct, deleteProduct } from '@/api/service';
+// 导入图片
+import defaultImage from '@/assets/smtj.jpg';
 
 export default {
   data() {
@@ -214,16 +209,17 @@ export default {
         category: '',
         price: 0,
         status: '',
-        image: '',
-        productRemark: '', // 商品备注
-        serviceDetails: '', // 服务详情
-        sales: 0, // 销量
-        servicePeople: 0, // 服务人数
-        serviceDuration: 0, // 服务时长（分钟）
+        // 移除原本的 image 字段
+        productRemark: '',
+        serviceDetails: '',
+        sales: 0,
+        servicePeople: 0,
+        serviceDuration: 0,
       },
       selectedRows: [],
       userInfo: this.$store.state.userInfo,
-
+      // 添加默认图片路径
+      defaultImage: defaultImage
     };
   },
   components: {
