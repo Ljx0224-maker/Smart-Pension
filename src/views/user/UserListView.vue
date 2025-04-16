@@ -72,20 +72,22 @@
           </el-table-column>
           <el-table-column prop="userId" label="ID" width="180"></el-table-column>
           <el-table-column prop="realName" label="真实姓名" width="180"></el-table-column>
+
+
           <el-table-column prop="tags" label="用户标签" width="200">
-            <template #default="scope">
-              <div>
-                <el-tag
-                  v-for="(tag, index) in scope.row.tags"
-                  :key="index"
-                  type="info"
-                  style="margin-right: 5px;"
-                >
-                  {{ tag }}
-                </el-tag>
-              </div>
-            </template>
-          </el-table-column>
+          <template #default="scope">
+            <div>
+              <el-tag
+                v-for="(tag, index) in scope.row.tags"
+                :key="index"
+                :type="getTagType(tag)" 
+                class="tag-item">
+                {{ tag }}
+            </el-tag>
+          </div>
+          </template>
+        </el-table-column>
+
           <el-table-column prop="lastLoginTime" label="最后登录时间" width="200"></el-table-column>
           <el-table-column label="操作" width="180">
             <template #default="scope">
@@ -260,6 +262,18 @@
   },
 
     methods: {
+      getTagType(tag) {
+      if (tag === '糖尿病') {
+        return 'info';
+      } else if (tag === '多次购买') {
+        return 'warning';
+      } else if (tag === '高血压') {
+        return 'success';
+      } else if (tag === '慢性病') {
+        return 'primary';
+      } 
+      return '';
+    },
       // 搜索框
       searchUsers() {
         this.loadUsers();
@@ -591,6 +605,11 @@
   font-size: 14px; 
   line-height: 1; 
 }
+.tag-item {
+  margin-right: 3px; /* 设置右侧间距 */
+  margin-bottom: 3px; /* 如果标签换行，设置下方间距 */
+}
+
 </style>
 
 

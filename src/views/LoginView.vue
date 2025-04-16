@@ -49,7 +49,7 @@ export default {
   <div class="login-container">
     <div class="left-section">
       <h1 style="margin-left: 300px">颐康云护</h1>
-      <p style="margin-left: 250px">智慧养老后台管理系统后台端</p>
+      <p style="margin-left: 250px">智慧养老管理系统后台端</p>
       <el-image style="width: 400px; height: auto;margin-left:160px;" :src="url1" :fit="fit" />
     </div>
     <div class="right-section">
@@ -64,7 +64,7 @@ export default {
           placeholder="请输入密码"
           show-password
         />
-        <el-button type="primary" round @click="submitForm">登录</el-button>
+        <el-button type="primary" round @click="submitForm" style="margin-top: 20px;">登录</el-button>
       </div>
     </div>
   </div>
