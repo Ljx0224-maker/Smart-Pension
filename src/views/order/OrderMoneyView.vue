@@ -76,13 +76,13 @@
       </el-table>
 
       <el-pagination
-        background
-        v-model:current-page="currentPage"
-        :page-size="pageSize"
-        layout="total, prev, pager, next, jumper"
-        :total="total"
-        @current-change="handlePageChange"
-      ></el-pagination>
+    background
+    v-model:current-page="currentPage"
+    :page-size="pageSize"
+    layout="total, prev, pager, next, jumper"
+    :total="total"
+    @current-change="handlePageChange"
+  ></el-pagination>
     </div>
   </div>
 </template>
@@ -111,7 +111,8 @@ export default {
   },
   computed: {
     filteredTransactions() {
-      return this.tableData.filter(item => {
+      // 先进行筛选
+      let filteredData = this.tableData.filter(item => {
         // 根据收支类型筛选
         const matchesType = !this.transactionType || item.transactionType === this.transactionType;
   
@@ -128,29 +129,36 @@ export default {
   
         return matchesType && matchesKeyword && matchesDate;
       });
+
+      // 更新总记录数为筛选后数据的长度
+      this.total = filteredData.length;
+
+      // 进行分页
+      const start = (this.currentPage - 1) * this.pageSize;
+      const end = start + this.pageSize;
+      return filteredData.slice(start, end);
     },
   },
   methods: {
     searchTransactions() {
-      this.loadTransactions();
+      this.currentPage = 1; 
     },
     resetSearch() {
       this.transactionType = '';
       this.dateRange = '';
       this.searchKeyword = '';
-      this.loadTransactions();
+      this.currentPage = 1; 
     },
     handleSelectionChange(selection) {
       this.selectedRows = selection;
     },
     handlePageChange(page) {
       this.currentPage = page;
-      this.loadTransactions();
+      
     },
     loadTransactions() {
+      // 不再传递分页参数，获取全部数据
       const params = {
-        pageSize: this.pageSize,
-        pageNum: this.currentPage,
         params: {
           transactionType: this.transactionType,
           keyword: this.searchKeyword,
@@ -172,7 +180,8 @@ export default {
             amount: item.orders[0]?.total_amount || '',
             description: item.productNames.join('、'),
           }));
-          this.total = this.tableData.length;
+          // 更新总记录数为全部数据的长度
+          this.total = this.tableData.length; 
         } else {
           ElMessage.error('获取数据失败');
         }

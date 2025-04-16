@@ -48,13 +48,13 @@ export default {
 <template>
   <div class="login-container">
     <div class="left-section">
-      <h1 style="margin-left: 250px">颐康云护</h1>
-      <p style="margin-left: 200px">智慧养老后台管理系统后台端</p>
-      <el-image style="width: 300px; height: auto" :src="url1" :fit="fit" />
+      <h1 style="margin-left: 300px">颐康云护</h1>
+      <p style="margin-left: 250px">智慧养老后台管理系统后台端</p>
+      <el-image style="width: 400px; height: auto;margin-left:160px;" :src="url1" :fit="fit" />
     </div>
     <div class="right-section">
       <div class="form-wrap">
-        <el-image style="width: 100px; height: 100px" :src="url" :fit="fit" />
+        <el-image style="width: 100px; height: auto; margin-left: 125px;" :src="url" :fit="fit" />
         <h2>欢迎登录</h2>
         <el-input v-model="staffId" placeholder="请输入账号" />
         <el-input
@@ -83,7 +83,7 @@ export default {
     flex-direction: column;
     justify-content: center;
     align-items: flex-start;
-    background:#407BFD; //linear-gradient(to right, #407BFD, #ffffff);
+    background:linear-gradient(to right, #407BFD, #F2F6FF);
 
     h1 {
       font-size: 28px;
@@ -107,28 +107,32 @@ export default {
   .right-section {
     flex: 1;
     display: flex;
-    justify-content: center;
+    
     align-items: center;
-    background-color: white;
-
+    background: linear-gradient(to right, #F2F6FF, #FFFFFF); // 渐变背景
+ 
     .form-wrap {
       width: 360px;
-      padding: 32px;
-      border-radius: 8px;
+      padding: 50px;
+      border-radius: 25px;
+      align-items: center;
       background-color: white;
-      text-align: center;
-
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); 
+ 
+ 
       h2 {
         font-size: 24px;
         color: #333;
         margin-bottom: 20px;
+        text-align: center;
+ 
       }
-
+ 
       .el-input {
+        margin-top: 10px;
         margin-bottom: 20px;
         width: 100%;
       }
-
       .psw {
         margin-bottom: 10px;
       }

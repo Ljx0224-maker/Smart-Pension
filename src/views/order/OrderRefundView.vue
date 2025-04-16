@@ -50,7 +50,7 @@
         <el-table-column label="操作" width="200">
           <template #default="scope">
             <el-button type="text" @click="editReason(scope.row)">编辑</el-button>
-            <el-button type="text" @click="deleteReason(scope.row)">删除</el-button>
+            <el-button type="text" @click="deleteReason(scope.row)" style="color: #FFB800;">删除</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -126,7 +126,16 @@ export default {
   },
   computed: {
     computedTableData() {
-      return this.tableData.slice(
+      // 先根据搜索关键词过滤数据
+      let filteredData = this.tableData.filter(item => {
+        // 检查多个字段是否包含关键词，可按需添加更多字段
+        return item.reason?.includes(this.searchKeyword) || 
+               item.lastUpdatedBy?.includes(this.searchKeyword) ||
+               item.status?.includes(this.searchKeyword);
+      });
+
+      // 再进行分页
+      return filteredData.slice(
         (this.currentPage - 1) * this.pageSize,
         this.currentPage * this.pageSize
       );
@@ -235,7 +244,12 @@ export default {
         console.log('获取退款原因列表:', res); // 打印响应数据
         if (Array.isArray(res)) {
           this.tableData = res; // 将数据赋值给 tableData
-          this.total = res.length; // 设置总条目数
+          // 更新总条目数为筛选后的数据数量
+          this.total = this.tableData.filter(item => {
+            return item.reason?.includes(this.searchKeyword) || 
+                   item.lastUpdatedBy?.includes(this.searchKeyword) ||
+                   item.status?.includes(this.searchKeyword);
+          }).length;
         } else {
           ElMessage.error('获取数据失败');
         }
@@ -243,6 +257,7 @@ export default {
         ElMessage.error('请求失败，请检查网络或后端服务');
       });
     },
+
   },
   mounted() {
     this.loadReasons();

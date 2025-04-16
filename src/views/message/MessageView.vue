@@ -169,7 +169,7 @@ export default {
     },
     // 前端分页逻辑
     computedTableData() {
-      return this.tableData.slice(
+      return this.filteredMessages.slice(
         (this.currentPage - 1) * this.pageSize,
         this.currentPage * this.pageSize
       );

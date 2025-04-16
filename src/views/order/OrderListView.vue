@@ -11,11 +11,10 @@
         <div class="filter-row">
           <div class="filter-item">
             <span>服务类型</span>
-            <el-radio-group v-model="category">
-              <el-radio label="生活照料">生活照料</el-radio>
-              <el-radio label="临床护理">临床护理</el-radio>
-              <el-radio label="康复护理">康复护理</el-radio>
-              <el-radio label="心理关怀">心理关怀</el-radio>
+            <el-radio-group v-model="serviceType">
+              <el-radio label="家政护理">家政护理</el-radio>
+              <el-radio label="康复理疗">康复理疗</el-radio>
+              <el-radio label="上门体检">上门体检</el-radio>
             </el-radio-group>
           </div>
         </div>
@@ -80,10 +79,10 @@
             {{ formatDate(scope.row.orderedTime) }}
           </template>
         </el-table-column>
-        <el-table-column prop="category" label="服务类型">
+        <el-table-column prop="serviceType" label="服务类型">
           <template #default="scope">
-            <el-tag :type="getCategoryType(scope.row.category)">
-              {{ scope.row.category }}
+            <el-tag :type="getCategoryType(scope.row.serviceType)">
+              {{ scope.row.serviceType }}
             </el-tag>
           </template>
         </el-table-column>
@@ -124,7 +123,7 @@ export default {
       currentPage: 1,
       pageSize: 10,
       total: 0,
-      category: '',
+      serviceType: '',
       paymentMethod: '',
       orderDateRange: '',
       minPrice: null,
@@ -142,7 +141,7 @@ export default {
     filteredOrders() {
       return this.orders.filter(order => {
         // 筛选服务类型
-        if (this.category && order.category !== this.category) {
+        if (this.serviceType && order.serviceType !== this.serviceType) {
           return false;
         }
 
@@ -180,7 +179,7 @@ export default {
       this.loadOrders();
     },
     resetSearch() {
-      this.category = '';
+      this.serviceType = '';
       this.paymentMethod = '';
       this.orderDateRange = '';
       this.minPrice = null;
@@ -268,15 +267,13 @@ export default {
       this.loadOrders(); // 切换页码时重新加载数据
     },
         getCategoryType(category) {
-      if (category === '生活照料') {
+      if (category === '家政护理') {
         return 'success';
-      } else if (category === '临床护理') {
+      } else if (category === '康复理疗') {
         return 'primary';
-      } else if (category === '康复护理') {
+      } else if (category === '上门体检') {
         return 'warning';
-      } else if (category === '心理关怀') {
-        return 'info';
-      }
+      } 
       return '';
     },
   },
