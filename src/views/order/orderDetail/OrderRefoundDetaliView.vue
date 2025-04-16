@@ -42,9 +42,8 @@
 
     <!-- 用户信息 -->
     <div class="user-info">
-      <h3>用户信息</h3>
+      <h3>用户信息<el-button style="margin-left: 20px;" type="text" @click="viewUserDetails">查看详情</el-button></h3>
       <p>姓名：{{ refundDetail.realName }}</p>
-      <p>手机号：{{ refundDetail.contactPhone }}</p>
       <p>注册时间：{{ refundDetail.registrationTime }}</p>
       <p>备注：{{ refundDetail.remark }}</p>
     </div>
@@ -77,11 +76,14 @@
 
 <script>
 import { afterSalesDetail } from "@/api/order";
+import SingleDetailView from '@/views/user/userDetail/SingleDetailView.vue';
 
 export default {
+  components: { SingleDetailView },
   data() {
     return {
       refundDetail: {}, // 存储售后订单详情数据
+      selectedUserId:null, // 选中的用户 ID
     };
   },
   methods: {
@@ -92,6 +94,7 @@ export default {
         console.log(res);
         if (res.code === 200) {
           this.refundDetail = res.data[0]; // 接口返回的售后订单详情
+          this.selectedUserId = this.refundDetail.userId; // 动态设置 selectedUserId
         } else {
           this.$message.error("获取售后订单详情失败");
         }
@@ -101,6 +104,15 @@ export default {
     goBack() {
       this.$router.go(-1);
     },
+    // 跳转到用户详情页
+    viewUserDetails() {
+      if (this.selectedUserId) {
+        this.$router.push({
+          path: '/user/userdetails/singledetail',
+          query: { userId: this.selectedUserId } // 传递 userId 作为查询参数
+        });
+      } 
+    }
   },
   mounted() {
     this.fetchRefundDetail(); // 页面加载时获取售后订单详情

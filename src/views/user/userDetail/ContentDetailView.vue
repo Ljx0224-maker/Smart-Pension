@@ -51,7 +51,11 @@
         <el-col :span="6">
                 <el-card class="user-card">
                     <div class="user-header">
-                        <img :src="user.avatar || defaultAvatar" alt="头像" class="user-avatar" />
+                      <div class="demo-type"  style="margin-left: 0px;margin-right: 20px;">
+                          <div>
+                            <el-avatar> {{ user.nickname }} </el-avatar>
+                          </div>
+                        </div>
                         <div class="user-info">
                             <h2>{{ user.nickname }} <span v-if="user.gender === 'female'">♀</span><span v-else>♂</span></h2>
                             <p>ID: {{ user.userId }}</p>

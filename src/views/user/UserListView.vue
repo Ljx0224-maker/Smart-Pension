@@ -63,8 +63,11 @@
           <el-table-column type="selection" width="55"></el-table-column>
           <el-table-column label="用户信息" width="180">
             <template #default="scope">
-              <img :src="scope.row.avatar" alt="用户头像" class="user-avatar">
-              <div>{{ scope.row.nickname }}</div>
+          <div class="demo-type">
+            <div>
+              <el-avatar> {{ scope.row.nickname }} </el-avatar>
+            </div>
+          </div>
             </template>
           </el-table-column>
           <el-table-column prop="userId" label="ID" width="180"></el-table-column>
@@ -545,11 +548,7 @@
   text-align: center;
 }
 
-.user-avatar {
-  width: 50px;
-  height: 50px;
-  border-radius: 50%;
-}
+
 
 .edit-link {
   color: #409eff;

@@ -269,6 +269,8 @@ export default {
       };
 
       getBanners(params).then(res => {
+        console.log('获取轮播图列表响应:', res);
+        
         if (res.code === 200) {
           this.tableData = res.data;
           this.total = res.total;

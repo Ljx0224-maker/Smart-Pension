@@ -21,9 +21,11 @@
           :class="{ active: activeConversationId === conversation.id }"
           @click="selectConversation(conversation)"
         >
-          <div class="avatar">
-            <img :src="conversation.avatar" alt="用户头像">
-          </div>
+        <div class="demo-type"  style="margin-left: 0px;margin-right: 20px;">
+                          <div>
+                            <el-avatar> user </el-avatar>
+                          </div>
+                        </div>
           <div class="info">
             <div class="name">{{ conversation.name }}</div>
             <div class="message">{{ conversation.lastMessage }}</div>
@@ -60,7 +62,11 @@
           <div class="message-time">{{ message.time }}</div>
           <div class="message-content" :class="{ 'is-user': message.isUser }">
             <div class="avatar">
-              <img :src="message.avatar" alt="用户头像">
+              <div class="demo-type"  style="margin-left: 0px;margin-right: 20px;">
+                          <div>
+                            <el-avatar> avatar </el-avatar>
+                          </div>
+                        </div>
             </div>
             <div class="bubble">{{ message.content }}</div>
           </div>
@@ -84,12 +90,13 @@
         <h2>  </h2>
       </div>
       <div class="customer-info">
-        <div class="avatar">
-          <img :src="currentCustomer.avatar" alt="客户头像">
-        </div>
+        <div class="demo-type"  style="margin-left: 0px;margin-right: 20px;">
+                          <div>
+                            <el-avatar> user </el-avatar>
+                          </div>
+                        </div>
         <div class="name">
           {{ currentCustomer.name }}
-          <el-button type="text" @click="viewCustomerDetails">查看资料</el-button>
         </div>
         <div class="tags">
           <el-tag v-for="tag in currentCustomer.tags" :key="tag" size="small">{{ tag }}</el-tag>
@@ -106,11 +113,10 @@
           <div class="order-status">{{ order.status }}</div>
           <div class="order-details">
             <div class="product">
-              <img :src="order.productImage" alt="商品图片">
+              <img src="@/assets/image1.jpg" alt="商品图片">
               <div class="product-info">
                 <div class="product-name">{{ order.productName }}</div>
                 <div class="order-detail">
-                  <el-button type="text" @click="viewOrderDetails(order)">订单详情</el-button>
                 </div>
               </div>
             </div>

@@ -42,7 +42,6 @@
           <p>上门地址：{{ orderDetail.address }}</p>
           <p>预约时间：{{ orderDetail.appointmentTime }}</p>
           <p>预约时长：{{ orderDetail.serviceDuration }} 分钟</p>
-          <p>联系方式：{{ orderDetail.contactPhone }}</p>
         </el-col>
       </el-row>
     </div>
@@ -51,7 +50,6 @@
     <div class="user-info">
       <h3>用户信息<el-button style="margin-left: 20px;" type="text" @click="viewUserDetails">查看详情</el-button></h3>
       <p>姓名：{{ orderDetail.realName }}</p>
-      <p>手机号：{{ orderDetail.contactPhone }}</p>
       <p>注册时间：{{ orderDetail.registrationTime }}</p>
       <p>备注：{{ orderDetail.remark }}</p>
     </div>
