@@ -57,7 +57,7 @@
       <div class="action-section">
         <div class="action-buttons">
           <el-button type="primary" @click="addNewProduct">新增</el-button>
-          
+          <el-button @click="batchDelete" :disabled="selectedRows.length === 0">批量删除</el-button>
         </div>
       </div>
 

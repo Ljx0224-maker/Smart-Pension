@@ -194,7 +194,8 @@ export default {
       statusFilter: '',
       categoryFilter: '',
       dateRange: '',
-      searchKeyword: '',
+      // 关键字搜索输入框绑定的数据
+      searchKeyword: '', 
       dialogVisible: false,
       dialogTitle: '',
       form: {
@@ -204,7 +205,6 @@ export default {
         category: '',
         price: 0,
         status: '',
-        // 移除原本的 image 字段
         productRemark: '',
         serviceDetails: '',
         sales: 0,
@@ -213,7 +213,6 @@ export default {
       },
       selectedRows: [],
       userInfo: this.$store.state.userInfo,
-      // 添加默认图片路径
       defaultImage: defaultImage
     };
   },
@@ -246,8 +245,14 @@ export default {
         }
 
         // 筛选关键字
-        if (this.searchKeyword && !product.name.includes(this.searchKeyword)) {
-          return false;
+        if (this.searchKeyword) {
+          const nameMatch = product.name && product.name.includes(this.searchKeyword);
+          const productNameMatch = product.productName && product.productName.includes(this.searchKeyword);
+          const productCodeMatch = product.productCode && product.productCode.includes(this.searchKeyword);
+
+          if (!nameMatch && !productNameMatch && !productCodeMatch) {
+            return false;
+          }
         }
 
         return true;
@@ -256,24 +261,9 @@ export default {
   },
   methods: {
     generateRandomCode() {
-      const timestamp = Date.now().toString(36); // 基于时间戳的部分
-      const randomPart = Math.random().toString(36).substring(2, 8).toUpperCase(); // 随机部分
-      return `KF-${timestamp}-${randomPart}`; // 组合成商品编码
-    },
-    handleImageSuccess(res, file) {
-      this.form.image = URL.createObjectURL(file.raw);
-    },
-    beforeImageUpload(file) {
-      const isJPG = file.type === 'image/jpeg';
-      const isLt2M = file.size / 1024 / 1024 < 2;
-
-      if (!isJPG) {
-        ElMessage.error('上传头像图片只能是 JPG 格式!');
-      }
-      if (!isLt2M) {
-        ElMessage.error('上传头像图片大小不能超过 2MB!');
-      }
-      return isJPG && isLt2M;
+      const timestamp = Date.now().toString(36); 
+      const randomPart = Math.random().toString(36).substring(2, 8).toUpperCase(); 
+      return `KF-${timestamp}-${randomPart}`; 
     },
     searchProducts() {
       this.loadProducts();
@@ -289,20 +279,18 @@ export default {
       this.dialogTitle = '新增商品';
       this.form = {
         id: null,
-        name: '', // 商品名称
-        productCode: this.generateRandomCode(), // 随机生成商品编码
-        category: '', // 分类
-        price: 0, // 价格
-        status: '下架', // 默认状态为下架
-        image: '', // 商品图片
-        productRemark: '', // 商品备注
-        serviceDetails: '', // 服务详情
-        sales: 0, // 销量
-        servicePeople: 0, // 服务人数
-        serviceDuration: 0, // 服务时长（分钟）
-        serviceType: '康复理疗', // 设置服务类型为康复理疗
-        lastUpdatedBy: this.userInfo.staffName || '未知', // 自动填充更新人
-
+        name: '', 
+        productCode: this.generateRandomCode(), 
+        category: '', 
+        price: 0, 
+        status: '下架', 
+        productRemark: '', 
+        serviceDetails: '', 
+        sales: 0, 
+        servicePeople: 0, 
+        serviceDuration: 0, 
+        serviceType: '康复理疗', 
+        lastUpdatedBy: this.userInfo.staffName || '未知', 
       };
       this.dialogVisible = true;
     },
@@ -312,7 +300,6 @@ export default {
       this.dialogVisible = true;
     },
     removeProduct(row) {
-      console.log('删除的行数据:', row); // 调试信息
       ElMessageBox.confirm(
         '确定要删除此商品吗?',
         '提示',
@@ -322,19 +309,16 @@ export default {
           type: 'warning',
         }
       ).then(() => {
-        console.log('删除参数:', row.productId); // 调试信息
-        deleteProduct(row.productId) // 修改为传递 productId
+        deleteProduct(row.productId) 
           .then(res => {
-            console.log('删除接口返回:', res); // 调试信息
-            if (res.code === 200) { // 根据后端返回值调整判断条件
+            if (res.code === 200) { 
               ElMessage.success('删除成功');
-              this.loadProducts(); // 重新加载商品列表
+              this.loadProducts(); 
             } else {
               ElMessage.error('删除失败: ' + (res.message || '未知错误'));
             }
           })
           .catch(err => {
-            console.error('Delete error:', err); // 打印错误信息
             ElMessage.error('删除失败: ' + (err.message || '未知错误'));
           });
       }).catch(() => {
@@ -344,10 +328,9 @@ export default {
     saveProduct() {
       const payload = {
         ...this.form,
-        productName: this.form.name, // 映射为后端字段
-        status: this.form.status === '已上架' ? '已上架' : '下架', // 映射状态值
-       
-        serviceType: '康复理疗', // 确保服务类型为康复理疗
+        productName: this.form.name, 
+        status: this.form.status === '已上架' ? '已上架' : '下架', 
+        serviceType: '康复理疗', 
       };
 
       if (this.form.id) {
@@ -355,12 +338,11 @@ export default {
           if (res.code === 200) {
             ElMessage.success('编辑成功');
             this.dialogVisible = false;
-            this.loadProducts(); // 刷新商品列表
+            this.loadProducts(); 
           } else {
             ElMessage.error('编辑失败: ' + res.message);
           }
         }).catch(err => {
-          console.error('编辑失败:', err);
           ElMessage.error('编辑失败: ' + (err.message || '未知错误'));
         });
       } else {
@@ -368,12 +350,11 @@ export default {
           if (res.code === 200) {
             ElMessage.success('新增成功');
             this.dialogVisible = false;
-            this.loadProducts(); // 刷新商品列表
+            this.loadProducts(); 
           } else {
             ElMessage.error('新增失败: ' + res.message);
           }
         }).catch(err => {
-          console.error('新增失败:', err);
           ElMessage.error('新增失败: ' + (err.message || '未知错误'));
         });
       }
@@ -418,7 +399,7 @@ export default {
           status: this.statusFilter,
           category: this.categoryFilter,
           keyword: this.searchKeyword,
-          serviceType: '康复理疗', // 只加载服务类型为康复理疗的商品
+          serviceType: '康复理疗', 
         },
       };
 
@@ -429,13 +410,12 @@ export default {
 
       getKFProductList(params).then(res => {
         if (res.code === 200) {
-          this.tableData = res.data; // 更新表格数据
-          this.total = res.total; // 更新总条目数
+          this.tableData = res.data; 
+          this.total = res.total; 
         } else {
-          ElMessage.error('获取数据失败');
+          ElMessage.error('商品列表加载失败: ' + (res.message || '未知错误'));
         }
       }).catch(err => {
-        console.error('获取数据失败:', err);
         ElMessage.error('获取数据失败: ' + (err.message || '未知错误'));
       });
     },

@@ -36,7 +36,7 @@
           <el-table-column prop="lastUpdatedAt" label="最后更新时间" width="220"></el-table-column>
           <el-table-column label="操作" width="100">
             <template #default="scope">
-              <el-button type="text" @click="openEditDialog(scope.row)">编辑</el-button>
+              <!-- <el-button type="text" @click="openEditDialog(scope.row)">编辑</el-button> -->
               <el-button type="text" @click="confirmDelete(scope.row)" style="color: #FFB800;">删除</el-button>
             </template>
           </el-table-column>
@@ -290,6 +290,8 @@ export default {
   padding: 20px;
   border-radius: 8px;
   margin-bottom: 20px;
+  /* 添加阴影样式 */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); 
 }
 
 .search-box {
@@ -304,7 +306,9 @@ export default {
   background-color: #fff;
   padding: 20px;
   border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  margin-bottom: 20px;
+  /* 移除阴影样式 */
+  /* 原有的 box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); 已删除 */
 }
 
 .el-table {

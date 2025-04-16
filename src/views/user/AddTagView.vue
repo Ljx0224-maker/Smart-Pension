@@ -66,8 +66,9 @@
           product: ''
         },
         products: [
-          { id: '1', name: '商品1' },
-          { id: '2', name: '商品2' }
+          { id: '1', name: '家政护理' },
+          { id: '2', name: '康复理疗' },
+          { id: '3', name: '上门体检' }
         ]
       };
     },
