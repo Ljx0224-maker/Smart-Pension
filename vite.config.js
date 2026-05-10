@@ -29,7 +29,7 @@ export default defineConfig({
   server: {
     proxy: {
       '/smartcare': {
-        target: 'http://192.168.31.50:8888', // 后端接口地址
+        target: 'http://10.69.107.179:8888', // 后端接口地址
         changeOrigin: true, // 是否改变源
       },
     },

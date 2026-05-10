@@ -195,7 +195,7 @@ export default {
       dialogTitle: '',
       form: {
         id: null,
-        name: '',
+        productname: '',
         productCode: '',
         category: '',
         price: 0,
@@ -273,7 +273,7 @@ export default {
       console.log('新增商品信息:', this.form); 
       this.form = {
         id: null,
-        name: '', 
+        productname: '', 
         category: '', 
         price: 0, 
         status: '', 

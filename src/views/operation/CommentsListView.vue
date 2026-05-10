@@ -42,7 +42,6 @@
         </div>
       </div>
     </div>
-
     <div class="action-table-box">
       <div class="action-section">
         <div class="action-buttons">

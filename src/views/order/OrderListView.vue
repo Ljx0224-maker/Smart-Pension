@@ -86,7 +86,7 @@
             </el-tag>
           </template>
         </el-table-column>
-        <el-table-column prop="totalAmount" label="总金额（元）"></el-table-column>
+        <el-table-column prop="price" label="总金额（元）"></el-table-column>
         <el-table-column prop="realName" label="买家"></el-table-column>
         <el-table-column prop="orderStatus" label="订单状态"></el-table-column>
         <el-table-column prop="paymentMethod" label="支付方式"></el-table-column>
@@ -206,7 +206,7 @@ export default {
       const params = {
         pageSize: this.pageSize,
         pageNum: this.currentPage,
-        category: this.category,
+        serviceType: this.serviceType,
         paymentMethod: this.paymentMethod,
         minPrice: this.minPrice,
         maxPrice: this.maxPrice,
@@ -266,12 +266,12 @@ export default {
       this.currentPage = page;
       this.loadOrders(); // 切换页码时重新加载数据
     },
-        getCategoryType(category) {
-      if (category === '家政护理') {
+        getCategoryType(serviceType) {
+      if (serviceType === '家政护理') {
         return 'success';
-      } else if (category === '康复理疗') {
+      } else if (serviceType === '康复理疗') {
         return 'primary';
-      } else if (category === '上门体检') {
+      } else if (serviceType === '上门体检') {
         return 'warning';
       } 
       return '';
