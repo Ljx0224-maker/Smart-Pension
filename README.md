@@ -51,14 +51,13 @@ Smart-Pension/
 **注：本存储库只有web前端代码**
 
 ## 界面效果部分展示：
-<img width="1098" height="533" alt="微信图片_20250327113036" src="https://github.com/user-attachments/assets/9c4cf9da-f6b1-4604-bff6-3a025bd14b88" />
-<img width="1115" height="572" alt="微信图片_20250327114908" src="https://github.com/user-attachments/assets/84b026a1-0e21-4b19-93cd-ce7480253945" />
-<img width="1058" height="569" alt="微信图片_20250328163513" src="https://github.com/user-attachments/assets/4c090822-81f7-48d2-95b7-919b77cbf8a2" />
+<img width="2209" height="1199" alt="登录" src="https://github.com/user-attachments/assets/ac2f4762-fa16-4a40-aa09-1f6f8e5c2dbe" />
+<img width="2196" height="1197" alt="首页-工作台" src="https://github.com/user-attachments/assets/fec404ed-495c-4446-8bd1-62d90f0a7ea6" />
+<img width="2184" height="1203" alt="首页-预约看板" src="https://github.com/user-attachments/assets/dd7ba877-68ec-4fbf-b15b-24ea7e990b81" />
+<img width="1657" height="894" alt="全部服务人员列表" src="https://github.com/user-attachments/assets/4239c4fe-1973-43b5-96d2-155fd6b04de4" />
+<img width="992" height="826" alt="编辑服务人员信息" src="https://github.com/user-attachments/assets/dff81d68-6614-4a9b-9dcc-6aa1a77c9823" />
+<img width="1845" height="921" alt="用户概况" src="https://github.com/user-attachments/assets/11c6af7a-f94f-44a9-9036-8b23b4f0684b" />
+<img width="2182" height="1215" alt="交易管理-订单列表" src="https://github.com/user-attachments/assets/19dbf0c8-a0cf-43c9-a89b-7b3669704743" />
+<img width="1838" height="919" alt="用户列表" src="https://github.com/user-attachments/assets/63d3a436-4fdc-4830-944e-ad1f70a42ed6" />
+<img width="2199" height="1200" alt="消息管理-会话" src="https://github.com/user-attachments/assets/226eb5cd-aff2-4f3f-969b-60349f87651b" />
 
-<img width="900" height="529" alt="微信图片_20250408110041" src="https://github.com/user-attachments/assets/60f7ad48-12da-4de6-a4fe-f83594d0c70d" />
-
-<img width="906" height="534" alt="微信图片_20250408110902" src="https://github.com/user-attachments/assets/dc0b71ab-3b23-4ec7-bfee-44fedf1baaa1" />
-
-<img width="263" height="567" alt="微信图片_20250330160142" src="https://github.com/user-attachments/assets/f5685786-4f54-46db-a707-bc1a62d41d48" />
-
-<img width="269" height="561" alt="微信图片_20250330160146" src="https://github.com/user-attachments/assets/1f174b9f-9645-4782-a66e-304147c498df" />
