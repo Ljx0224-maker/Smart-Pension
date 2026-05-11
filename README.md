@@ -52,10 +52,8 @@ Smart-Pension/
 
 ## 界面效果部分展示：
 <img width="1098" height="533" alt="微信图片_20250327113036" src="https://github.com/user-attachments/assets/9c4cf9da-f6b1-4604-bff6-3a025bd14b88" />
-
-<img width="1058" height="569" alt="微信图片_20250328163513" src="https://github.com/user-attachments/assets/4c090822-81f7-48d2-95b7-919b77cbf8a2" />
-
 <img width="1115" height="572" alt="微信图片_20250327114908" src="https://github.com/user-attachments/assets/84b026a1-0e21-4b19-93cd-ce7480253945" />
+<img width="1058" height="569" alt="微信图片_20250328163513" src="https://github.com/user-attachments/assets/4c090822-81f7-48d2-95b7-919b77cbf8a2" />
 
 <img width="900" height="529" alt="微信图片_20250408110041" src="https://github.com/user-attachments/assets/60f7ad48-12da-4de6-a4fe-f83594d0c70d" />
 
